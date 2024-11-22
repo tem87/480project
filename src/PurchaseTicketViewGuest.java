@@ -2,11 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
-
-public class PurchaseTicketView {
+public class PurchaseTicketViewGuest {
 
     public static void showPurchaseTicketView(JFrame frame, Runnable backToMenuCallback) {
         frame.getContentPane().removeAll();
@@ -35,7 +31,7 @@ public class PurchaseTicketView {
             int selectedTheatreIndex = theatreDropdown.getSelectedIndex();
             if (selectedTheatreIndex >= 0) {
                 Theatre selectedTheatre = theatres.get(selectedTheatreIndex);
-                List<Movie> movies = Movie.fetchMovies();
+                List<Movie> movies = Movie.fetchMoviesNoEarlyAccess();
 
                 for (Movie movie : movies) {
                     movieDropdown.addItem(movie.getTitle());
@@ -51,7 +47,7 @@ public class PurchaseTicketView {
 
             if (selectedTheatreIndex >= 0 && selectedMovieIndex >= 0) {
                 Theatre selectedTheatre = theatres.get(selectedTheatreIndex);
-                Movie selectedMovie = Movie.fetchMovies().get(selectedMovieIndex);
+                Movie selectedMovie = Movie.fetchMoviesNoEarlyAccess().get(selectedMovieIndex);
 
                 List<Showtime> showtimes = Showtime.fetchShowtimes();
                 for (Showtime showtime : showtimes) {
@@ -83,11 +79,13 @@ public class PurchaseTicketView {
 
             if (selectedTheatreIndex >= 0 && selectedMovieIndex >= 0 && selectedShowtimeIndex >= 0) {
                 Theatre selectedTheatre = theatres.get(selectedTheatreIndex);
-                Movie selectedMovie = Movie.fetchMovies().get(selectedMovieIndex);
+                Movie selectedMovie = Movie.fetchMoviesNoEarlyAccess().get(selectedMovieIndex);
                 Showtime selectedShowtime = Showtime.fetchShowtimes().get(selectedShowtimeIndex);
 
                 // Open SeatSelectionView
-                SeatSelectionView.showSeatMap(frame, selectedShowtime.getShowtimeID(), backToMenuCallback, selectedTheatre, selectedMovie, selectedShowtime);
+                //SeatSelectionView.showSeatMap(frame, selectedShowtime.getShowtimeID(), backToMenuCallback, selectedTheatre, selectedMovie, selectedShowtime);
+                SeatSelectionView.showSeatMap(frame, selectedShowtime.getShowtimeID(), backToMenuCallback, selectedTheatre, selectedMovie, selectedShowtime, null);
+
             } else {
                 JOptionPane.showMessageDialog(frame, "Please select a theatre, movie, and showtime to proceed.");
             }

@@ -2,13 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
-public class PaymentView {
+public class RegisteredUserPaymentView {
 
-    public static void showPaymentView(JFrame frame, Theatre theatre, Movie movie, Showtime showtime, List<Seat> selectedSeats, Runnable backToMenuCallback) {
+    public static void showPaymentView(JFrame frame, RegisteredUser loggedInUser, Theatre theatre, Movie movie, Showtime showtime, List<Seat> selectedSeats, Runnable backToMenuCallback) {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout(10, 10));
 
@@ -48,18 +48,12 @@ public class PaymentView {
         paymentPanel.setBorder(BorderFactory.createTitledBorder("Payment Information"));
 
         JComboBox<String> paymentMethodDropdown = new JComboBox<>(new String[]{"Credit Card", "Debit Card"});
-        JTextField nameField = new JTextField();
-        JTextField emailField = new JTextField();
         JTextField cardNumberField = new JTextField();
         JPasswordField cvvField = new JPasswordField();
         JTextField expirationDateField = new JTextField();
 
         paymentPanel.add(new JLabel("Payment Method:"));
         paymentPanel.add(paymentMethodDropdown);
-        paymentPanel.add(new JLabel("Email:"));
-        paymentPanel.add(emailField);
-        paymentPanel.add(new JLabel("Cardholder Name:"));
-        paymentPanel.add(nameField);
         paymentPanel.add(new JLabel("Card Number:"));
         paymentPanel.add(cardNumberField);
         paymentPanel.add(new JLabel("CVV:"));
@@ -72,26 +66,17 @@ public class PaymentView {
         JButton confirmButton = new JButton("Confirm Payment");
 
         confirmButton.addActionListener(e -> {
-            String name = nameField.getText();
-            String email = emailField.getText();
             String cardNumber = cardNumberField.getText();
             String cvv = new String(cvvField.getPassword());
             String expirationDate = expirationDateField.getText();
 
-            if (validateInputs(name, cardNumber, cvv, expirationDate)) {
+            if (validateInputs(cardNumber, cvv, expirationDate)) {
                 if (validateCardDetails(cardNumber, cvv, expirationDate, totalPriceAfterTax)) {
-                    // Save guest user to Users table
-                    int userId = User.saveGuestUserToDatabase(name, email);
-                    if (userId == -1) {
-                        JOptionPane.showMessageDialog(frame, "Failed to save user details. Payment aborted.");
-                        return;
-                    }
-
                     boolean success = true;
                     for (Seat seat : selectedSeats) {
-                        // Save ticket for each seat
+                        // Save ticket for each seat using logged-in user's ID
                         Ticket ticket = new Ticket(
-                                userId, // Use the newly created user ID
+                                loggedInUser.getUserId(), // Use the logged-in user's ID
                                 showtime.getShowtimeID(),
                                 seat.getSeatId(),
                                 pricePerSeat,
@@ -120,7 +105,6 @@ public class PaymentView {
             }
         });
 
-
         JButton backButton = new JButton("Back");
         backButton.addActionListener(e -> backToMenuCallback.run());
 
@@ -133,9 +117,8 @@ public class PaymentView {
         frame.repaint();
     }
 
-    private static boolean validateInputs(String name, String cardNumber, String cvv, String expirationDate) {
-        return name != null && !name.trim().isEmpty()
-                && cardNumber != null && cardNumber.matches("\\d{16}")
+    private static boolean validateInputs(String cardNumber, String cvv, String expirationDate) {
+        return cardNumber != null && cardNumber.matches("\\d{16}")
                 && cvv != null && cvv.matches("\\d{3}")
                 && expirationDate != null && expirationDate.matches("(0[1-9]|1[0-2])/\\d{2}");
     }
@@ -169,3 +152,4 @@ public class PaymentView {
         return false;
     }
 }
+

@@ -16,7 +16,7 @@ public class RegisteredUserView {
 
         JButton viewTheatreButton = new JButton("View Theatres");
         JButton viewMovieButton = new JButton("View Movies");
-        JButton viewearlyMovieButton = new JButton("View early access movies");
+        JButton viewearlyMovieButton = new JButton("View Early Access Movies");
         JButton viewShowtimeButton = new JButton("View Showtimes");
         JButton purchaseTicketButton = new JButton("Purchase Ticket");
         JButton cancelTicketButton = new JButton("Cancel Ticket");
@@ -40,24 +40,11 @@ public class RegisteredUserView {
         );
 
         purchaseTicketButton.addActionListener(e ->
-                PurchaseTicketView.showPurchaseTicketView(frame,() -> openRegisteredUserMenu(frame, loggedInUser))
+                PurchaseTicketViewRU.showPurchaseTicketView(frame, loggedInUser, () -> RegisteredUserView.openRegisteredUserMenu(frame, loggedInUser))
         );
 
-//        // Add functionality for canceling tickets specific to Registered Users
-//        cancelTicketButton.addActionListener(e -> {
-//            CancelTicketView.showCancelTicketView(frame, loggedInUser, () -> openRegisteredUserMenu(frame, loggedInUser));
-//        });
 
-        // Annual Fee Payment
-//        annualFeeButton.addActionListener(e -> {
-//            boolean feePaid = AnnualFeePaymentView.payAnnualFee(frame, loggedInUser);
-//            if (feePaid) {
-//                JOptionPane.showMessageDialog(frame, "Annual fee payment successful!");
-//                loggedInUser.setAnnualFeePaid(true); // Update user state
-//            } else {
-//                JOptionPane.showMessageDialog(frame, "Failed to process annual fee payment.", "Error", JOptionPane.ERROR_MESSAGE);
-//            }
-//        });
+
 
         // Logout functionality
         backButton.addActionListener(e -> {
@@ -80,7 +67,21 @@ public class RegisteredUserView {
         frame.revalidate();
         frame.repaint();
     }
-
+    //        cancelTicketButton.addActionListener(e -> {
+//            // Implement cancel ticket logic for registered users
+//            CancelTicketView.showCancelTicketView(frame, loggedInUser, () -> openRegisteredUserMenu(frame, loggedInUser));
+//        });
+//
+//        // Annual Fee Payment
+//        annualFeeButton.addActionListener(e -> {
+//            boolean feePaid = AnnualFeePaymentView.payAnnualFee(frame, loggedInUser);
+//            if (feePaid) {
+//                JOptionPane.showMessageDialog(frame, "Annual fee payment successful!");
+//                loggedInUser.setAnnualFeePaid(true); // Update user state
+//            } else {
+//                JOptionPane.showMessageDialog(frame, "Failed to process annual fee payment.", "Error", JOptionPane.ERROR_MESSAGE);
+//            }
+//        });
     public static void login(JFrame frame) {
         JTextField emailField = new JTextField();
         JPasswordField passwordField = new JPasswordField();
@@ -106,3 +107,4 @@ public class RegisteredUserView {
         }
     }
 }
+

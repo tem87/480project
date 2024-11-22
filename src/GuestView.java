@@ -33,7 +33,7 @@ public class GuestView {
 
         // Open the PurchaseTicketView when Purchase Ticket button is clicked
         purchaseTicketButton.addActionListener(e ->
-                PurchaseTicketView.showPurchaseTicketView(frame, () -> GuestView.openGuestMenu(frame))
+                PurchaseTicketViewGuest.showPurchaseTicketView(frame, () -> GuestView.openGuestMenu(frame))
         );
 
         backButton.addActionListener(e ->
