@@ -9,7 +9,8 @@ CREATE TABLE Movie (
     synopsis TEXT,
     length VARCHAR(100) NOT NULL, 
     rating VARCHAR(10),
-    price DECIMAL(8, 2) NOT NULL -- Added price column
+    price DECIMAL(8, 2) NOT NULL,
+    early_access BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE Theater (
@@ -78,11 +79,11 @@ VALUES
 
 
 -- Insert movies with prices
-INSERT INTO Movie (title, genre, synopsis, length, rating, price) VALUES
-('Avengers: Endgame', 'Action', 'The Avengers attempt to undo the damage caused by Thanos.', '3h 2min', 'PG-13', 20.00),
-('Shrek 2', 'Animation', 'Shrek and Fiona visit her parents.', '1h 33min', 'PG', 15.00),
-('Spirited Away', 'Fantasy', 'A young girl enters a magical.', '2h 5min', 'PG', 13.00),
-('Me Before You', 'Romance', 'A young woman forms a bond with a paralyzed man she cares for.', '1h 50min', 'PG-13', 13.00);
+INSERT INTO Movie (title, genre, synopsis, length, rating, price, early_access) VALUES
+('Avengers: Endgame', 'Action', 'The Avengers attempt to undo the damage caused by Thanos.', '3h 2min', 'PG-13', 20.00, FALSE),
+('Shrek 2', 'Animation', 'Shrek and Fiona visit her parents.', '1h 33min', 'PG', 15.00, TRUE),
+('Spirited Away', 'Fantasy', 'A young girl enters a magical.', '2h 5min', 'PG', 13.00, FALSE),
+('Me Before You', 'Romance', 'A young woman forms a bond with a paralyzed man she cares for.', '1h 50min', 'PG-13', 13.00, FALSE);
 
 -- Insert theaters
 INSERT INTO Theater (name, location) VALUES
