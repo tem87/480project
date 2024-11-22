@@ -107,62 +107,29 @@ public class WelcomeView {
         }
     }
 
-    private static void loginForm(JFrame frame) {
-        JTextField emailField = new JTextField();
-        JPasswordField passwordField = new JPasswordField();
+//    private static void loginForm(JFrame frame) {
+//        JTextField emailField = new JTextField();
+//        JPasswordField passwordField = new JPasswordField();
+//
+//        Object[] message = {
+//                "Email:", emailField,
+//                "Password:", passwordField
+//        };
+//
+//        int option = JOptionPane.showConfirmDialog(frame, message, "Login", JOptionPane.OK_CANCEL_OPTION);
+//        if (option == JOptionPane.OK_OPTION) {
+//            String email = emailField.getText();
+//            String password = new String(passwordField.getPassword());
+//
+//            User loggedInUser = User.authenticate(email, password);
+//            if (loggedInUser != null) {
+//                JOptionPane.showMessageDialog(frame, "Login Successful! Welcome, " + loggedInUser.getName());
+//                showUserMenu(frame, loggedInUser);
+//            } else {
+//                JOptionPane.showMessageDialog(frame, "Invalid email or password. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+//            }
+//        }
+//    }
 
-        Object[] message = {
-                "Email:", emailField,
-                "Password:", passwordField
-        };
 
-        int option = JOptionPane.showConfirmDialog(frame, message, "Login", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            String email = emailField.getText();
-            String password = new String(passwordField.getPassword());
-
-            User loggedInUser = User.authenticate(email, password);
-            if (loggedInUser != null) {
-                JOptionPane.showMessageDialog(frame, "Login Successful! Welcome, " + loggedInUser.getName());
-                showUserMenu(frame, loggedInUser);
-            } else {
-                JOptionPane.showMessageDialog(frame, "Invalid email or password. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-
-    private static void showUserMenu(JFrame frame, User user) {
-        frame.getContentPane().removeAll();
-        frame.setLayout(new BorderLayout());
-
-        JLabel userLabel = new JLabel("Welcome, " + user.getName(), SwingConstants.CENTER);
-        userLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        userLabel.setForeground(new Color(0, 51, 102));
-        frame.add(userLabel, BorderLayout.NORTH);
-
-        JPanel userMenuPanel = new JPanel(new GridLayout(0, 1, 10, 10));
-
-        JButton viewMoviesButton = new JButton("View Movies");
-        JButton viewShowtimesButton = new JButton("View Showtimes");
-        JButton bookTicketButton = new JButton("Book Ticket");
-        JButton logoutButton = new JButton("Logout");
-
-        // Action listener to show seating map when the "Book Ticket" button is clicked
-        bookTicketButton.addActionListener(e -> {
-            int showtimeId = 1; // This will come from the selected showtime
-            //showSeatMap(frame, showtimeId, user);
-        });
-
-        logoutButton.addActionListener(e -> showMainMenu());
-
-        userMenuPanel.add(viewMoviesButton);
-        userMenuPanel.add(viewShowtimesButton);
-        userMenuPanel.add(bookTicketButton);
-        userMenuPanel.add(logoutButton);
-
-        frame.add(userMenuPanel, BorderLayout.CENTER);
-        frame.revalidate();
-        frame.repaint();
-    }
-    
 }

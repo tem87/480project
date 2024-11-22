@@ -11,7 +11,6 @@ public class User {
     private String phoneNumber;
     private String address;
     private boolean isRegistered;
-    private boolean annualFeePaid;
 
     // Constructor for creating new users (no ID)
     public User(String name, String email, String password, String phoneNumber, String address) {
@@ -20,13 +19,12 @@ public class User {
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.address = address;
-        this.isRegistered = true;
-        this.annualFeePaid = false;
+        this.isRegistered = false;
     }
 
     // Constructor for existing users (with ID)
     public User(int userId, String name, String email, String password, String phoneNumber, String address,
-                boolean isRegistered, boolean annualFeePaid) {
+                boolean isRegistered) {
         this.userId = userId;
         this.name = name;
         this.email = email;
@@ -34,8 +32,8 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.isRegistered = isRegistered;
-        this.annualFeePaid = annualFeePaid;
     }
+
 
     // Getters and Setters
     public int getUserId() {
@@ -66,10 +64,6 @@ public class User {
         return isRegistered;
     }
 
-    public boolean isAnnualFeePaid() {
-        return annualFeePaid;
-    }
-
     // Save user to the database
     public boolean saveToDatabase() {
         String query = "INSERT INTO Users (name, email, password, phone_number, address, is_registered, annual_fee_paid) "
@@ -84,7 +78,7 @@ public class User {
             preparedStatement.setString(4, phoneNumber);
             preparedStatement.setString(5, address);
             preparedStatement.setBoolean(6, isRegistered);
-            preparedStatement.setBoolean(7, annualFeePaid);
+            preparedStatement.setBoolean(7, false); // Default for annual_fee_paid
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -106,16 +100,28 @@ public class User {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                return new User(
-                        resultSet.getInt("user_id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("email"),
-                        resultSet.getString("password"),
-                        resultSet.getString("phone_number"),
-                        resultSet.getString("address"),
-                        resultSet.getBoolean("is_registered"),
-                        resultSet.getBoolean("annual_fee_paid")
-                );
+                boolean isRegistered = resultSet.getBoolean("is_registered");
+                if (isRegistered) {
+                    return new RegisteredUser(
+                            resultSet.getInt("user_id"),
+                            resultSet.getString("name"),
+                            resultSet.getString("email"),
+                            resultSet.getString("password"),
+                            resultSet.getString("phone_number"),
+                            resultSet.getString("address"),
+                            resultSet.getBoolean("annual_fee_paid")
+                    );
+                } else {
+                    return new User(
+                            resultSet.getInt("user_id"),
+                            resultSet.getString("name"),
+                            resultSet.getString("email"),
+                            resultSet.getString("password"),
+                            resultSet.getString("phone_number"),
+                            resultSet.getString("address"),
+                            isRegistered
+                    );
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error fetching user: " + e.getMessage());
@@ -124,33 +130,28 @@ public class User {
         return null; // User not found
     }
 
-    public static User authenticate(String email, String password) {
-        String query = "SELECT * FROM Users WHERE email = ? AND password = ?";
+    public static int saveGuestUserToDatabase(String name, String email) {
+        String query = "INSERT INTO Users (name, email, password, is_registered, annual_fee_paid) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            stmt.setString(1, name);
+            stmt.setString(2, email);
+            stmt.setString(3, "guest"); // Placeholder password for guest user
+            stmt.setBoolean(4, false); // Guest user is not registered
+            stmt.setBoolean(5, false); // No annual fee paid for guest user
 
-            preparedStatement.setString(1, email);
-            preparedStatement.setString(2, password);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                return new User(
-                        resultSet.getInt("user_id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("email"),
-                        resultSet.getString("password"),
-                        resultSet.getString("phone_number"),
-                        resultSet.getString("address"),
-                        resultSet.getBoolean("is_registered"),
-                        resultSet.getBoolean("annual_fee_paid")
-                );
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                ResultSet rs = stmt.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1); // Return the generated user ID
+                }
             }
         } catch (SQLException e) {
-            System.err.println("Error authenticating user: " + e.getMessage());
+            System.err.println("Error saving guest user: " + e.getMessage());
         }
-
-        return null; // Authentication failed
+        return -1; // Return -1 if saving the user fails
     }
 
 }

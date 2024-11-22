@@ -273,6 +273,8 @@ public class SeatSelectionView {
         frame.repaint();
     }
 
+
+
     public static void showSeats(JFrame frame, int showtimeId, Runnable backToMenuCallback) {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());

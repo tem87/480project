@@ -3,7 +3,7 @@ import java.awt.*;
 
 public class RegisteredUserView {
 
-    public static void openRegisteredUserMenu(JFrame frame, User loggedInUser) {
+    public static void openRegisteredUserMenu(JFrame frame, RegisteredUser loggedInUser) {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
@@ -21,7 +21,7 @@ public class RegisteredUserView {
         JButton cancelTicketButton = new JButton("Cancel Ticket");
         JButton annualFeeButton = new JButton("Pay Annual Fee");
         JButton newsButton = new JButton("News");
-        JButton informationButton = new JButton("Change information");
+        JButton informationButton = new JButton("Change Information");
         JButton backButton = new JButton("Logout");
 
         // Update callbacks for the registered user functionality
@@ -36,17 +36,26 @@ public class RegisteredUserView {
         );
 
         purchaseTicketButton.addActionListener(e ->
-                PurchaseTicketView.showPurchaseTicketView(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
+                PurchaseTicketView.showPurchaseTicketView(frame,() -> openRegisteredUserMenu(frame, loggedInUser))
         );
 
-        // Add functionality for canceling tickets specific to Registered Users
+//        // Add functionality for canceling tickets specific to Registered Users
 //        cancelTicketButton.addActionListener(e -> {
-//            // Open cancel ticket functionality
 //            CancelTicketView.showCancelTicketView(frame, loggedInUser, () -> openRegisteredUserMenu(frame, loggedInUser));
 //        });
 
+        // Annual Fee Payment
+//        annualFeeButton.addActionListener(e -> {
+//            boolean feePaid = AnnualFeePaymentView.payAnnualFee(frame, loggedInUser);
+//            if (feePaid) {
+//                JOptionPane.showMessageDialog(frame, "Annual fee payment successful!");
+//                loggedInUser.setAnnualFeePaid(true); // Update user state
+//            } else {
+//                JOptionPane.showMessageDialog(frame, "Failed to process annual fee payment.", "Error", JOptionPane.ERROR_MESSAGE);
+//            }
+//        });
 
-
+        // Logout functionality
         backButton.addActionListener(e -> {
             JOptionPane.showMessageDialog(frame, "You have been logged out.");
             WelcomeView.showMainMenu();
@@ -82,7 +91,7 @@ public class RegisteredUserView {
             String password = new String(passwordField.getPassword());
 
             // Authenticate the registered user
-            User loggedInUser = User.authenticate(email, password);
+            RegisteredUser loggedInUser = RegisteredUser.authenticate(email, password);
             if (loggedInUser != null) {
                 JOptionPane.showMessageDialog(frame, "Login Successful! Welcome, " + loggedInUser.getName());
                 openRegisteredUserMenu(frame, loggedInUser);

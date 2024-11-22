@@ -1,95 +1,47 @@
-//import java.time.LocalDateTime;
-//
-//public class Ticket {
-//    private int ticketID;
-//    private Seat seat;
-//    private Showtime showtime;
-//    private User user;
-//    private String status;
-//    private Receipt receipt;
-//
-//    private static int ticketCounter = 1000;
-//
-//    // Constructors
-//    public Ticket(Seat seat, Showtime showtime, User user) {
-//        this.ticketID = ticketCounter++;
-//        this.seat = seat;
-//        this.showtime = showtime;
-//        this.user = user;
-//        this.status = "active";
-//    }
-//
-//    public Ticket(int ticketID, Seat seat, Showtime showtime, User user, String status) {
-//        this.ticketID = ticketID;
-//        if (ticketID >= ticketCounter) {
-//            ticketCounter = ticketID + 1;
-//        }
-//        this.seat = seat;
-//        this.showtime = showtime;
-//        this.user = user;
-//        this.status = status;
-//    }
-//
-//    // Getters and Setters
-//    public int getTicketID() {
-//        return ticketID;
-//    }
-//
-//    public Seat getSeat() {
-//        return seat;
-//    }
-//
-//    public void setSeat(Seat seat) {
-//        this.seat = seat;
-//    }
-//
-//    public Showtime getShowtime() {
-//        return showtime;
-//    }
-//
-//    public void setShowtime(Showtime showtime) {
-//        this.showtime = showtime;
-//    }
-//
-//    public User getUser() {
-//        return user;
-//    }
-//
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
-//
-//    public String getStatus() {
-//        return status;
-//    }
-//
-//    public void setStatus(String status) {
-//        this.status = status;
-//    }
-//
-//    public Receipt getReceipt() {
-//        return receipt;
-//    }
-//
-//    public void setReceipt(Receipt receipt) {
-//        this.receipt = receipt;
-//    }
-//
-//    // Other methods
-//    public boolean cancelTicket() {
-//        if ("active".equals(this.status)) {
-//            this.status = "cancelled";
-//            this.seat.releaseSeat();
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//    public String getTicketDetails() {
-//        return "Ticket ID: " + ticketID +
-//                "\nShowtime: " + showtime.getDateTime() +
-//                "\nSeat: " + seat.getSeatNumber() +
-//                "\nUser: " + user.getName() +
-//                "\nStatus: " + status;
-//    }
-//}
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+
+public class Ticket {
+    private int ticketId;
+    private int userId;
+    private int showtimeId;
+    private int seatId;
+    private double price;
+    private String status;
+    private LocalDateTime purchaseDate;
+
+    public Ticket(int userId, int showtimeId, int seatId, double price, String status, LocalDateTime purchaseDate) {
+        this.userId = userId;
+        this.showtimeId = showtimeId;
+        this.seatId = seatId;
+        this.price = price;
+        this.status = status;
+        this.purchaseDate = purchaseDate;
+    }
+
+    // Save ticket to the database
+    public boolean saveToDatabase() {
+        String query = "INSERT INTO Tickets (user_id, showtime_id, seat_id, price, status, purchase_date) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, showtimeId);
+            preparedStatement.setInt(3, seatId);
+            preparedStatement.setDouble(4, price);
+            preparedStatement.setString(5, status);
+            preparedStatement.setTimestamp(6, java.sql.Timestamp.valueOf(purchaseDate));
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error saving ticket: " + e.getMessage());
+            return false;
+        }
+    }
+}
