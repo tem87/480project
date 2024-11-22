@@ -28,7 +28,7 @@ public class WelcomeView {
 
             adminButton.addActionListener(e -> AdminView.showAdminLogin(frame));
             guestButton.addActionListener(e -> GuestView.openGuestMenu(frame));
-            loginButton.addActionListener(e -> loginForm(frame));
+            loginButton.addActionListener(e -> RegisteredUserView.login(frame));
             signInButton.addActionListener(e -> showSignUpForm(frame));
 
             gbc.gridy = 0;
@@ -164,12 +164,5 @@ public class WelcomeView {
         frame.revalidate();
         frame.repaint();
     }
-
-
-
-
-
-
-
-
+    
 }

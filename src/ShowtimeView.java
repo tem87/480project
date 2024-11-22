@@ -103,10 +103,24 @@ public class ShowtimeView {
         int option = JOptionPane.showConfirmDialog(frame, message, "Add New Showtime", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             try {
-                int movieID = Integer.parseInt(movieIDField.getText());
-                int theaterID = Integer.parseInt(theaterIDField.getText());
-                LocalDateTime dateTime = LocalDateTime.parse(dateTimeField.getText(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                int maxSeats = Integer.parseInt(maxSeatsField.getText());
+                // Trim input and validate each field
+                String movieIDText = movieIDField.getText().trim();
+                String theaterIDText = theaterIDField.getText().trim();
+                String dateTimeText = dateTimeField.getText().trim();
+                String maxSeatsText = maxSeatsField.getText().trim();
+
+                if (movieIDText.isEmpty() || theaterIDText.isEmpty() || dateTimeText.isEmpty() || maxSeatsText.isEmpty()) {
+                    throw new IllegalArgumentException("All fields must be filled!");
+                }
+
+                int movieID = Integer.parseInt(movieIDText);
+                int theaterID = Integer.parseInt(theaterIDText);
+                LocalDateTime dateTime = LocalDateTime.parse(dateTimeText, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                int maxSeats = Integer.parseInt(maxSeatsText);
+
+                if (maxSeats <= 0) {
+                    throw new IllegalArgumentException("Max Seats must be greater than 0!");
+                }
 
                 Showtime newShowtime = new Showtime(movieID, theaterID, dateTime, maxSeats);
                 if (newShowtime.addShowtime()) {
@@ -114,14 +128,19 @@ public class ShowtimeView {
                 } else {
                     JOptionPane.showMessageDialog(frame, "Failed to add showtime.");
                 }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(frame, "Invalid input. Please try again.");
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(frame, "Movie ID, Theater ID, and Max Seats must be valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            } catch (java.time.format.DateTimeParseException e) {
+                JOptionPane.showMessageDialog(frame, "Start Time must be in the format YYYY-MM-DD HH:MM:SS.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
+
     public static void modifyShowtime(JFrame frame) {
-        java.util.List<Showtime> showtimes = Showtime.fetchShowtimes();
+        List<Showtime> showtimes = Showtime.fetchShowtimes();
         String[] showtimeIDs = showtimes.stream().map(s -> String.valueOf(s.getShowtimeID())).toArray(String[]::new);
 
         String selectedShowtimeID = (String) JOptionPane.showInputDialog(
@@ -156,10 +175,24 @@ public class ShowtimeView {
                 int option = JOptionPane.showConfirmDialog(frame, message, "Modify Showtime", JOptionPane.OK_CANCEL_OPTION);
                 if (option == JOptionPane.OK_OPTION) {
                     try {
-                        int movieID = Integer.parseInt(movieIDField.getText());
-                        int theaterID = Integer.parseInt(theaterIDField.getText());
-                        LocalDateTime dateTime = LocalDateTime.parse(dateTimeField.getText(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                        int maxSeats = Integer.parseInt(maxSeatsField.getText());
+                        // Trim input and validate each field
+                        String movieIDText = movieIDField.getText().trim();
+                        String theaterIDText = theaterIDField.getText().trim();
+                        String dateTimeText = dateTimeField.getText().trim();
+                        String maxSeatsText = maxSeatsField.getText().trim();
+
+                        if (movieIDText.isEmpty() || theaterIDText.isEmpty() || dateTimeText.isEmpty() || maxSeatsText.isEmpty()) {
+                            throw new IllegalArgumentException("All fields must be filled!");
+                        }
+
+                        int movieID = Integer.parseInt(movieIDText);
+                        int theaterID = Integer.parseInt(theaterIDText);
+                        LocalDateTime dateTime = LocalDateTime.parse(dateTimeText, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                        int maxSeats = Integer.parseInt(maxSeatsText);
+
+                        if (maxSeats <= 0) {
+                            throw new IllegalArgumentException("Max Seats must be greater than 0!");
+                        }
 
                         showtimeToEdit = new Showtime(showtimeToEdit.getShowtimeID(), movieID, theaterID, dateTime, maxSeats);
                         if (showtimeToEdit.modifyShowtime()) {
@@ -167,13 +200,18 @@ public class ShowtimeView {
                         } else {
                             JOptionPane.showMessageDialog(frame, "Failed to update showtime.");
                         }
-                    } catch (Exception e) {
-                        JOptionPane.showMessageDialog(frame, "Invalid input. Please try again.");
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(frame, "Movie ID, Theater ID, and Max Seats must be valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                    } catch (java.time.format.DateTimeParseException e) {
+                        JOptionPane.showMessageDialog(frame, "Start Time must be in the format YYYY-MM-DD HH:MM:SS.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                    } catch (IllegalArgumentException e) {
+                        JOptionPane.showMessageDialog(frame, e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
         }
     }
+
 
     public static void deleteShowtime(JFrame frame) {
         List<Showtime> showtimes = Showtime.fetchShowtimes();

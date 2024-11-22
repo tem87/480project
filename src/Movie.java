@@ -12,26 +12,27 @@ public class Movie {
     private String rating;
     private String synopsis;
     private String length;
-    //private String imagePath;
+    private double price;
 
     // Constructor for retrieving existing movies
-    public Movie(int movieID, String title, String genre, String rating, String synopsis, String length) {
+    public Movie(int movieID, String title, String genre, String rating, String synopsis, String length, double price) {
         this.movieID = movieID;
         this.title = title;
         this.genre = genre;
         this.rating = rating;
         this.synopsis = synopsis;
         this.length = length;
-        //this.imagePath = imagePath;
+        this.price = price;
     }
 
     // Constructor for creating new movies (without ID)
-    public Movie(String title, String genre, String rating, String synopsis, String length) {
+    public Movie(String title, String genre, String rating, String synopsis, String length, double price) {
         this.title = title;
         this.genre = genre;
         this.rating = rating;
         this.synopsis = synopsis;
         this.length = length;
+        this.price = price;
     }
 
     // Getters
@@ -59,8 +60,13 @@ public class Movie {
         return length;
     }
 
+    public double getPrice() {
+        return price;
+    }
+
+    // Add movie to the database
     public boolean addMovie() {
-        String query = "INSERT INTO Movie (title, genre, rating, synopsis, length) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Movie (title, genre, rating, synopsis, length, price) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -70,6 +76,7 @@ public class Movie {
             preparedStatement.setString(3, rating);
             preparedStatement.setString(4, synopsis);
             preparedStatement.setString(5, length);
+            preparedStatement.setDouble(6, price);
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -80,8 +87,9 @@ public class Movie {
         }
     }
 
+    // Update an existing movie
     public boolean modifyMovie() {
-        String query = "UPDATE Movie SET title = ?, genre = ?, rating = ?, synopsis = ?, length = ? WHERE movie_id = ?";
+        String query = "UPDATE Movie SET title = ?, genre = ?, rating = ?, synopsis = ?, length = ?, price = ? WHERE movie_id = ?";
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -91,7 +99,8 @@ public class Movie {
             preparedStatement.setString(3, rating);
             preparedStatement.setString(4, synopsis);
             preparedStatement.setString(5, length);
-            preparedStatement.setInt(6, movieID);
+            preparedStatement.setDouble(6, price);
+            preparedStatement.setInt(7, movieID);
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -102,6 +111,7 @@ public class Movie {
         }
     }
 
+    // Delete a movie from the database
     public static boolean deleteMovie(int movieID) {
         String query = "DELETE FROM Movie WHERE movie_id = ?";
 
@@ -135,8 +145,9 @@ public class Movie {
                 String rating = resultSet.getString("rating");
                 String synopsis = resultSet.getString("synopsis");
                 String length = resultSet.getString("length");
+                double price = resultSet.getDouble("price");
 
-                movies.add(new Movie(movieID, title, genre, rating, synopsis, length));
+                movies.add(new Movie(movieID, title, genre, rating, synopsis, length, price));
             }
 
         } catch (SQLException e) {
@@ -145,14 +156,10 @@ public class Movie {
 
         return movies;
     }
-    public String toTableString() {
-        return String.format("%-5d %-30s %-15s %-10s %-50s %-10s",
-                movieID, title, genre, rating, synopsis, length);
-    }
 
     @Override
     public String toString() {
-        return String.format("Movie{movieID=%d, title='%s', genre='%s', rating='%s', synopsis='%s', length='%s'}",
-                movieID, title, genre, rating, synopsis, length);
+        return String.format("Movie{movieID=%d, title='%s', genre='%s', rating='%s', synopsis='%s', length='%s', price=%.2f}",
+                movieID, title, genre, rating, synopsis, length, price);
     }
 }

@@ -53,8 +53,14 @@ public class TheatreView {
 
         int option = JOptionPane.showConfirmDialog(frame, message, "Add New Theater", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
-            String name = nameField.getText();
-            String location = locationField.getText();
+            String name = nameField.getText().trim();
+            String location = locationField.getText().trim();
+
+            // Validate input fields
+            if (name.isEmpty() || location.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "All fields must be filled!", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             Theatre newTheater = new Theatre(name, location);
             if (newTheater.addTheatre()) {
@@ -64,6 +70,7 @@ public class TheatreView {
             }
         }
     }
+
 
     public static void modifyTheatre(JFrame frame) {
         List<Theatre> theaters = Theatre.fetchTheaters();
@@ -96,10 +103,19 @@ public class TheatreView {
 
                 int option = JOptionPane.showConfirmDialog(frame, message, "Modify Theater", JOptionPane.OK_CANCEL_OPTION);
                 if (option == JOptionPane.OK_OPTION) {
+                    String name = nameField.getText().trim();
+                    String location = locationField.getText().trim();
+
+                    // Validate input fields
+                    if (name.isEmpty() || location.isEmpty()) {
+                        JOptionPane.showMessageDialog(frame, "All fields must be filled!", "Input Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
                     theaterToEdit = new Theatre(
                             theaterToEdit.getTheatreID(),
-                            nameField.getText(),
-                            locationField.getText()
+                            name,
+                            location
                     );
 
                     if (theaterToEdit.updateTheater()) {
@@ -111,4 +127,5 @@ public class TheatreView {
             }
         }
     }
+
 }

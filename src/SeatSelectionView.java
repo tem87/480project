@@ -195,22 +195,27 @@ public class SeatSelectionView {
 
         // Fetch seats for the selected showtime
         List<Seat> seats = Seat.fetchSeatsByShowtime(showtimeId);
-        List<Seat> selectedSeats = new ArrayList<>(); // List to store selected seats
+        List<Seat> selectedSeats = new ArrayList<>();
 
-        // Determine rows and columns dynamically
         int columns = (int) Math.ceil(Math.sqrt(seats.size()));
         int rows = (int) Math.ceil((double) seats.size() / columns);
 
-        // Panel for displaying seat buttons
         JPanel seatsPanel = new JPanel(new GridLayout(rows, columns, 5, 5));
         seatsPanel.setOpaque(false);
 
+        JLabel totalCostLabel = new JLabel("Total Cost: $0.00", SwingConstants.CENTER);
+        totalCostLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        totalCostLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
+        double moviePrice = movie.getPrice();
+
+        // Create buttons for seats
         for (Seat seat : seats) {
             JButton seatButton = new JButton(seat.getSeatNumber());
             seatButton.setFont(new Font("Arial", Font.BOLD, 12));
-            seatButton.setPreferredSize(new Dimension(50, 50));
+            seatButton.setPreferredSize(new Dimension(70, 70));
 
-            // Style the button based on the seat status
+
             if ("Available".equalsIgnoreCase(seat.getStatus())) {
                 seatButton.setBackground(new Color(144, 238, 144)); // Green for available seats
             } else {
@@ -218,7 +223,6 @@ public class SeatSelectionView {
                 seatButton.setEnabled(false); // Disable button for booked seats
             }
 
-            // Toggle seat selection
             seatButton.addActionListener(e -> {
                 if (selectedSeats.contains(seat)) {
                     selectedSeats.remove(seat);
@@ -227,6 +231,10 @@ public class SeatSelectionView {
                     selectedSeats.add(seat);
                     seatButton.setBackground(Color.YELLOW); // Mark the seat as selected
                 }
+
+                // Update total cost
+                double totalCost = selectedSeats.size() * moviePrice;
+                totalCostLabel.setText(String.format("Total Cost: $%.2f", totalCost));
             });
 
             seatsPanel.add(seatButton);
@@ -257,6 +265,7 @@ public class SeatSelectionView {
         controlPanel.add(proceedButton);
 
         // Add components to the frame
+        frame.add(totalCostLabel, BorderLayout.NORTH);
         frame.add(centerWrapper, BorderLayout.CENTER);
         frame.add(controlPanel, BorderLayout.SOUTH);
 

@@ -11,7 +11,7 @@ public class MovieView {
 
         List<Movie> movies = Movie.fetchMovies();
 
-        String[] columnNames = {"ID", "Title", "Genre", "Rating", "Synopsis", "Length"};
+        String[] columnNames = {"ID", "Title", "Genre", "Rating", "Synopsis", "Length", "Price"};
 
         Object[][] data = new Object[movies.size()][columnNames.length];
         for (int i = 0; i < movies.size(); i++) {
@@ -22,6 +22,7 @@ public class MovieView {
             data[i][3] = movie.getRating();
             data[i][4] = movie.getSynopsis();
             data[i][5] = movie.getLength();
+            data[i][6] = String.format("$%.2f", movie.getPrice()); // Correctly fetch and format price
         }
 
         JTable table = new JTable(data, columnNames);
@@ -54,24 +55,42 @@ public class MovieView {
         JTextField ratingField = new JTextField();
         JTextField synopsisField = new JTextField();
         JTextField lengthField = new JTextField();
+        JTextField priceField = new JTextField();
 
         Object[] message = {
                 "Title:", titleField,
                 "Genre:", genreField,
                 "Rating:", ratingField,
                 "Synopsis:", synopsisField,
-                "Length:", lengthField
+                "Length:", lengthField,
+                "Price:", priceField
         };
 
         int option = JOptionPane.showConfirmDialog(frame, message, "Add New Movie", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
+            // Validate all fields
+            if (titleField.getText().isEmpty() || genreField.getText().isEmpty() ||
+                    ratingField.getText().isEmpty() || synopsisField.getText().isEmpty() ||
+                    lengthField.getText().isEmpty() || priceField.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "All fields must be filled!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             String title = titleField.getText();
             String genre = genreField.getText();
             String rating = ratingField.getText();
             String synopsis = synopsisField.getText();
             String length = lengthField.getText();
+            double price;
 
-            Movie newMovie = new Movie(title, genre, rating, synopsis, length);
+            try {
+                price = Double.parseDouble(priceField.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(frame, "Invalid price. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Movie newMovie = new Movie(title, genre, rating, synopsis, length, price);
             if (newMovie.addMovie()) {
                 JOptionPane.showMessageDialog(frame, "Movie added successfully!");
             } else {
@@ -107,35 +126,52 @@ public class MovieView {
                 JTextField ratingField = new JTextField(movieToEdit.getRating());
                 JTextField synopsisField = new JTextField(movieToEdit.getSynopsis());
                 JTextField lengthField = new JTextField(movieToEdit.getLength());
+                JTextField priceField = new JTextField(String.valueOf(movieToEdit.getPrice()));
 
                 Object[] message = {
                         "Title:", titleField,
                         "Genre:", genreField,
                         "Rating:", ratingField,
                         "Synopsis:", synopsisField,
-                        "Length:", lengthField
+                        "Length:", lengthField,
+                        "Price:", priceField
                 };
 
                 int option = JOptionPane.showConfirmDialog(frame, message, "Modify Movie", JOptionPane.OK_CANCEL_OPTION);
                 if (option == JOptionPane.OK_OPTION) {
-                    movieToEdit = new Movie(
-                            movieToEdit.getMovieID(),
-                            titleField.getText(),
-                            genreField.getText(),
-                            ratingField.getText(),
-                            synopsisField.getText(),
-                            lengthField.getText()
-                    );
+                    // Validate all fields
+                    if (titleField.getText().isEmpty() || genreField.getText().isEmpty() ||
+                            ratingField.getText().isEmpty() || synopsisField.getText().isEmpty() ||
+                            lengthField.getText().isEmpty() || priceField.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(frame, "All fields must be filled!", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
 
-                    if (movieToEdit.modifyMovie()) {
-                        JOptionPane.showMessageDialog(frame, "Movie updated successfully!");
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Failed to update movie.");
+                    try {
+                        double price = Double.parseDouble(priceField.getText());
+                        movieToEdit = new Movie(
+                                movieToEdit.getMovieID(),
+                                titleField.getText(),
+                                genreField.getText(),
+                                ratingField.getText(),
+                                synopsisField.getText(),
+                                lengthField.getText(),
+                                price
+                        );
+
+                        if (movieToEdit.modifyMovie()) {
+                            JOptionPane.showMessageDialog(frame, "Movie updated successfully!");
+                        } else {
+                            JOptionPane.showMessageDialog(frame, "Failed to update movie.");
+                        }
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(frame, "Invalid price. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
         }
     }
+
 
     // Delete an existing movie (Admin-specific functionality)
     public static void deleteMovie(JFrame frame) {
