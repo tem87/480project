@@ -4,16 +4,12 @@ import java.util.List;
 
 public class MovieView {
 
-    // Show movies and provide a dynamic back button callback
-    public static void showMovie(JFrame frame, Runnable backToMenuCallback) {
-        frame.getContentPane().removeAll();
-        frame.setLayout(new BorderLayout());
-
+    // Show all movies
+    public static void showMoviesAdminView(JFrame frame, Runnable backToMenuCallback) {
         List<Movie> movies = Movie.fetchMovies();
-
-        String[] columnNames = {"ID", "Title", "Genre", "Rating", "Synopsis", "Length", "Price"};
-
+        String[] columnNames = {"ID", "Title", "Genre", "Rating", "Synopsis", "Length", "Price", "Early Access"};
         Object[][] data = new Object[movies.size()][columnNames.length];
+
         for (int i = 0; i < movies.size(); i++) {
             Movie movie = movies.get(i);
             data[i][0] = movie.getMovieID();
@@ -22,8 +18,55 @@ public class MovieView {
             data[i][3] = movie.getRating();
             data[i][4] = movie.getSynopsis();
             data[i][5] = movie.getLength();
-            data[i][6] = String.format("$%.2f", movie.getPrice()); // Correctly fetch and format price
+            data[i][6] = String.format("$%.2f", movie.getPrice());
+            data[i][7] = movie.isEarlyAccess() ? "Yes" : "No";
         }
+
+        displayTable(frame, columnNames, data, backToMenuCallback);
+    }
+
+    // View for movies that are NOT early access
+    public static void showMovie(JFrame frame, Runnable backToMenuCallback) {
+        List<Movie> movies = Movie.fetchMoviesNoEarlyAccess();
+        String[] columnNames = {"Title", "Genre", "Rating", "Synopsis", "Length", "Price"};
+        Object[][] data = new Object[movies.size()][columnNames.length];
+
+        for (int i = 0; i < movies.size(); i++) {
+            Movie movie = movies.get(i);
+            data[i][0] = movie.getTitle();
+            data[i][1] = movie.getGenre();
+            data[i][2] = movie.getRating();
+            data[i][3] = movie.getSynopsis();
+            data[i][4] = movie.getLength();
+            data[i][5] = String.format("$%.2f", movie.getPrice());
+        }
+
+        displayTable(frame, columnNames, data, backToMenuCallback);
+    }
+
+    // View for early access movies without showing the early access attribute
+    public static void showEarlyAccessMovies(JFrame frame, Runnable backToMenuCallback) {
+        List<Movie> movies = Movie.fetchEarlyAccessMovies();
+        String[] columnNames = {"Title", "Genre", "Rating", "Synopsis", "Length", "Price"};
+        Object[][] data = new Object[movies.size()][columnNames.length];
+
+        for (int i = 0; i < movies.size(); i++) {
+            Movie movie = movies.get(i);
+            data[i][0] = movie.getTitle();
+            data[i][1] = movie.getGenre();
+            data[i][2] = movie.getRating();
+            data[i][3] = movie.getSynopsis();
+            data[i][4] = movie.getLength();
+            data[i][5] = String.format("$%.2f", movie.getPrice());
+        }
+
+        displayTable(frame, columnNames, data, backToMenuCallback);
+    }
+
+    // Helper method to display the table
+    private static void displayTable(JFrame frame, String[] columnNames, Object[][] data, Runnable backToMenuCallback) {
+        frame.getContentPane().removeAll();
+        frame.setLayout(new BorderLayout());
 
         JTable table = new JTable(data, columnNames);
         table.setFillsViewportHeight(true);
@@ -33,7 +76,6 @@ public class MovieView {
 
         JScrollPane scrollPane = new JScrollPane(table);
 
-        // Back button to dynamically return to the user's menu
         JButton backButton = new JButton("Back to Menu");
         backButton.setBackground(Color.DARK_GRAY);
         backButton.setForeground(Color.WHITE);
@@ -56,6 +98,7 @@ public class MovieView {
         JTextField synopsisField = new JTextField();
         JTextField lengthField = new JTextField();
         JTextField priceField = new JTextField();
+        JCheckBox earlyAccessCheckbox = new JCheckBox();
 
         Object[] message = {
                 "Title:", titleField,
@@ -63,12 +106,12 @@ public class MovieView {
                 "Rating:", ratingField,
                 "Synopsis:", synopsisField,
                 "Length:", lengthField,
-                "Price:", priceField
+                "Price:", priceField,
+                "Early Access:", earlyAccessCheckbox
         };
 
         int option = JOptionPane.showConfirmDialog(frame, message, "Add New Movie", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
-            // Validate all fields
             if (titleField.getText().isEmpty() || genreField.getText().isEmpty() ||
                     ratingField.getText().isEmpty() || synopsisField.getText().isEmpty() ||
                     lengthField.getText().isEmpty() || priceField.getText().isEmpty()) {
@@ -81,6 +124,7 @@ public class MovieView {
             String rating = ratingField.getText();
             String synopsis = synopsisField.getText();
             String length = lengthField.getText();
+            boolean earlyAccess = earlyAccessCheckbox.isSelected();
             double price;
 
             try {
@@ -90,7 +134,7 @@ public class MovieView {
                 return;
             }
 
-            Movie newMovie = new Movie(title, genre, rating, synopsis, length, price);
+            Movie newMovie = new Movie(title, genre, rating, synopsis, length, price, earlyAccess);
             if (newMovie.addMovie()) {
                 JOptionPane.showMessageDialog(frame, "Movie added successfully!");
             } else {
@@ -127,6 +171,8 @@ public class MovieView {
                 JTextField synopsisField = new JTextField(movieToEdit.getSynopsis());
                 JTextField lengthField = new JTextField(movieToEdit.getLength());
                 JTextField priceField = new JTextField(String.valueOf(movieToEdit.getPrice()));
+                JCheckBox earlyAccessCheckbox = new JCheckBox();
+                earlyAccessCheckbox.setSelected(movieToEdit.isEarlyAccess());
 
                 Object[] message = {
                         "Title:", titleField,
@@ -134,12 +180,12 @@ public class MovieView {
                         "Rating:", ratingField,
                         "Synopsis:", synopsisField,
                         "Length:", lengthField,
-                        "Price:", priceField
+                        "Price:", priceField,
+                        "Early Access:", earlyAccessCheckbox
                 };
 
                 int option = JOptionPane.showConfirmDialog(frame, message, "Modify Movie", JOptionPane.OK_CANCEL_OPTION);
                 if (option == JOptionPane.OK_OPTION) {
-                    // Validate all fields
                     if (titleField.getText().isEmpty() || genreField.getText().isEmpty() ||
                             ratingField.getText().isEmpty() || synopsisField.getText().isEmpty() ||
                             lengthField.getText().isEmpty() || priceField.getText().isEmpty()) {
@@ -156,7 +202,8 @@ public class MovieView {
                                 ratingField.getText(),
                                 synopsisField.getText(),
                                 lengthField.getText(),
-                                price
+                                price,
+                                earlyAccessCheckbox.isSelected()
                         );
 
                         if (movieToEdit.modifyMovie()) {
@@ -171,7 +218,6 @@ public class MovieView {
             }
         }
     }
-
 
     // Delete an existing movie (Admin-specific functionality)
     public static void deleteMovie(JFrame frame) {

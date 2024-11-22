@@ -72,7 +72,7 @@ public class AdminView {
         viewTheatreButton.addActionListener(e -> TheatreView.showTheatre(frame, () -> AdminView.openAdminMenu(frame)));
         addTheatreButton.addActionListener(e -> TheatreView.addTheatre(frame));
         modifyTheatreButton.addActionListener(e -> TheatreView.modifyTheatre(frame));
-        viewMovieButton.addActionListener(e -> MovieView.showMovie(frame, () -> AdminView.openAdminMenu(frame)));
+        viewMovieButton.addActionListener(e -> MovieView.showMoviesAdminView(frame, () -> AdminView.openAdminMenu(frame)));
         addMovieButton.addActionListener(e -> MovieView.addMovie(frame));
         modifyMovieButton.addActionListener(e -> MovieView.modifyMovie(frame));
         deleteMovieButton.addActionListener(e -> MovieView.deleteMovie(frame));

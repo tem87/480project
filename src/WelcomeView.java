@@ -47,23 +47,23 @@ public class WelcomeView {
 
     private static JButton createStyledButton(String text) {
         JButton button = new JButton(text);
-        button.setBackground(new Color(200, 162, 200));
+        button.setBackground(new Color(10, 100, 200));
         button.setForeground(Color.WHITE);
         button.setFont(new Font("Arial", Font.BOLD, 18));
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(200, 162, 200), 2),
+                BorderFactory.createLineBorder(new Color(10, 100, 200), 2),
                 BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(216, 191, 216));
+                button.setBackground(new Color(100, 162, 200));
             }
 
             @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(200, 162, 200));
+                button.setBackground(new Color(10, 100, 200));
             }
         });
         return button;
@@ -97,7 +97,7 @@ public class WelcomeView {
                 return;
             }
 
-            User newUser = new User(name, email, password, phone, address);
+            RegisteredUser newUser = new RegisteredUser(name, email, password, phone, address);
 
             if (newUser.saveToDatabase()) {
                 JOptionPane.showMessageDialog(frame, "Sign Up Successful! Welcome, " + name + "Login now to access all the features");

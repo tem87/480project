@@ -209,27 +209,45 @@ public class SeatSelectionView {
 
         double moviePrice = movie.getPrice();
 
+        // Load and resize images
+        ImageIcon availableIcon = resizeImage("images/seat.png",70, 70);
+        ImageIcon selectedIcon = resizeImage("images/sel_seat.png",70, 70);
+        ImageIcon bookedIcon = resizeImage("images/booked_seat.png",70, 70);
+
         // Create buttons for seats
         for (Seat seat : seats) {
-            JButton seatButton = new JButton(seat.getSeatNumber());
-            seatButton.setFont(new Font("Arial", Font.BOLD, 12));
+            JButton seatButton = new JButton();
             seatButton.setPreferredSize(new Dimension(70, 70));
+            seatButton.setLayout(new BorderLayout()); // Allow text overlay
 
-
+            // Determine the icon and background color based on seat status
             if ("Available".equalsIgnoreCase(seat.getStatus())) {
-                seatButton.setBackground(new Color(144, 238, 144)); // Green for available seats
+                seatButton.setIcon(availableIcon); // Available seat icon
+                seatButton.setBackground(Color.WHITE); // Default background for available seats
+                seatButton.setContentAreaFilled(false); // Transparent background if an icon is used
             } else {
-                seatButton.setBackground(new Color(255, 99, 71)); // Red for booked seats
+                seatButton.setIcon(bookedIcon); // Booked seat icon
+                seatButton.setDisabledIcon(bookedIcon); // Prevent grayed-out effect
                 seatButton.setEnabled(false); // Disable button for booked seats
+                seatButton.setBackground(Color.GRAY); // Grey background for booked seats
+                seatButton.setContentAreaFilled(true); // Ensure the background color is visible
             }
 
+            // Add seat number as an overlay label
+            JLabel seatLabel = new JLabel(seat.getSeatNumber(), SwingConstants.CENTER);
+            seatLabel.setForeground(Color.BLACK); // Black text for visibility
+            seatLabel.setFont(new Font("Arial", Font.BOLD, 14));
+            seatLabel.setOpaque(false); // Transparent background
+            seatButton.add(seatLabel, BorderLayout.CENTER);
+
+            // Action listener for seat selection
             seatButton.addActionListener(e -> {
                 if (selectedSeats.contains(seat)) {
                     selectedSeats.remove(seat);
-                    seatButton.setBackground(new Color(144, 238, 144)); // Deselect the seat (back to green)
+                    seatButton.setIcon(availableIcon); // Deselect seat
                 } else {
                     selectedSeats.add(seat);
-                    seatButton.setBackground(Color.YELLOW); // Mark the seat as selected
+                    seatButton.setIcon(selectedIcon); // Mark as selected
                 }
 
                 // Update total cost
@@ -239,6 +257,8 @@ public class SeatSelectionView {
 
             seatsPanel.add(seatButton);
         }
+
+
 
         // Create a wrapper panel to center the seat map
         JPanel centerWrapper = new JPanel(new GridBagLayout());
@@ -271,6 +291,13 @@ public class SeatSelectionView {
 
         frame.revalidate();
         frame.repaint();
+    }
+
+    // Helper method to resize images
+    private static ImageIcon resizeImage(String path, int width, int height) {
+        ImageIcon originalIcon = new ImageIcon(path);
+        Image scaledImage = originalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(scaledImage);
     }
 
 

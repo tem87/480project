@@ -16,6 +16,7 @@ public class RegisteredUserView {
 
         JButton viewTheatreButton = new JButton("View Theatres");
         JButton viewMovieButton = new JButton("View Movies");
+        JButton viewearlyMovieButton = new JButton("View early access movies");
         JButton viewShowtimeButton = new JButton("View Showtimes");
         JButton purchaseTicketButton = new JButton("Purchase Ticket");
         JButton cancelTicketButton = new JButton("Cancel Ticket");
@@ -30,6 +31,9 @@ public class RegisteredUserView {
         );
         viewMovieButton.addActionListener(e ->
                 MovieView.showMovie(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
+        );
+        viewearlyMovieButton.addActionListener(e ->
+                MovieView.showEarlyAccessMovies(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
         viewShowtimeButton.addActionListener(e ->
                 ShowtimeView.showShowtimeDetails(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
@@ -63,6 +67,7 @@ public class RegisteredUserView {
 
         registeredUserPanel.add(viewTheatreButton);
         registeredUserPanel.add(viewMovieButton);
+        registeredUserPanel.add(viewearlyMovieButton);
         registeredUserPanel.add(viewShowtimeButton);
         registeredUserPanel.add(purchaseTicketButton);
         registeredUserPanel.add(cancelTicketButton);

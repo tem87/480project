@@ -56,10 +56,10 @@ public class PaymentView {
 
         paymentPanel.add(new JLabel("Payment Method:"));
         paymentPanel.add(paymentMethodDropdown);
-        paymentPanel.add(new JLabel("Name:"));
-        paymentPanel.add(nameField);
         paymentPanel.add(new JLabel("Email:"));
         paymentPanel.add(emailField);
+        paymentPanel.add(new JLabel("Cardholder Name:"));
+        paymentPanel.add(nameField);
         paymentPanel.add(new JLabel("Card Number:"));
         paymentPanel.add(cardNumberField);
         paymentPanel.add(new JLabel("CVV:"));
