@@ -10,34 +10,55 @@ public class CancelTicketViewGuest {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
-        // Prompt for guest email
-        JPanel emailPanel = new JPanel(new GridLayout(0, 1, 10, 10));
+        // Prompt for guest email and name
+        JPanel inputPanel = new JPanel(new GridLayout(0, 1, 10, 10));
         JLabel emailLabel = new JLabel("Enter the email used to purchase the ticket:");
         JTextField emailField = new JTextField();
         emailField.setPreferredSize(new Dimension(200, 24));
-        JButton checkEmailButton = new JButton("Check Email");
 
-        emailPanel.add(emailLabel);
+        JLabel nameLabel = new JLabel("Enter the name used to purchase the ticket:");
+        JTextField nameField = new JTextField();
+        nameField.setPreferredSize(new Dimension(200, 24));
+
+        JButton checkDetailsButton = new JButton("Check Details");
+        checkDetailsButton.setPreferredSize(new Dimension(120, 30)); // Resized button
+
+        JButton backButton = new JButton("Back to Menu");
+        backButton.setPreferredSize(new Dimension(120, 30)); // Resized button
+
+        inputPanel.add(emailLabel);
         JPanel emailInputPanel = new JPanel();
         emailInputPanel.add(emailField);
-        emailPanel.add(emailInputPanel);
-        emailPanel.add(checkEmailButton);
+        inputPanel.add(emailInputPanel);
 
-        frame.add(emailPanel, BorderLayout.CENTER);
+        inputPanel.add(nameLabel);
+        JPanel nameInputPanel = new JPanel();
+        nameInputPanel.add(nameField);
+        inputPanel.add(nameInputPanel);
 
-        checkEmailButton.addActionListener(e -> {
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(checkDetailsButton);
+        buttonPanel.add(backButton);
+
+        inputPanel.add(buttonPanel);
+
+        frame.add(inputPanel, BorderLayout.CENTER);
+
+        checkDetailsButton.addActionListener(e -> {
             String email = emailField.getText().trim();
+            String name = nameField.getText().trim();
 
-            if (email.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "Please enter a valid email.", "Error", JOptionPane.ERROR_MESSAGE);
+            if (email.isEmpty() || name.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Please enter both a valid email and name.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             try (Connection conn = DBConnection.getConnection()) {
-                // Check if the email exists in the Users table and is not registered
-                String query = "SELECT user_id, is_registered FROM Users WHERE email = ?";
+                // Check if the email and name exist in the Users table and the user is not registered
+                String query = "SELECT user_id, is_registered FROM Users WHERE email = ? AND name = ?";
                 PreparedStatement stmt = conn.prepareStatement(query);
                 stmt.setString(1, email);
+                stmt.setString(2, name);
                 ResultSet rs = stmt.executeQuery();
 
                 if (rs.next()) {
@@ -46,19 +67,21 @@ public class CancelTicketViewGuest {
 
                     if (!isRegistered) {
                         // Proceed to cancel ticket functionality
-                        User guestUser = new User(userId, "Guest", email, null, null, null, false);
+                        User guestUser = new User(userId, name, email, null, null, null, false);
                         displayCancelTicketPanel(frame, guestUser, backCallback);
                     } else {
-                        JOptionPane.showMessageDialog(frame, "This email is associated with a registered user. Please log in.", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(frame, "This email and name are associated with a registered user. Please log in.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Email not found in the system.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "No matching guest user found with the provided email and name.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(frame, "Error checking email.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Error checking details.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+
+        backButton.addActionListener(e -> backCallback.run());
 
         frame.revalidate();
         frame.repaint();
@@ -114,10 +137,16 @@ public class CancelTicketViewGuest {
 
             if (ticketIds.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "No tickets to cancel.", "Info", JOptionPane.INFORMATION_MESSAGE);
+
+                // Redirect back to the email and name prompt instead of staying in the ticket selection
+                showCancelTicketView(frame, backCallback);
+                return; // Exit the current method to prevent further processing
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(frame, "Error fetching tickets.", "Error", JOptionPane.ERROR_MESSAGE);
+            showCancelTicketView(frame, backCallback); // Return to email and name prompt on error
+            return;
         }
 
         cancelTicketButton.addActionListener(e -> {
@@ -189,4 +218,5 @@ public class CancelTicketViewGuest {
         frame.revalidate();
         frame.repaint();
     }
+
 }

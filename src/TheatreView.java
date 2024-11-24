@@ -10,14 +10,13 @@ public class TheatreView {
 
         java.util.List<Theatre> theaters = Theatre.fetchTheaters();
 
-        String[] columnNames = {"ID", "Name", "Location"};
+        String[] columnNames = {"Name", "Location"};
 
         Object[][] data = new Object[theaters.size()][columnNames.length];
         for (int i = 0; i < theaters.size(); i++) {
             Theatre theater = theaters.get(i);
-            data[i][0] = theater.getTheatreID();
-            data[i][1] = theater.getName();
-            data[i][2] = theater.getLocation();
+            data[i][0] = theater.getName();
+            data[i][1] = theater.getLocation();
         }
 
         JTable table = new JTable(data, columnNames);

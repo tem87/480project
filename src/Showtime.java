@@ -93,6 +93,37 @@ public class Showtime {
         return showtimes;
     }
 
+    public static List<Showtime> fetchShowtimesGuest() {
+        List<Showtime> showtimes = new ArrayList<>();
+        String query = "SELECT s.showtime_id, m.title AS movie_name, t.name AS theater_name, s.start_time, s.max_seats " +
+                "FROM Showtime s " +
+                "JOIN Movie m ON s.movie_id = m.movie_id " +
+                "JOIN Theater t ON s.theater_id = t.theater_id " +
+                "WHERE m.early_access = FALSE";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                int showtimeID = resultSet.getInt("showtime_id");
+                String movieName = resultSet.getString("movie_name");
+                String theaterName = resultSet.getString("theater_name");
+                LocalDateTime dateTime = resultSet.getTimestamp("start_time").toLocalDateTime();
+                int maxSeats = resultSet.getInt("max_seats");
+
+                showtimes.add(new Showtime(showtimeID, movieName, theaterName, dateTime, maxSeats));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error fetching showtimes with details: " + e.getMessage());
+        }
+
+        return showtimes;
+    }
+
+
+
     public static List<Showtime> fetchShowtimesWithDetails() {
         List<Showtime> showtimes = new ArrayList<>();
         String query = "SELECT s.showtime_id, m.title AS movie_name, t.name AS theater_name, " +
@@ -112,7 +143,6 @@ public class Showtime {
                 LocalDateTime startTime = resultSet.getTimestamp("start_time").toLocalDateTime();
                 int maxSeats = resultSet.getInt("max_seats");
 
-                // Assuming you have a constructor in Showtime class to handle these details
                 showtimes.add(new Showtime(showtimeID, movieName, theaterName, startTime, maxSeats));
             }
 

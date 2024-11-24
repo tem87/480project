@@ -1,7 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ShowtimeView {
@@ -50,9 +55,9 @@ public class ShowtimeView {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
-        List<Showtime> showtimes = Showtime.fetchShowtimesWithDetails();
+        List<Showtime> showtimes = Showtime.fetchShowtimesGuest();
 
-        String[] columnNames = {"Movie Name", "Theater Name", "Start Time", "Max Seats"};
+        String[] columnNames = {"Movie Name", "Theater Name", "Start Time"};
 
         Object[][] data = new Object[showtimes.size()][columnNames.length];
         for (int i = 0; i < showtimes.size(); i++) {
@@ -60,7 +65,6 @@ public class ShowtimeView {
             data[i][0] = showtime.getMovieName();
             data[i][1] = showtime.getTheaterName();
             data[i][2] = showtime.getDateTime();
-            data[i][3] = showtime.getMaxSeats();
         }
 
         JTable table = new JTable(data, columnNames);
