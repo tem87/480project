@@ -104,7 +104,10 @@ INSERT INTO Showtime (movie_id, theater_id, start_time, max_seats) VALUES
 (1, 2, '2024-11-20 18:00', 5),
 (2, 1, '2024-11-21 19:00', 10),
 (2, 2, '2024-11-21 20:00', 10),
-(3, 1, '2024-11-22 22:00', 10);
+(3, 1, '2024-11-22 22:00', 10),
+(3, 2, '2024-11-21 20:00', 10),
+(4, 1, '2024-11-22 22:00', 10),
+(4, 2, '2024-11-21 20:00', 10);
 
 -- Generate seats for showtime_id = 1 (10 seats)
 INSERT INTO Seats (showtime_id, seat_number) VALUES
