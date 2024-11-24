@@ -18,6 +18,7 @@ public class GuestView {
         JButton viewMovieButton = new JButton("View Movies");
         JButton viewShowtimeButton = new JButton("View Showtimes");
         JButton purchaseTicketButton = new JButton("Purchase Ticket");
+        JButton cancelTicketButton = new JButton("Cancel Ticket"); // Fixed button text
         JButton backButton = new JButton("Back to Main Menu");
 
         // Update callbacks for the new changes
@@ -36,15 +37,20 @@ public class GuestView {
                 PurchaseTicketViewGuest.showPurchaseTicketView(frame, () -> GuestView.openGuestMenu(frame))
         );
 
-        backButton.addActionListener(e ->
-                WelcomeView.showMainMenu()
+        // Cancel ticket action
+        cancelTicketButton.addActionListener(e ->
+                CancelTicketViewGuest.showCancelTicketView(frame, () -> GuestView.openGuestMenu(frame))
         );
+
+        backButton.addActionListener(e -> WelcomeView.showMainMenu());
 
         guestPanel.add(viewTheatreButton);
         guestPanel.add(viewMovieButton);
         guestPanel.add(viewShowtimeButton);
         guestPanel.add(purchaseTicketButton);
+        guestPanel.add(cancelTicketButton); // Added the cancel ticket button
         guestPanel.add(backButton);
+
         frame.add(guestPanel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();

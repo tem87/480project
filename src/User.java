@@ -89,6 +89,62 @@ public class User {
         }
     }
 
+    // Get user ID from email (Used for getting Ticket information)
+    public static int getUserIdByEmail(String email) {
+        String query = "SELECT user_id FROM Users WHERE email = ?";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt("user_id");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching user ID by email: " + e.getMessage());
+        }
+
+        return -1; // Return -1 if the user is not found
+    }
+
+    //fetchTickets from Database
+    public String fetchTicketsFromDatabase() {
+        StringBuilder tickets = new StringBuilder();
+        String query = "SELECT T.ticket_id, M.title AS movie_title, S.start_time AS showtime_time, Seats.seat_number, " +
+                "T.price, T.status, T.purchase_date " +
+                "FROM Tickets T " +
+                "JOIN Showtime S ON T.showtime_id = S.showtime_id " +
+                "JOIN Movie M ON S.movie_id = M.movie_id " +
+                "JOIN Seats ON T.seat_id = Seats.seat_id " +
+                "WHERE T.user_id = ?";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setInt(1, this.userId); // Bind the userId to the query
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                tickets.append("Ticket ID: ").append(resultSet.getInt("ticket_id"))
+                        .append(", Movie: ").append(resultSet.getString("movie_title"))
+                        .append(", Showtime: ").append(resultSet.getTimestamp("showtime_time"))
+                        .append(", Seat: ").append(resultSet.getString("seat_number"))
+                        .append(", Price: $").append(resultSet.getBigDecimal("price"))
+                        .append(", Status: ").append(resultSet.getString("status"))
+                        .append(", Purchase Date: ").append(resultSet.getTimestamp("purchase_date"))
+                        .append("\n");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error fetching tickets: " + e.getMessage());
+        }
+
+        return tickets.toString().isEmpty() ? "No tickets found for this user." : tickets.toString();
+    }
+
+
     // Fetch user from the database by email
     public static User fetchByEmail(String email) {
         String query = "SELECT * FROM Users WHERE email = ?";
