@@ -70,6 +70,14 @@ CREATE TABLE Bank (
     balance DECIMAL(10, 2) 
 );
 
+CREATE TABLE Voucher (
+    voucher_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    amount DECIMAL(8, 2) NOT NULL, -- Value of the voucher
+    is_used BOOLEAN DEFAULT FALSE, -- Indicates if the voucher has been redeemed
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
 INSERT INTO Bank (card_number, cvv, expiration_date, balance)
 VALUES
 ('1234567890123456', '123', '12/25', 500.00),
@@ -113,6 +121,9 @@ INSERT INTO Seats (showtime_id, seat_number) VALUES
 INSERT INTO Users (name, email, password, phone_number, address, is_registered, annual_fee_paid) VALUES
 ('Jamie Smith', 'jamie1@gmaile.com', NULL, NULL, NULL, FALSE, FALSE),
 ('Tony Sanchez', 'tony2@example.com', 'password456&', '0987654321', '596 Oak Avenue', FALSE, FALSE);
+
+
+
 
 /*
 -- Users Table
