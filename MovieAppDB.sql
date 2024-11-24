@@ -1,5 +1,5 @@
 DROP DATABASE IF EXISTS MovieAppDB;
-CREATE DATABASE MovieAppDB; 
+CREATE DATABASE MovieAppDB;
 USE MovieAppDB;
 
 CREATE TABLE Movie (
@@ -7,7 +7,7 @@ CREATE TABLE Movie (
     title VARCHAR(255) NOT NULL,
     genre VARCHAR(100) NOT NULL,
     synopsis TEXT,
-    length VARCHAR(100) NOT NULL, 
+    length VARCHAR(100) NOT NULL,
     rating VARCHAR(10),
     price DECIMAL(8, 2) NOT NULL,
     early_access BOOLEAN DEFAULT FALSE
@@ -40,11 +40,11 @@ CREATE TABLE Seats (
 CREATE TABLE Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255),
-    email VARCHAR(255) UNIQUE, 
-    password VARCHAR(255), 
+    email VARCHAR(255) UNIQUE,
+    password VARCHAR(255),
     phone_number VARCHAR(15),
     address TEXT,
-    is_registered BOOLEAN DEFAULT FALSE, 
+    is_registered BOOLEAN DEFAULT FALSE,
     annual_fee_paid BOOLEAN DEFAULT FALSE
 );
 
@@ -52,9 +52,9 @@ CREATE TABLE Tickets (
     ticket_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     showtime_id INT NOT NULL,
-    seat_id INT NOT NULL, 
+    seat_id INT NOT NULL,
     price DECIMAL(8, 2) NOT NULL,
-    status ENUM('Booked', 'Cancelled') DEFAULT 'Booked', 
+    status ENUM('Booked', 'Cancelled') DEFAULT 'Booked',
     purchase_date DATETIME NOT NULL,
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
     FOREIGN KEY (showtime_id) REFERENCES Showtime(showtime_id),
@@ -67,7 +67,7 @@ CREATE TABLE Bank (
     card_number VARCHAR(16) UNIQUE NOT NULL,
     cvv VARCHAR(3) NOT NULL,
     expiration_date VARCHAR(5) NOT NULL, -- Format MM/YY
-    balance DECIMAL(10, 2) 
+    balance DECIMAL(10, 2)
 );
 
 CREATE TABLE Voucher (
@@ -103,7 +103,8 @@ INSERT INTO Showtime (movie_id, theater_id, start_time, max_seats) VALUES
 (1, 1, '2024-11-20 17:00', 10),
 (1, 2, '2024-11-20 18:00', 5),
 (2, 1, '2024-11-21 19:00', 10),
-(3, 2, '2024-11-22 20:00', 5);
+(2, 2, '2024-11-21 20:00', 10),
+(3, 1, '2024-11-22 22:00', 10);
 
 -- Generate seats for showtime_id = 1 (10 seats)
 INSERT INTO Seats (showtime_id, seat_number) VALUES
