@@ -67,7 +67,7 @@ public class PurchaseTicketViewGuest {
 
             if (selectedTheatreIndex >= 0 && selectedMovieIndex >= 0) {
                 Theatre selectedTheatre = theatres.get(selectedTheatreIndex);
-                Movie selectedMovie = Movie.fetchMovies().get(selectedMovieIndex);
+                Movie selectedMovie = Movie.fetchMoviesNoEarlyAccess().get(selectedMovieIndex);
 
                 // Populate showtime dropdown
                 List<Showtime> showtimes = Showtime.fetchShowtimes();
