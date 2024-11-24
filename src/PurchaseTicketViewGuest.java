@@ -39,6 +39,26 @@ public class PurchaseTicketViewGuest {
             }
         });
 
+//        movieDropdown.addActionListener(e -> {
+//            showtimeDropdown.removeAllItems();
+//
+//            int selectedTheatreIndex = theatreDropdown.getSelectedIndex();
+//            int selectedMovieIndex = movieDropdown.getSelectedIndex();
+//
+//            if (selectedTheatreIndex >= 0 && selectedMovieIndex >= 0) {
+//                Theatre selectedTheatre = theatres.get(selectedTheatreIndex);
+//                Movie selectedMovie = Movie.fetchMoviesNoEarlyAccess().get(selectedMovieIndex);
+//
+//                List<Showtime> showtimes = Showtime.fetchShowtimes();
+//                for (Showtime showtime : showtimes) {
+//                    if (showtime.getMovieID() == selectedMovie.getMovieID()
+//                            && showtime.getTheaterID() == selectedTheatre.getTheatreID()) {
+//                        showtimeDropdown.addItem(showtime.getDateTime().toString());
+//                    }
+//                }
+//            }
+//        });
+
         movieDropdown.addActionListener(e -> {
             showtimeDropdown.removeAllItems();
 
@@ -47,14 +67,19 @@ public class PurchaseTicketViewGuest {
 
             if (selectedTheatreIndex >= 0 && selectedMovieIndex >= 0) {
                 Theatre selectedTheatre = theatres.get(selectedTheatreIndex);
-                Movie selectedMovie = Movie.fetchMoviesNoEarlyAccess().get(selectedMovieIndex);
+                Movie selectedMovie = Movie.fetchMovies().get(selectedMovieIndex);
 
+                // Populate showtime dropdown
                 List<Showtime> showtimes = Showtime.fetchShowtimes();
                 for (Showtime showtime : showtimes) {
-                    if (showtime.getMovieID() == selectedMovie.getMovieID()
-                            && showtime.getTheaterID() == selectedTheatre.getTheatreID()) {
+                    if (showtime.getTheaterID() == selectedTheatre.getTheatreID() &&
+                            showtime.getMovieID() == selectedMovie.getMovieID()) {
                         showtimeDropdown.addItem(showtime.getDateTime().toString());
                     }
+                }
+
+                if (showtimeDropdown.getItemCount() == 0) {
+                    JOptionPane.showMessageDialog(frame, "No showtimes available for the selected movie at the selected theater.");
                 }
             }
         });

@@ -18,7 +18,7 @@ public class PurchaseTicketViewRU {
         JComboBox<String> movieDropdown = new JComboBox<>();
         JComboBox<String> showtimeDropdown = new JComboBox<>();
 
-        // Populate Theatre Dropdown
+        // Fetch all theatres and populate dropdown
         List<Theatre> theatres = Theatre.fetchTheaters();
         for (Theatre theatre : theatres) {
             theatreDropdown.addItem(theatre.getName() + " - " + theatre.getLocation());
@@ -31,14 +31,52 @@ public class PurchaseTicketViewRU {
             int selectedTheatreIndex = theatreDropdown.getSelectedIndex();
             if (selectedTheatreIndex >= 0) {
                 Theatre selectedTheatre = theatres.get(selectedTheatreIndex);
-                List<Movie> movies = Movie.fetchMovies();
+                List<Movie> allMovies = Movie.fetchMovies();
 
-                for (Movie movie : movies) {
-                    movieDropdown.addItem(movie.getTitle());
+                // Populate movie dropdown with movies at the selected theatre
+                for (Movie movie : allMovies) {
+                    boolean isMovieAtTheatre = false;
+                    for (Showtime showtime : Showtime.fetchShowtimes()) {
+                        if (showtime.getTheaterID() == selectedTheatre.getTheatreID() &&
+                                showtime.getMovieID() == movie.getMovieID()) {
+                            isMovieAtTheatre = true;
+                            break;
+                        }
+                    }
+                    if (isMovieAtTheatre) {
+                        movieDropdown.addItem(movie.getTitle());
+                    }
+                }
+
+                if (movieDropdown.getItemCount() == 0) {
+                    JOptionPane.showMessageDialog(frame, "No movies available at the selected theater.");
                 }
             }
         });
 
+//        movieDropdown.addActionListener(e -> {
+//            showtimeDropdown.removeAllItems();
+//
+//            int selectedTheatreIndex = theatreDropdown.getSelectedIndex();
+//            int selectedMovieIndex = movieDropdown.getSelectedIndex();
+//
+//            if (selectedTheatreIndex >= 0 && selectedMovieIndex >= 0) {
+//                Theatre selectedTheatre = theatres.get(selectedTheatreIndex);
+//                Movie selectedMovie = Movie.fetchMovies().get(selectedMovieIndex);
+//
+//                // Populate showtime dropdown with showtimes matching selected theatre and movie
+//                for (Showtime showtime : Showtime.fetchShowtimes()) {
+//                    if (showtime.getTheaterID() == selectedTheatre.getTheatreID() &&
+//                            showtime.getMovieID() == selectedMovie.getMovieID()) {
+//                        showtimeDropdown.addItem(showtime.getDateTime().toString());
+//                    }
+//                }
+//
+//                if (showtimeDropdown.getItemCount() == 0) {
+//                    JOptionPane.showMessageDialog(frame, "No showtimes available for the selected movie at the selected theater.");
+//                }
+//            }
+//        });
         movieDropdown.addActionListener(e -> {
             showtimeDropdown.removeAllItems();
 
@@ -47,17 +85,23 @@ public class PurchaseTicketViewRU {
 
             if (selectedTheatreIndex >= 0 && selectedMovieIndex >= 0) {
                 Theatre selectedTheatre = theatres.get(selectedTheatreIndex);
-                Movie selectedMovie = Movie.fetchMoviesNoEarlyAccess().get(selectedMovieIndex);
+                Movie selectedMovie = Movie.fetchMovies().get(selectedMovieIndex);
 
+                // Populate showtime dropdown
                 List<Showtime> showtimes = Showtime.fetchShowtimes();
                 for (Showtime showtime : showtimes) {
-                    if (showtime.getMovieID() == selectedMovie.getMovieID()
-                            && showtime.getTheaterID() == selectedTheatre.getTheatreID()) {
+                    if (showtime.getTheaterID() == selectedTheatre.getTheatreID() &&
+                            showtime.getMovieID() == selectedMovie.getMovieID()) {
                         showtimeDropdown.addItem(showtime.getDateTime().toString());
                     }
                 }
+
+                if (showtimeDropdown.getItemCount() == 0) {
+                    JOptionPane.showMessageDialog(frame, "No showtimes available for the selected movie at the selected theater.");
+                }
             }
         });
+
 
         panel.add(new JLabel("Select Theatre:", SwingConstants.CENTER));
         panel.add(theatreDropdown);
@@ -82,7 +126,6 @@ public class PurchaseTicketViewRU {
                 Movie selectedMovie = Movie.fetchMovies().get(selectedMovieIndex);
                 Showtime selectedShowtime = Showtime.fetchShowtimes().get(selectedShowtimeIndex);
 
-                // Pass the loggedInUser to SeatSelectionView
                 SeatSelectionView.showSeatMap(
                         frame,
                         selectedShowtime.getShowtimeID(),
@@ -90,13 +133,12 @@ public class PurchaseTicketViewRU {
                         selectedTheatre,
                         selectedMovie,
                         selectedShowtime,
-                        loggedInUser // Pass the logged-in user
+                        loggedInUser
                 );
             } else {
                 JOptionPane.showMessageDialog(frame, "Please select a theatre, movie, and showtime to proceed.");
             }
         });
-
 
         backButton.addActionListener(e -> backToMenuCallback.run());
 
