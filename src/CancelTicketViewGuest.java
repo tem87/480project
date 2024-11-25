@@ -206,11 +206,12 @@ public class CancelTicketViewGuest {
                 int voucherId = generateUniqueVoucherId(conn);
 
                 String createVoucherQuery = "INSERT INTO Voucher (voucher_id, user_id, amount) " +
-                        "SELECT ?, user_id, price FROM Tickets WHERE ticket_id = ?";
+                        "SELECT ?, user_id, price * 0.85 FROM Tickets WHERE ticket_id = ?";
                 PreparedStatement createVoucherStmt = conn.prepareStatement(createVoucherQuery);
                 createVoucherStmt.setInt(1, voucherId);
                 createVoucherStmt.setInt(2, ticketId);
                 createVoucherStmt.executeUpdate();
+
 
                 // Display voucher details
                 String getVoucherDetailsQuery = "SELECT amount FROM Voucher WHERE voucher_id = ?";
