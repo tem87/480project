@@ -79,6 +79,33 @@ public class CancelTicketView {
                 // Start a transaction
                 conn.setAutoCommit(false);
 
+
+                // Get the showtime for the selected ticket
+                String showtimeQuery = "SELECT sh.start_time FROM Tickets t " +
+                        "JOIN Showtime sh ON t.showtime_id = sh.showtime_id WHERE t.ticket_id = ?";
+                PreparedStatement showtimeStmt = conn.prepareStatement(showtimeQuery);
+                showtimeStmt.setInt(1, ticketId);
+                ResultSet rs = showtimeStmt.executeQuery();
+
+                if (rs.next()) {
+                    Timestamp showtime = rs.getTimestamp("start_time");
+                    Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
+                    // Calculate the difference in hours between current time and showtime
+                    long timeDifference = showtime.getTime() - currentTime.getTime();
+                    long hoursDifference = timeDifference / (1000 * 60 * 60); // Convert milliseconds to hours
+
+                    // If showtime is within 72 hours, ticket can't be canceled
+                    if (hoursDifference < 72) {
+                        JOptionPane.showMessageDialog(frame, "Tickets can only be canceled more than 72 hours before the showtime.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Showtime details not found for the selected ticket.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+
                 // Step 1: Update the seat status to "Available"
                 String updateSeatQuery = "UPDATE Seats SET status = 'Available' " +
                         "WHERE seat_id = (SELECT seat_id FROM Tickets WHERE ticket_id = ?)";

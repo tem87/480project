@@ -31,7 +31,6 @@ public class RegisteredUserView {
 
         // Update callbacks for the registered user functionality
         showTicketsButton.addActionListener(e -> {
-            // Fetch ticket information for the logged-in user
             String ticketInfo = loggedInUser.fetchTicketsFromDatabase();
             if (ticketInfo != null && !ticketInfo.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, ticketInfo, "Your Tickets", JOptionPane.INFORMATION_MESSAGE);
@@ -40,7 +39,6 @@ public class RegisteredUserView {
             }
         });
 
-        //cancel ticket functionality
         cancelTicketButton.addActionListener(e ->
                 CancelTicketView.showCancelTicketView(frame, loggedInUser, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
@@ -48,12 +46,15 @@ public class RegisteredUserView {
         viewTheatreButton.addActionListener(e ->
                 TheatreView.showTheatre(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
+
         viewMovieButton.addActionListener(e ->
                 MovieView.showMovie(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
+
         viewearlyMovieButton.addActionListener(e ->
                 MovieView.showEarlyAccessMovies(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
+
         viewShowtimeButton.addActionListener(e ->
                 ShowtimeView.showShowtimeDetails(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
@@ -64,6 +65,10 @@ public class RegisteredUserView {
 
         annualFeeButton.addActionListener(e -> handleAnnualFeePayment(frame, loggedInUser));
 
+        // Navigate to ChangeInformationView
+        informationButton.addActionListener(e ->
+                ChangeInformationView.showChangeInformation(frame, loggedInUser, () -> openRegisteredUserMenu(frame, loggedInUser))
+        );
 
         // Logout functionality
         backButton.addActionListener(e -> {
@@ -71,8 +76,7 @@ public class RegisteredUserView {
             WelcomeView.showMainMenu();
         });
 
-
-        registeredUserPanel.add(showTicketsButton); //add ticket buttons
+        registeredUserPanel.add(showTicketsButton); // Add ticket buttons
         registeredUserPanel.add(viewTheatreButton);
         registeredUserPanel.add(viewMovieButton);
         registeredUserPanel.add(viewearlyMovieButton);
@@ -103,7 +107,6 @@ public class RegisteredUserView {
             String email = emailField.getText();
             String password = new String(passwordField.getPassword());
 
-            // Authenticate the registered user
             RegisteredUser loggedInUser = RegisteredUser.authenticate(email, password);
             if (loggedInUser != null) {
                 JOptionPane.showMessageDialog(frame, "Login Successful! Welcome, " + loggedInUser.getName());
@@ -114,7 +117,6 @@ public class RegisteredUserView {
         }
     }
 
-    //main code for handling annual fee payment
     private static void handleAnnualFeePayment(JFrame frame, RegisteredUser loggedInUser) {
         if (loggedInUser.isAnnualFeePaid()) {
             JOptionPane.showMessageDialog(frame, "You have already paid the annual fee.", "Payment Complete", JOptionPane.INFORMATION_MESSAGE);
@@ -165,17 +167,13 @@ public class RegisteredUserView {
         }
     }
 
-    //helper function for handling annual fee payment
     private static boolean validatePaymentInputs(String cardNumber, String cvv, String expirationDate) {
         return cardNumber != null && cardNumber.matches("\\d{16}")
                 && cvv != null && cvv.matches("\\d{3}")
                 && expirationDate != null && expirationDate.matches("(0[1-9]|1[0-2])/\\d{2}");
     }
 
-    //helper function for handling annual fee payment
     private static boolean processAnnualFeePayment(String cardNumber, String cvv, String expirationDate) {
-        // This function should validate the card details and deduct $20.00 from the balance
-        // using the same database logic as in `validateCardDetails` from the RegisteredUserPaymentView class.
         String query = "SELECT balance FROM Bank WHERE card_number = ? AND cvv = ? AND expiration_date = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -202,7 +200,6 @@ public class RegisteredUserView {
         return false;
     }
 
-    //helper function for handling annual fee payment
     private static void updateAnnualFeeStatusInDatabase(RegisteredUser user) {
         String query = "UPDATE Users SET annual_fee_paid = ? WHERE user_id = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -215,6 +212,4 @@ public class RegisteredUserView {
             System.err.println("Error updating annual fee status: " + e.getMessage());
         }
     }
-
-
 }
