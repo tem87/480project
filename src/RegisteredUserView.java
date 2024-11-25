@@ -40,7 +40,7 @@ public class RegisteredUserView {
         });
 
         cancelTicketButton.addActionListener(e ->
-                CancelTicketView.showCancelTicketView(frame, loggedInUser, () -> openRegisteredUserMenu(frame, loggedInUser))
+                CancelTicketViewRU.showCancelTicketView(frame, loggedInUser, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
 
         viewTheatreButton.addActionListener(e ->

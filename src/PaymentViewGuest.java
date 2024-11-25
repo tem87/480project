@@ -1,10 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.sql.*;
 import java.util.List;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class PaymentViewGuest {
 
@@ -16,7 +13,9 @@ public class PaymentViewGuest {
         mainTitle.setFont(new Font("Arial", Font.BOLD, 24));
         frame.add(mainTitle, BorderLayout.NORTH);
 
-        JPanel mainPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+        JPanel mainPanel = new JPanel(new GridLayout(4, 1, 10, 10));
+
+        // Movie and Seat Details
         JPanel detailsPanel = new JPanel(new GridLayout(0, 1, 5, 5));
         detailsPanel.setBorder(BorderFactory.createTitledBorder("Movie & Seat Details"));
 
@@ -30,32 +29,87 @@ public class PaymentViewGuest {
         detailsPanel.add(new JLabel("Selected Seats: " + seatNumbers.toString()));
         mainPanel.add(detailsPanel);
 
+        // Pricing Details
         JPanel pricingPanel = new JPanel(new GridLayout(0, 1, 5, 5));
         pricingPanel.setBorder(BorderFactory.createTitledBorder("Pricing Details"));
 
         double pricePerSeat = movie.getPrice();
         double totalPrice = pricePerSeat * selectedSeats.size();
         double tax = totalPrice * 0.05; // 5% tax
-        double totalPriceAfterTax = totalPrice + tax;
+        final double[] totalPriceAfterTax = {totalPrice + tax}; // Mutable wrapper for the total price
 
+        JLabel totalPriceLabel = new JLabel(String.format("Total Price (After Tax): $%.2f", totalPriceAfterTax[0]));
         pricingPanel.add(new JLabel(String.format("Price Per Seat: $%.2f", pricePerSeat)));
         pricingPanel.add(new JLabel(String.format("Total Price (Before Tax): $%.2f", totalPrice)));
         pricingPanel.add(new JLabel(String.format("Tax (5%%): $%.2f", tax)));
-        pricingPanel.add(new JLabel(String.format("Total Price (After Tax): $%.2f", totalPriceAfterTax)));
+        pricingPanel.add(totalPriceLabel);
         mainPanel.add(pricingPanel);
 
+        // Voucher implementation
+        JPanel voucherPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+        voucherPanel.setBorder(BorderFactory.createTitledBorder("Voucher Code"));
+
+        JLabel voucherLabel = new JLabel("Enter Voucher Code:");
+        JTextField voucherField = new JTextField();
+        JButton applyVoucherButton = new JButton("Apply Voucher");
+        JLabel voucherMessage = new JLabel("No voucher applied.", SwingConstants.CENTER);
+
+        applyVoucherButton.addActionListener(e -> {
+            String voucherCode = voucherField.getText().trim();
+
+            if (voucherCode.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Please enter a valid voucher code.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try (Connection conn = DBConnection.getConnection()) {
+                String query = "SELECT amount FROM Voucher WHERE voucher_id = ? AND is_used = FALSE";
+                PreparedStatement stmt = conn.prepareStatement(query);
+                stmt.setString(1, voucherCode);
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    double voucherAmount = rs.getDouble("amount");
+
+                    if (voucherAmount >= totalPriceAfterTax[0]) {
+                        totalPriceAfterTax[0] = 0;
+                        voucherMessage.setText("Voucher fully covers the price. Remaining: $0.00");
+                    } else {
+                        totalPriceAfterTax[0] -= voucherAmount;
+                        voucherMessage.setText(String.format("Voucher applied. Remaining to pay: $%.2f", totalPriceAfterTax[0]));
+                    }
+                    totalPriceLabel.setText(String.format("Total Price (After Tax): $%.2f", totalPriceAfterTax[0]));
+
+                    // Mark the voucher as used
+                    String updateVoucherQuery = "UPDATE Voucher SET is_used = TRUE WHERE voucher_id = ?";
+                    PreparedStatement updateStmt = conn.prepareStatement(updateVoucherQuery);
+                    updateStmt.setString(1, voucherCode);
+                    updateStmt.executeUpdate();
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Invalid or already used voucher code.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Error applying voucher.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        voucherPanel.add(voucherLabel);
+        voucherPanel.add(voucherField);
+        voucherPanel.add(applyVoucherButton);
+        voucherPanel.add(voucherMessage);
+        mainPanel.add(voucherPanel);
+
+        // Payment Information
         JPanel paymentPanel = new JPanel(new GridLayout(0, 2, 5, 5));
         paymentPanel.setBorder(BorderFactory.createTitledBorder("Payment Information"));
 
-        JComboBox<String> paymentMethodDropdown = new JComboBox<>(new String[]{"Credit Card", "Debit Card"});
         JTextField nameField = new JTextField();
         JTextField emailField = new JTextField();
         JTextField cardNumberField = new JTextField();
         JPasswordField cvvField = new JPasswordField();
         JTextField expirationDateField = new JTextField();
 
-        paymentPanel.add(new JLabel("Payment Method:"));
-        paymentPanel.add(paymentMethodDropdown);
         paymentPanel.add(new JLabel("Email:"));
         paymentPanel.add(emailField);
         paymentPanel.add(new JLabel("Cardholder Name:"));
@@ -70,6 +124,7 @@ public class PaymentViewGuest {
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton confirmButton = new JButton("Confirm Payment");
+        JButton backButton = new JButton("Back");
 
         confirmButton.addActionListener(e -> {
             String name = nameField.getText();
@@ -79,7 +134,7 @@ public class PaymentViewGuest {
             String expirationDate = expirationDateField.getText();
 
             if (validateInputs(name, cardNumber, cvv, expirationDate)) {
-                if (validateCardDetails(cardNumber, cvv, expirationDate, totalPriceAfterTax)) {
+                if (validateCardDetails(cardNumber, cvv, expirationDate, totalPriceAfterTax[0])) {
                     // Save guest user to Users table
                     int userId = User.saveGuestUserToDatabase(name, email);
                     if (userId == -1) {
@@ -91,7 +146,7 @@ public class PaymentViewGuest {
                     for (Seat seat : selectedSeats) {
                         // Save ticket for each seat
                         Ticket ticket = new Ticket(
-                                userId, // Use the newly created user ID
+                                userId,
                                 showtime.getShowtimeID(),
                                 seat.getSeatId(),
                                 pricePerSeat,
@@ -105,7 +160,7 @@ public class PaymentViewGuest {
                             break;
                         }
 
-                        seat.reserveSeat(seat.getSeatId()); // Reserve the seat
+                        seat.reserveSeat(seat.getSeatId());
                     }
 
                     if (success) {
@@ -120,8 +175,6 @@ public class PaymentViewGuest {
             }
         });
 
-
-        JButton backButton = new JButton("Back");
         backButton.addActionListener(e -> backToMenuCallback.run());
 
         buttonPanel.add(confirmButton);
@@ -153,7 +206,6 @@ public class PaymentViewGuest {
             if (rs.next()) {
                 double balance = rs.getDouble("balance");
                 if (balance >= totalPrice) {
-                    // Deduct balance
                     String updateQuery = "UPDATE Bank SET balance = balance - ? WHERE card_number = ?";
                     try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
                         updateStmt.setDouble(1, totalPrice);
@@ -164,7 +216,7 @@ public class PaymentViewGuest {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error validating card details: " + e.getMessage());
+            e.printStackTrace();
         }
         return false;
     }

@@ -171,6 +171,7 @@ public class CancelTicketViewGuest {
                 showtimeStmt.setInt(1, ticketId);
                 ResultSet rs = showtimeStmt.executeQuery();
 
+                //check if cancellation is within allowed time
                 if (rs.next()) {
                     Timestamp showtime = rs.getTimestamp("start_time");
                     Timestamp currentTime = new Timestamp(System.currentTimeMillis());
@@ -189,44 +190,47 @@ public class CancelTicketViewGuest {
                     return;
                 }
 
-                // Proceed with the ticket cancellation
+                // Proceed with the ticket cancellation and update seat status
                 String updateSeatQuery = "UPDATE Seats SET status = 'Available' WHERE seat_id = (SELECT seat_id FROM Tickets WHERE ticket_id = ?)";
                 PreparedStatement updateSeatStmt = conn.prepareStatement(updateSeatQuery);
                 updateSeatStmt.setInt(1, ticketId);
                 updateSeatStmt.executeUpdate();
 
+                // mark ticket as "cancelled"
                 String updateTicketQuery = "UPDATE Tickets SET status = 'Cancelled' WHERE ticket_id = ?";
                 PreparedStatement updateTicketStmt = conn.prepareStatement(updateTicketQuery);
                 updateTicketStmt.setInt(1, ticketId);
                 int rowsAffected = updateTicketStmt.executeUpdate();
 
-                if (rowsAffected > 0) {
-                    // Create a voucher for the canceled ticket
-                    String createVoucherQuery = "INSERT INTO Voucher (user_id, amount) " +
-                            "SELECT user_id, price * 0.85 FROM Tickets WHERE ticket_id = ?";
-                    PreparedStatement createVoucherStmt = conn.prepareStatement(createVoucherQuery, Statement.RETURN_GENERATED_KEYS);
-                    createVoucherStmt.setInt(1, ticketId);
-                    createVoucherStmt.executeUpdate();
+                //generate voucher id and save it in the database
+                int voucherId = generateUniqueVoucherId(conn);
 
-                    ResultSet generatedKeys = createVoucherStmt.getGeneratedKeys();
-                    if (generatedKeys.next()) {
-                        int voucherId = generatedKeys.getInt(1);
+                String createVoucherQuery = "INSERT INTO Voucher (voucher_id, user_id, amount) " +
+                        "SELECT ?, user_id, price FROM Tickets WHERE ticket_id = ?";
+                PreparedStatement createVoucherStmt = conn.prepareStatement(createVoucherQuery);
+                createVoucherStmt.setInt(1, voucherId);
+                createVoucherStmt.setInt(2, ticketId);
+                createVoucherStmt.executeUpdate();
 
-                        String getVoucherDetailsQuery = "SELECT amount FROM Voucher WHERE voucher_id = ?";
-                        PreparedStatement getVoucherDetailsStmt = conn.prepareStatement(getVoucherDetailsQuery);
-                        getVoucherDetailsStmt.setInt(1, voucherId);
-                        ResultSet voucherDetailsRs = getVoucherDetailsStmt.executeQuery();
+                // Display voucher details
+                String getVoucherDetailsQuery = "SELECT amount FROM Voucher WHERE voucher_id = ?";
+                PreparedStatement getVoucherDetailsStmt = conn.prepareStatement(getVoucherDetailsQuery);
+                getVoucherDetailsStmt.setInt(1, voucherId);
+                ResultSet voucherDetailsRs = getVoucherDetailsStmt.executeQuery();
 
-                        if (voucherDetailsRs.next()) {
-                            double voucherAmount = voucherDetailsRs.getDouble("amount");
-                            JOptionPane.showMessageDialog(frame, "Ticket successfully canceled. Voucher created for $" + voucherAmount, "Success", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                    }
-
-                    conn.commit(); // Commit the transaction
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Failed to cancel ticket. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                if (voucherDetailsRs.next()) {
+                    double voucherAmount = voucherDetailsRs.getDouble("amount");
+                    JOptionPane.showMessageDialog(frame,
+                            "Your ticket has been successfully canceled.\n" +
+                                    "Voucher Code: " + voucherId + "\n" +
+                                    "Refund Amount: $" + String.format("%.2f", voucherAmount),
+                            "Voucher Issued",
+                            JOptionPane.INFORMATION_MESSAGE);
                 }
+
+                conn.commit();
+                ticketDropdown.removeItemAt(selectedIndex);
+                ticketIds.remove(selectedIndex);
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 try {
@@ -253,6 +257,22 @@ public class CancelTicketViewGuest {
 
         frame.revalidate();
         frame.repaint();
+    }
+
+    private static int generateUniqueVoucherId(Connection conn) throws SQLException {
+        int voucherId;
+        boolean isUnique;
+        do {
+            voucherId = 1000 + (int) (Math.random() * 9000); // Generate random 4-digit number
+            String checkQuery = "SELECT COUNT(*) FROM Voucher WHERE voucher_id = ?";
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+                checkStmt.setInt(1, voucherId);
+                ResultSet rs = checkStmt.executeQuery();
+                rs.next();
+                isUnique = rs.getInt(1) == 0; // Check if the ID is unique
+            }
+        } while (!isUnique);
+        return voucherId;
     }
 
 }

@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CancelTicketView {
+public class CancelTicketViewRU {
 
     public static void showCancelTicketView(JFrame frame, RegisteredUser loggedInUser, Runnable backCallback) {
         frame.getContentPane().removeAll();
