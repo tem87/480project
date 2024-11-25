@@ -1,11 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.sql.*;
 import java.util.List;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 
 public class PaymentViewRU {
 
@@ -49,58 +45,60 @@ public class PaymentViewRU {
         pricingPanel.add(totalPriceLabel);
         mainPanel.add(pricingPanel);
 
-        // Voucher Details
+        // Voucher Input
         JPanel voucherPanel = new JPanel(new GridLayout(0, 1, 5, 5));
-        voucherPanel.setBorder(BorderFactory.createTitledBorder("Voucher Details"));
+        voucherPanel.setBorder(BorderFactory.createTitledBorder("Voucher Code"));
 
-        JLabel voucherLabel = new JLabel("Select a voucher to apply:");
-        JComboBox<String> voucherDropdown = new JComboBox<>();
+        JLabel voucherLabel = new JLabel("Enter Voucher Code:");
+        JTextField voucherField = new JTextField();
+        JButton applyVoucherButton = new JButton("Apply Voucher");
         JLabel voucherMessage = new JLabel("No voucher applied.", SwingConstants.CENTER);
 
-        // Fetch available vouchers for the user
-        List<Integer> voucherIds = new ArrayList<>();
-        try (Connection conn = DBConnection.getConnection()) {
-            String query = "SELECT voucher_id, amount FROM Voucher WHERE user_id = ? AND is_used = FALSE";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setInt(1, loggedInUser.getUserId());
-            ResultSet rs = stmt.executeQuery();
+        applyVoucherButton.addActionListener(e -> {
+            String voucherCode = voucherField.getText().trim();
 
-            while (rs.next()) {
-                int voucherId = rs.getInt("voucher_id");
-                double amount = rs.getDouble("amount");
-
-                voucherDropdown.addItem("Voucher #" + voucherId + " - $" + amount);
-                voucherIds.add(voucherId);
+            if (voucherCode.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Please enter a valid voucher code.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
 
-            if (voucherIds.isEmpty()) {
-                voucherMessage.setText("No vouchers available.");
-                voucherDropdown.setEnabled(false);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+            try (Connection conn = DBConnection.getConnection()) {
+                String query = "SELECT amount FROM Voucher WHERE voucher_id = ? AND user_id = ? AND is_used = FALSE";
+                PreparedStatement stmt = conn.prepareStatement(query);
+                stmt.setString(1, voucherCode);
+                stmt.setInt(2, loggedInUser.getUserId());
+                ResultSet rs = stmt.executeQuery();
 
-        voucherDropdown.addActionListener(e -> {
-            if (voucherDropdown.getSelectedIndex() != -1) {
-                String selectedVoucher = (String) voucherDropdown.getSelectedItem();
-                assert selectedVoucher != null;
-                String[] parts = selectedVoucher.split(" - \\$");
-                double voucherAmount = Double.parseDouble(parts[1]);
+                if (rs.next()) {
+                    double voucherAmount = rs.getDouble("amount");
 
-                if (voucherAmount >= totalPriceAfterTax[0]) {
-                    totalPriceAfterTax[0] = 0;
-                    voucherMessage.setText("Voucher fully covers the price. Remaining: $0.00");
+                    if (voucherAmount >= totalPriceAfterTax[0]) {
+                        totalPriceAfterTax[0] = 0;
+                        voucherMessage.setText("Voucher fully covers the price. Remaining: $0.00");
+                    } else {
+                        totalPriceAfterTax[0] -= voucherAmount;
+                        voucherMessage.setText(String.format("Voucher applied. Remaining to pay: $%.2f", totalPriceAfterTax[0]));
+                    }
+                    totalPriceLabel.setText(String.format("Total Price (After Tax): $%.2f", totalPriceAfterTax[0]));
+
+                    // Mark the voucher as used
+                    String updateVoucherQuery = "UPDATE Voucher SET is_used = TRUE WHERE voucher_id = ?";
+                    PreparedStatement updateStmt = conn.prepareStatement(updateVoucherQuery);
+                    updateStmt.setString(1, voucherCode);
+                    updateStmt.executeUpdate();
+
                 } else {
-                    totalPriceAfterTax[0] -= voucherAmount;
-                    voucherMessage.setText(String.format("Voucher applied. Remaining to pay: $%.2f", totalPriceAfterTax[0]));
+                    JOptionPane.showMessageDialog(frame, "Invalid or already used voucher code.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                totalPriceLabel.setText(String.format("Total Price (After Tax): $%.2f", totalPriceAfterTax[0]));
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Error applying voucher.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         voucherPanel.add(voucherLabel);
-        voucherPanel.add(voucherDropdown);
+        voucherPanel.add(voucherField);
+        voucherPanel.add(applyVoucherButton);
         voucherPanel.add(voucherMessage);
         mainPanel.add(voucherPanel);
 
@@ -136,18 +134,6 @@ public class PaymentViewRU {
             if (totalPriceAfterTax[0] == 0 || validateInputs(cardNumber, cvv, expirationDate)) {
                 if (totalPriceAfterTax[0] == 0 || validateCardDetails(cardNumber, cvv, expirationDate, totalPriceAfterTax[0])) {
                     boolean success = true;
-
-                    // Update voucher as used
-                    if (voucherDropdown.getSelectedIndex() != -1) {
-                        try (Connection conn = DBConnection.getConnection()) {
-                            String updateVoucherQuery = "UPDATE Voucher SET is_used = TRUE WHERE voucher_id = ?";
-                            PreparedStatement stmt = conn.prepareStatement(updateVoucherQuery);
-                            stmt.setInt(1, voucherIds.get(voucherDropdown.getSelectedIndex()));
-                            stmt.executeUpdate();
-                        } catch (SQLException ex) {
-                            ex.printStackTrace();
-                        }
-                    }
 
                     for (Seat seat : selectedSeats) {
                         Ticket ticket = new Ticket(
