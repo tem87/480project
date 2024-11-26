@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class PaymentViewGuest {
@@ -63,14 +64,31 @@ public class PaymentViewGuest {
             }
 
             try (Connection conn = DBConnection.getConnection()) {
-                String query = "SELECT amount FROM Voucher WHERE voucher_id = ? AND is_used = FALSE";
+                String query = "SELECT amount, created_at, is_used FROM Voucher WHERE voucher_id = ?";
                 PreparedStatement stmt = conn.prepareStatement(query);
                 stmt.setString(1, voucherCode);
                 ResultSet rs = stmt.executeQuery();
 
                 if (rs.next()) {
+                    boolean isUsed = rs.getBoolean("is_used");
+                    Timestamp createdAt = rs.getTimestamp("created_at");
                     double voucherAmount = rs.getDouble("amount");
 
+                    // Check if the voucher is already used
+                    if (isUsed) {
+                        JOptionPane.showMessageDialog(frame, "This voucher has already been used.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Check if the voucher is within one year of its creation date
+                    LocalDateTime creationDate = createdAt.toLocalDateTime();
+                    LocalDateTime expiryDate = creationDate.plusYears(1);
+                    if (LocalDateTime.now().isAfter(expiryDate)) {
+                        JOptionPane.showMessageDialog(frame, "This voucher has expired.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Apply the voucher if valid
                     if (voucherAmount >= totalPriceAfterTax[0]) {
                         totalPriceAfterTax[0] = 0;
                         voucherMessage.setText("Voucher fully covers the price. Remaining: $0.00");
@@ -86,13 +104,14 @@ public class PaymentViewGuest {
                     updateStmt.setString(1, voucherCode);
                     updateStmt.executeUpdate();
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Invalid or already used voucher code.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Invalid voucher code.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(frame, "Error applying voucher.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+
 
         voucherPanel.add(voucherLabel);
         voucherPanel.add(voucherField);

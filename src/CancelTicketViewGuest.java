@@ -205,19 +205,32 @@ public class CancelTicketViewGuest {
                 //generate voucher id and save it in the database
                 int voucherId = generateUniqueVoucherId(conn);
 
-                String createVoucherQuery = "INSERT INTO Voucher (voucher_id, user_id, amount) " +
-                        "SELECT ?, user_id, price * 0.85 FROM Tickets WHERE ticket_id = ?";
+                // Step 5: Create a voucher for the user
+                String createVoucherQuery = "INSERT INTO Voucher (voucher_id, user_id, amount, created_at) " +
+                        "SELECT ?, user_id, price, CURRENT_TIMESTAMP FROM Tickets WHERE ticket_id = ?";
                 PreparedStatement createVoucherStmt = conn.prepareStatement(createVoucherQuery);
                 createVoucherStmt.setInt(1, voucherId);
                 createVoucherStmt.setInt(2, ticketId);
                 createVoucherStmt.executeUpdate();
 
-
-                // Display voucher details
-                String getVoucherDetailsQuery = "SELECT amount FROM Voucher WHERE voucher_id = ?";
+// Display voucher details
+                String getVoucherDetailsQuery = "SELECT amount, created_at FROM Voucher WHERE voucher_id = ?";
                 PreparedStatement getVoucherDetailsStmt = conn.prepareStatement(getVoucherDetailsQuery);
                 getVoucherDetailsStmt.setInt(1, voucherId);
                 ResultSet voucherDetailsRs = getVoucherDetailsStmt.executeQuery();
+
+                if (voucherDetailsRs.next()) {
+                    double voucherAmount = voucherDetailsRs.getDouble("amount");
+                    Timestamp createdAt = voucherDetailsRs.getTimestamp("created_at");
+                    JOptionPane.showMessageDialog(frame,
+                            "Your ticket has been successfully canceled.\n" +
+                                    "Voucher Code: " + voucherId + "\n" +
+                                    "Refund Amount: $" + String.format("%.2f", voucherAmount) + "\n" +
+                                    "Created At: " + createdAt,
+                            "Voucher Issued",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+
 
                 if (voucherDetailsRs.next()) {
                     double voucherAmount = voucherDetailsRs.getDouble("amount");
