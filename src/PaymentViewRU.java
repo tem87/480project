@@ -158,7 +158,59 @@ public class PaymentViewRU {
                     boolean success = true;
 
                     try (Connection conn = DBConnection.getConnection()) {
-                        conn.setAutoCommit(false); // Start a transaction
+                        conn.setAutoCommit(false);
+
+                        // Check if this is an early access movie
+                        String checkEarlyAccessQuery = "SELECT early_access FROM Movie WHERE movie_id = ?";
+                        boolean isEarlyAccess = false;
+
+                        try (PreparedStatement checkStmt = conn.prepareStatement(checkEarlyAccessQuery)) {
+                            checkStmt.setInt(1, movie.getMovieId());
+                            ResultSet rs = checkStmt.executeQuery();
+                            if (rs.next()) {
+                                isEarlyAccess = rs.getBoolean("early_access");
+                            }
+                        }
+
+                        if (isEarlyAccess) {
+                            // Get the total number of seats for the showtime
+                            String totalSeatsQuery = "SELECT COUNT(*) AS total_seats FROM Seats WHERE showtime_id = ?";
+                            int totalSeats = 0;
+
+                            try (PreparedStatement totalSeatsStmt = conn.prepareStatement(totalSeatsQuery)) {
+                                totalSeatsStmt.setInt(1, showtime.getShowtimeID());
+                                ResultSet rs = totalSeatsStmt.executeQuery();
+                                if (rs.next()) {
+                                    totalSeats = rs.getInt("total_seats");
+                                }
+                            }
+
+                            // Get the number of seats already booked by registered users
+                            String bookedSeatsQuery = "SELECT COUNT(*) AS booked_seats FROM Tickets t " +
+                                    "JOIN Users u ON t.user_id = u.user_id " +
+                                    "WHERE t.showtime_id = ? AND u.is_registered = TRUE";
+                            int bookedSeats = 0;
+
+                            try (PreparedStatement bookedSeatsStmt = conn.prepareStatement(bookedSeatsQuery)) {
+                                bookedSeatsStmt.setInt(1, showtime.getShowtimeID());
+                                ResultSet rs = bookedSeatsStmt.executeQuery();
+                                if (rs.next()) {
+                                    bookedSeats = rs.getInt("booked_seats");
+                                }
+                            }
+
+                            // Calculate the maximum number of seats registered users can book
+                            int maxSeatsForRegisteredUsers = (int) Math.ceil(totalSeats * 0.10);
+                            if (bookedSeats + selectedSeats.size() > maxSeatsForRegisteredUsers) {
+                                JOptionPane.showMessageDialog(frame,
+                                        "Cannot book seats. Only 10% of the seats can be booked by registered users for early access movies.",
+                                        "Booking Limit Reached",
+                                        JOptionPane.ERROR_MESSAGE);
+                                conn.rollback();
+                                confirmButton.setEnabled(true); // Re-enable the button
+                                return;
+                            }
+                        }
 
                         for (Seat seat : selectedSeats) {
                             // Check if the seat is already reserved

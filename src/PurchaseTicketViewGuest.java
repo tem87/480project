@@ -47,7 +47,7 @@ public class PurchaseTicketViewGuest {
                 for (Movie movie : allMovies) {
                     boolean isMovieAvailable = allShowtimes.stream()
                             .anyMatch(showtime -> showtime.getTheaterID() == selectedTheatre.getTheatreID()
-                                    && showtime.getMovieID() == movie.getMovieID());
+                                    && showtime.getMovieID() == movie.getMovieId());
                     if (isMovieAvailable) {
                         filteredMovies.add(movie);
                         movieDropdown.addItem(movie.getTitle());
@@ -75,7 +75,7 @@ public class PurchaseTicketViewGuest {
                 filteredShowtimes.clear();
                 for (Showtime showtime : allShowtimes) {
                     if (showtime.getTheaterID() == selectedTheatre.getTheatreID()
-                            && showtime.getMovieID() == selectedMovie.getMovieID()) {
+                            && showtime.getMovieID() == selectedMovie.getMovieId()) {
                         filteredShowtimes.add(showtime);
                         showtimeDropdown.addItem(showtime.getDateTime().toString());
                     }

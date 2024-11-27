@@ -56,8 +56,6 @@ public class AdminView {
         adminPanel.add(adminLabel);
 
         JButton viewTheatreButton = new JButton("View Theatres");
-        JButton addTheatreButton = new JButton("Add Theatre");
-        JButton modifyTheatreButton = new JButton("Modify Theatre");
         JButton viewMovieButton = new JButton("View Movies");
         JButton addMovieButton = new JButton("Add Movie");
         JButton modifyMovieButton = new JButton("Modify Movie");
@@ -70,8 +68,6 @@ public class AdminView {
 
         // Action listeners for Admin-specific functionality
         viewTheatreButton.addActionListener(e -> TheatreView.showTheatre(frame, () -> AdminView.openAdminMenu(frame)));
-        addTheatreButton.addActionListener(e -> TheatreView.addTheatre(frame));
-        modifyTheatreButton.addActionListener(e -> TheatreView.modifyTheatre(frame));
         viewMovieButton.addActionListener(e -> MovieView.showMoviesAdminView(frame, () -> AdminView.openAdminMenu(frame)));
         addMovieButton.addActionListener(e -> MovieView.addMovie(frame));
         modifyMovieButton.addActionListener(e -> MovieView.modifyMovie(frame));
@@ -89,8 +85,6 @@ public class AdminView {
 
         // Adding buttons to the Admin panel
         adminPanel.add(viewTheatreButton);
-        adminPanel.add(addTheatreButton);
-        adminPanel.add(modifyTheatreButton);
         adminPanel.add(viewMovieButton);
         adminPanel.add(addMovieButton);
         adminPanel.add(modifyMovieButton);

@@ -12,7 +12,7 @@ public class MovieView {
 
         for (int i = 0; i < movies.size(); i++) {
             Movie movie = movies.get(i);
-            data[i][0] = movie.getMovieID();
+            data[i][0] = movie.getMovieId();
             data[i][1] = movie.getTitle();
             data[i][2] = movie.getGenre();
             data[i][3] = movie.getRating();
@@ -196,7 +196,7 @@ public class MovieView {
                     try {
                         double price = Double.parseDouble(priceField.getText());
                         movieToEdit = new Movie(
-                                movieToEdit.getMovieID(),
+                                movieToEdit.getMovieId(),
                                 titleField.getText(),
                                 genreField.getText(),
                                 ratingField.getText(),
@@ -249,7 +249,7 @@ public class MovieView {
                 );
 
                 if (confirmation == JOptionPane.YES_OPTION) {
-                    if (Movie.deleteMovie(movieToDelete.getMovieID())) {
+                    if (Movie.deleteMovie(movieToDelete.getMovieId())) {
                         JOptionPane.showMessageDialog(frame, "Movie deleted successfully!");
                     } else {
                         JOptionPane.showMessageDialog(frame, "Failed to delete movie.");

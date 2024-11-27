@@ -42,7 +42,7 @@ public class PurchaseTicketViewRU {
                 for (Movie movie : Movie.fetchMovies()) {
                     boolean isMovieAtTheatre = Showtime.fetchShowtimes().stream()
                             .anyMatch(showtime -> showtime.getTheaterID() == selectedTheatre.getTheatreID()
-                                    && showtime.getMovieID() == movie.getMovieID());
+                                    && showtime.getMovieID() == movie.getMovieId());
                     if (isMovieAtTheatre) {
                         filteredMovies.add(movie);
                         movieDropdown.addItem(movie.getTitle());
@@ -70,7 +70,7 @@ public class PurchaseTicketViewRU {
                 filteredShowtimes.clear();
                 for (Showtime showtime : Showtime.fetchShowtimes()) {
                     if (showtime.getTheaterID() == selectedTheatre.getTheatreID() &&
-                            showtime.getMovieID() == selectedMovie.getMovieID()) {
+                            showtime.getMovieID() == selectedMovie.getMovieId()) {
                         filteredShowtimes.add(showtime);
                         showtimeDropdown.addItem(showtime.getDateTime().toString());
                     }

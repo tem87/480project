@@ -39,7 +39,7 @@ public class Movie {
     }
 
     // Getters
-    public int getMovieID() {
+    public int getMovieId() {
         return movieID;
     }
 
