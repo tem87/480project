@@ -75,8 +75,23 @@ CREATE TABLE Voucher (
     user_id INT NOT NULL,
     amount DECIMAL(8, 2) NOT NULL, -- Value of the voucher
     is_used BOOLEAN DEFAULT FALSE, -- Indicates if the voucher has been redeemed
+    created_at DATETIME NOT NULL, -- Timestamp when voucher was issued
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
+
+CREATE TABLE Receipt (
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    ticket_id INT,
+    card_number VARCHAR(16),
+    payment_date DATETIME NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    masked_card_number VARCHAR(19),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (ticket_id) REFERENCES Tickets(ticket_id)
+); 
+
+
 
 INSERT INTO Bank (card_number, cvv, expiration_date, balance)
 VALUES
@@ -101,7 +116,7 @@ INSERT INTO Theater (name, location) VALUES
 -- Insert showtimes
 INSERT INTO Showtime (movie_id, theater_id, start_time, max_seats) VALUES
 (1, 1, '2024-11-25 17:00', 10), -- less than 72 hours
-(1, 2, '2024-11-30 18:00', 5), -- more
+(1, 2, '2024-12-03 18:00', 5), -- more
 (2, 1, '2024-11-21 19:00', 10),
 (2, 2, '2024-11-21 20:00', 10),
 (3, 1, '2024-11-22 22:00', 10),
@@ -150,24 +165,31 @@ INSERT INTO Seats (showtime_id, seat_number) VALUES
 (4, 'H6'), (4, 'H7'), (4, 'H8'), (4, 'H9'), (4, 'H10');
 
 
-
 INSERT INTO Users (name, email, password, phone_number, address, is_registered, annual_fee_paid) VALUES
 ('Jamie Smith', 'jamie1@gmaile.com', NULL, NULL, NULL, FALSE, FALSE),
 ('a', 'a@gmail.com', 'a', '0987654321', '596 Oak Avenue', TRUE, FALSE);
 
 
+-- Step 2: Insert Voucher for the User
+INSERT INTO Users (name, email, password, phone_number, address, is_registered, annual_fee_paid)
+VALUES ('John Doe', 'john.doe@example.com', 'securepassword123', '5551234567', '123 Maple Street', TRUE, TRUE);
+-- Not expired
+INSERT INTO Voucher (voucher_id, user_id, amount, is_used, created_at)
+VALUES (4, 3, 50.00, FALSE, '2024-11-25 12:00:00');  -- Valid voucher
+-- Expired Voucher (created in the past, e.g., January 2024)
+INSERT INTO Voucher (voucher_id, user_id, amount, is_used, created_at)
+VALUES (5, 3, 50.00, FALSE, '2023-01-01 00:00:00');  -- Expired voucher
+-- Used Voucher (marked as used)
+INSERT INTO Voucher (voucher_id, user_id, amount, is_used, created_at)
+VALUES (6, 3, 50.00, TRUE, '2024-11-15 00:00:00');  -- Used voucher
 
+-- Insert guest user (non-registered)
+INSERT INTO Users (name, email, password, phone_number, address, is_registered, annual_fee_paid)
+VALUES ('Guest User', 'guest@example.com', NULL, NULL, NULL, FALSE, FALSE);
+-- Valid voucher for guest (not expired)
+INSERT INTO Voucher (voucher_id, user_id, amount, is_used, created_at)
+VALUES (7, 4, 30.00, FALSE, '2024-11-25 12:00:00');  -- Valid voucher for guest
 
-/*
--- Users Table
-INSERT INTO Users (name, email, password, phone_number, address, is_registered, annual_fee_paid) VALUES
-('Jamie Smith', 'jamie1@gmaile.com', 'password123#', '1234567890', '890 Brentwood', TRUE, TRUE),
-('Tony Sanchez', 'tony2@example.com', 'password456&', '0987654321', '596 Oak Avenue', FALSE, FALSE);
-
--- Tickets Table
--- checked that seats also updates when buying a ticket
-INSERT INTO Tickets (user_id, showtime_id, seat_id, price, status, purchase_date) VALUES
-(1, 1, 1, 12.50, 'Booked', '2024-11-10 10:00:00'),
-(1, 1, 2, 12.50, 'Booked', '2024-11-10 10:15:00'),
-(2, 2, 6, 15.00, 'Booked', '2024-11-11 14:30:00');
-*/
+-- Expired voucher for guest (created in the past, e.g., January 2024)
+INSERT INTO Voucher (voucher_id, user_id, amount, is_used, created_at)
+VALUES (8, 4, 20.00, FALSE, '2023-01-01 00:00:00');  -- Expired voucher for guest
