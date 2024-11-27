@@ -143,6 +143,8 @@ public class PaymentViewRU {
         // Action Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton confirmButton = new JButton("Confirm Payment");
+        //email thing
+        JButton sendEmailButton = new JButton("Send Receipt and Tickets via Email");
         JButton backButton = new JButton("Back");
 
         confirmButton.addActionListener(e -> {
@@ -152,30 +154,82 @@ public class PaymentViewRU {
 
             if (totalPriceAfterTax[0] == 0 || validateInputs(cardNumber, cvv, expirationDate)) {
                 if (totalPriceAfterTax[0] == 0 || validateCardDetails(cardNumber, cvv, expirationDate, totalPriceAfterTax[0])) {
+                    confirmButton.setEnabled(false); // Disable the button only after successful validation
                     boolean success = true;
 
-                    for (Seat seat : selectedSeats) {
-                        Ticket ticket = new Ticket(
-                                loggedInUser.getUserId(),
-                                showtime.getShowtimeID(),
-                                seat.getSeatId(),
-                                pricePerSeat,
-                                "Booked",
-                                java.time.LocalDateTime.now()
-                        );
+                    try (Connection conn = DBConnection.getConnection()) {
+                        conn.setAutoCommit(false); // Start a transaction
 
-                        if (!ticket.saveToDatabase()) {
-                            success = false;
-                            JOptionPane.showMessageDialog(frame, "Failed to save ticket for seat " + seat.getSeatNumber() + ". Please try again.");
-                            break;
+                        for (Seat seat : selectedSeats) {
+                            // Check if the seat is already reserved
+                            String checkSeatQuery = "SELECT status FROM Seats WHERE seat_id = ? AND showtime_id = ?";
+                            try (PreparedStatement checkStmt = conn.prepareStatement(checkSeatQuery)) {
+                                checkStmt.setInt(1, seat.getSeatId());
+                                checkStmt.setInt(2, showtime.getShowtimeID());
+                                ResultSet rs = checkStmt.executeQuery();
+
+                                if (rs.next() && "Reserved".equalsIgnoreCase(rs.getString("status"))) {
+                                    JOptionPane.showMessageDialog(frame, "Seat " + seat.getSeatNumber() + " is already reserved. Payment aborted.");
+                                    conn.rollback();
+                                    confirmButton.setEnabled(true); // Re-enable the button
+                                    return;
+                                }
+                            }
+
+                            // Create the ticket
+                            Ticket ticket = new Ticket(
+                                    loggedInUser.getUserId(),
+                                    showtime.getShowtimeID(),
+                                    seat.getSeatId(),
+                                    pricePerSeat,
+                                    "Booked",
+                                    java.time.LocalDateTime.now()
+                            );
+
+                            if (!ticket.saveToDatabase()) {
+                                success = false;
+                                JOptionPane.showMessageDialog(frame, "Failed to save ticket for seat " + seat.getSeatNumber() + ". Please try again.");
+                                conn.rollback();
+                                break;
+                            }
+
+                            int ticketId = ticket.getTicketId(); // Fetch the generated ticket_id
+                            if (ticketId == -1) {
+                                success = false;
+                                JOptionPane.showMessageDialog(frame, "Failed to retrieve ticket ID. Payment aborted.");
+                                conn.rollback();
+                                break;
+                            }
+
+                            // Save receipt linked to the ticket
+                            Receipt receipt = new Receipt(
+                                    loggedInUser.getUserId(),
+                                    ticketId,
+                                    cardNumber,
+                                    LocalDateTime.now(),
+                                    pricePerSeat
+                            );
+
+                            if (!receipt.saveToDatabase()) {
+                                success = false;
+                                JOptionPane.showMessageDialog(frame, "Failed to save receipt for ticket ID " + ticketId + ". Payment aborted.");
+                                conn.rollback();
+                                break;
+                            }
+
+                            // Reserve the seat
+                            seat.reserveSeat(seat.getSeatId());
                         }
 
-                        seat.reserveSeat(seat.getSeatId());
-                    }
+                        if (success) {
+                            conn.commit(); // Commit transaction
+                            JOptionPane.showMessageDialog(frame, "Payment Successful! Tickets and receipts have been saved.");
+                            confirmButton.setEnabled(false);
+                        }
 
-                    if (success) {
-                        JOptionPane.showMessageDialog(frame, "Payment Successful! Tickets have been saved.");
-                        backToMenuCallback.run();
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(frame, "Error processing payment. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
                     JOptionPane.showMessageDialog(frame, "Invalid or insufficient balance in card. Payment failed.");
@@ -185,9 +239,39 @@ public class PaymentViewRU {
             }
         });
 
+
+        // Send Receipt and Tickets via Email Button
+        sendEmailButton.addActionListener(e -> {
+            try (Connection conn = DBConnection.getConnection()) {
+                String query = "SELECT email FROM Users WHERE user_id = ?";
+                PreparedStatement stmt = conn.prepareStatement(query);
+                stmt.setInt(1, loggedInUser.getUserId());
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    String email = rs.getString("email");
+                    JOptionPane.showMessageDialog(frame,
+                            "Receipt and Tickets have been sent to: " + email,
+                            "Email Sent",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(frame,
+                            "Email not found for this user.",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Error retrieving email. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+
         backButton.addActionListener(e -> backToMenuCallback.run());
 
         buttonPanel.add(confirmButton);
+        buttonPanel.add(sendEmailButton);
         buttonPanel.add(backButton);
 
         frame.add(mainPanel, BorderLayout.CENTER);
@@ -229,4 +313,23 @@ public class PaymentViewRU {
         }
         return false;
     }
+
+
+    private static boolean associateTicketWithReceipt(int paymentId, int ticketId) {
+        String query = "UPDATE Receipt SET ticket_id = ? WHERE payment_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, ticketId);
+            stmt.setInt(2, paymentId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
 }

@@ -154,6 +154,7 @@ public class PaymentViewGuest {
 
             if (validateInputs(name, cardNumber, cvv, expirationDate)) {
                 if (validateCardDetails(cardNumber, cvv, expirationDate, totalPriceAfterTax[0])) {
+                    confirmButton.setEnabled(false); // Disable the button only after successful validation
                     // Save guest user to Users table
                     int userId = User.saveGuestUserToDatabase(name, email);
                     if (userId == -1) {
@@ -184,7 +185,7 @@ public class PaymentViewGuest {
 
                     if (success) {
                         JOptionPane.showMessageDialog(frame, "Payment Successful! Tickets have been saved.");
-                        backToMenuCallback.run();
+                        generateAndDisplayReceipt(name, email, cardNumber, totalPriceAfterTax[0], selectedSeats, movie, showtime, theatre);
                     }
                 } else {
                     JOptionPane.showMessageDialog(frame, "Invalid or insufficient balance in card. Payment failed.");
@@ -194,10 +195,30 @@ public class PaymentViewGuest {
             }
         });
 
+        JButton sendEmailButton = new JButton("Send Receipt and Tickets via Email");
+        buttonPanel.add(sendEmailButton);
+
+        // send email button
+        sendEmailButton.addActionListener(e -> {
+            String email = emailField.getText();
+            if (email != null && !email.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(frame,
+                        "Receipt and Tickets have been sent to: " + email,
+                        "Email Sent",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(frame,
+                        "Please provide a valid email address to send the receipt.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
         backButton.addActionListener(e -> backToMenuCallback.run());
 
         buttonPanel.add(confirmButton);
         buttonPanel.add(backButton);
+        buttonPanel.add(sendEmailButton);
 
         frame.add(mainPanel, BorderLayout.CENTER);
         frame.add(buttonPanel, BorderLayout.SOUTH);
@@ -239,4 +260,29 @@ public class PaymentViewGuest {
         }
         return false;
     }
+
+    private static void generateAndDisplayReceipt(String name, String email, String cardNumber, double totalPrice, List<Seat> selectedSeats, Movie movie, Showtime showtime, Theatre theatre) {
+        StringBuilder receipt = new StringBuilder();
+        receipt.append("---- Ticket Receipt ----\n");
+        receipt.append("Name: ").append(name).append("\n");
+        receipt.append("Email: ").append(email).append("\n");
+        receipt.append("Movie: ").append(movie.getTitle()).append("\n");
+        receipt.append("Theatre: ").append(theatre.getName()).append("\n");
+        receipt.append("Showtime: ").append(showtime.getDateTime()).append("\n");
+
+        receipt.append("Seats: ");
+        for (Seat seat : selectedSeats) {
+            receipt.append(seat.getSeatNumber()).append(", ");
+        }
+        receipt.setLength(receipt.length() - 2); // Remove trailing comma and space
+        receipt.append("\n");
+
+        receipt.append(String.format("Total Price Paid: $%.2f\n", totalPrice));
+        receipt.append("Card Number: **** **** **** ").append(cardNumber.substring(cardNumber.length() - 4)).append("\n"); // Mask all but the last 4 digits
+        receipt.append("Transaction Date: ").append(LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n");
+        receipt.append("--------------------------------------");
+
+        JOptionPane.showMessageDialog(null, receipt.toString(), "Payment Receipt", JOptionPane.INFORMATION_MESSAGE);
+    }
+
 }

@@ -26,22 +26,11 @@ public class RegisteredUserView {
         JButton annualFeeButton = new JButton("Pay Annual Fee");
         JButton newsButton = new JButton("News");
         JButton informationButton = new JButton("Change Information");
-        JButton showTicketsButton = new JButton("View Purchased Tickets and Receipts");
+        JButton showTicketsButton = new JButton("View Purchased Tickets");
+        JButton showReceiptsButton = new JButton("View Receipts");
         JButton backButton = new JButton("Logout");
 
-        // Update callbacks for the registered user functionality
-        showTicketsButton.addActionListener(e -> {
-            String ticketInfo = loggedInUser.fetchTicketsFromDatabase();
-            if (ticketInfo != null && !ticketInfo.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, ticketInfo, "Your Tickets", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(frame, "No tickets found for your account.", "Your Tickets", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
 
-        cancelTicketButton.addActionListener(e ->
-                CancelTicketViewRU.showCancelTicketView(frame, loggedInUser, () -> openRegisteredUserMenu(frame, loggedInUser))
-        );
 
         viewTheatreButton.addActionListener(e ->
                 TheatreView.showTheatre(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
@@ -65,6 +54,29 @@ public class RegisteredUserView {
 
         annualFeeButton.addActionListener(e -> handleAnnualFeePayment(frame, loggedInUser));
 
+        // Update callbacks for the registered user functionality
+        showTicketsButton.addActionListener(e -> {
+            String ticketInfo = loggedInUser.fetchTicketsFromDatabase();
+            if (ticketInfo != null && !ticketInfo.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, ticketInfo, "Your Tickets", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(frame, "No tickets found for your account.", "Your Tickets", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        showReceiptsButton.addActionListener(e -> {
+            String receiptInfo = loggedInUser.fetchReceiptsFromDatabase();
+            if (receiptInfo != null && !receiptInfo.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, receiptInfo, "Your Receipts", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(frame, "No receipts found for your account.", "Your Receipts", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        cancelTicketButton.addActionListener(e ->
+                CancelTicketViewRU.showCancelTicketView(frame, loggedInUser, () -> openRegisteredUserMenu(frame, loggedInUser))
+        );
+
         // Navigate to ChangeInformationView
         informationButton.addActionListener(e ->
                 ChangeInformationView.showChangeInformation(frame, loggedInUser, () -> openRegisteredUserMenu(frame, loggedInUser))
@@ -76,7 +88,7 @@ public class RegisteredUserView {
             WelcomeView.showMainMenu();
         });
 
-        registeredUserPanel.add(showTicketsButton); // Add ticket buttons
+
         registeredUserPanel.add(viewTheatreButton);
         registeredUserPanel.add(viewMovieButton);
         registeredUserPanel.add(viewearlyMovieButton);
@@ -84,6 +96,8 @@ public class RegisteredUserView {
         registeredUserPanel.add(purchaseTicketButton);
         registeredUserPanel.add(cancelTicketButton);
         registeredUserPanel.add(annualFeeButton);
+        registeredUserPanel.add(showTicketsButton); // Add ticket buttons
+        registeredUserPanel.add(showReceiptsButton);
         registeredUserPanel.add(newsButton);
         registeredUserPanel.add(informationButton);
         registeredUserPanel.add(backButton);

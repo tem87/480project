@@ -81,4 +81,81 @@ public class RegisteredUser extends User {
 
         return null; // Authentication failed
     }
+
+//    public String fetchReceiptsFromDatabase() {
+//        StringBuilder receiptInfo = new StringBuilder();
+//        String query = "SELECT r.payment_id, r.ticket_id, r.total_amount, r.payment_date, r.masked_card_number " +
+//                "FROM Receipt r " +
+//                "WHERE r.user_id = ?";
+//
+//        try (Connection conn = DBConnection.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(query)) {
+//
+//            stmt.setInt(1, this.getUserId());
+//            ResultSet rs = stmt.executeQuery();
+//
+//            while (rs.next()) {
+//                int paymentId = rs.getInt("payment_id");
+//                int ticketId = rs.getInt("ticket_id");
+//                double totalAmount = rs.getDouble("total_amount");
+//                String paymentDate = rs.getTimestamp("payment_date").toString();
+//                String maskedCardNumber = rs.getString("masked_card_number");
+//
+//                receiptInfo.append("Payment ID: ").append(paymentId).append("\n")
+//                        .append("Ticket ID: ").append(ticketId).append("\n")
+//                        .append("Amount Paid: $").append(String.format("%.2f", totalAmount)).append("\n")
+//                        .append("Payment Date: ").append(paymentDate).append("\n")
+//                        .append("Card: ").append(maskedCardNumber).append("\n\n");
+//            }
+//        } catch (SQLException e) {
+//            System.err.println("Error fetching receipts: " + e.getMessage());
+//        }
+//
+//        return receiptInfo.toString();
+//    }
+    public String fetchReceiptsFromDatabase() {
+        StringBuilder receiptInfo = new StringBuilder();
+        String query = "SELECT r.payment_id, r.ticket_id, r.total_amount, r.payment_date, r.masked_card_number, " +
+                "s.seat_number, m.title, t.name " +
+                "FROM Receipt r " +
+                "JOIN Tickets ti ON r.ticket_id = ti.ticket_id " +
+                "JOIN Seats s ON ti.seat_id = s.seat_id " +
+                "JOIN Showtime st ON ti.showtime_id = st.showtime_id " +
+                "JOIN Movie m ON st.movie_id = m.movie_id " +
+                "JOIN Theater t ON st.theater_id = t.theater_id " +
+                "WHERE r.user_id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, this.getUserId());
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int paymentId = rs.getInt("payment_id");
+                int ticketId = rs.getInt("ticket_id");
+                double totalAmount = rs.getDouble("total_amount");
+                String paymentDate = rs.getTimestamp("payment_date").toString();
+                String maskedCardNumber = rs.getString("masked_card_number");
+                String seatNumber = rs.getString("seat_number");
+                String movieTitle = rs.getString("title");
+                String theatreName = rs.getString("name");
+
+                receiptInfo.append("Payment ID: ").append(paymentId).append("\n")
+                        .append("Ticket ID: ").append(ticketId).append("\n")
+                        .append("Amount Paid: $").append(String.format("%.2f", totalAmount)).append("\n")
+                        .append("Payment Date: ").append(paymentDate).append("\n")
+                        .append("Card: ").append(maskedCardNumber).append("\n")
+                        .append("Seat Number: ").append(seatNumber).append("\n")
+                        .append("Movie: ").append(movieTitle).append("\n")
+                        .append("Theatre: ").append(theatreName).append("\n\n");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching receipts: " + e.getMessage());
+        }
+
+        return receiptInfo.toString();
+    }
+
+
 }
