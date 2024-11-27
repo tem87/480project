@@ -116,7 +116,7 @@ INSERT INTO Theater (name, location) VALUES
 -- Insert showtimes
 INSERT INTO Showtime (movie_id, theater_id, start_time, max_seats) VALUES
 (1, 1, '2024-11-25 17:00', 10), -- less than 72 hours
-(1, 2, '2024-12-03 18:00', 5), -- more
+(1, 2, '2024-12-03 18:00', 10), -- more
 (2, 1, '2024-11-21 19:00', 10),
 (2, 2, '2024-11-21 20:00', 10),
 (3, 1, '2024-11-22 22:00', 10),
@@ -125,44 +125,55 @@ INSERT INTO Showtime (movie_id, theater_id, start_time, max_seats) VALUES
 (4, 2, '2024-11-21 20:00', 10);
 
 
--- Generate seats for showtime_id = 1 (10 seats)
+-- Generate 20 seats for showtime_id = 1
 INSERT INTO Seats (showtime_id, seat_number) VALUES
 (1, 'A1'), (1, 'A2'), (1, 'A3'), (1, 'A4'), (1, 'A5'),
 (1, 'A6'), (1, 'A7'), (1, 'A8'), (1, 'A9'), (1, 'A10'),
-(1, 'A11'), (1, 'A12');
--- Generate seats for showtime_id = 2 (5 seats)
-INSERT INTO Seats (showtime_id, seat_number) VALUES
-(2, 'B1'), (2, 'B2'), (2, 'B3'), (2, 'B4'), (2, 'B5');
+(1, 'A11'), (1, 'A12'), (1, 'A13'), (1, 'A14'), (1, 'A15'),
+(1, 'A16'), (1, 'A17'), (1, 'A18'), (1, 'A19'), (1, 'A20');
 
--- Generate seats for showtime_id = 3 (5 seats)
+-- Generate 20 seats for showtime_id = 2
 INSERT INTO Seats (showtime_id, seat_number) VALUES
-(3, 'B1'), (3, 'B2'), (3, 'B3'), (3, 'B4'), (3, 'B5');
--- c and d are for me before you
--- Generate seats for showtime_id = 7 (10 seats as per max_seats)
-INSERT INTO Seats (showtime_id, seat_number) VALUES
-(7, 'C1'), (7, 'C2'), (7, 'C3'), (7, 'C4'), (7, 'C5'),
-(7, 'C6'), (7, 'C7'), (7, 'C8'), (7, 'C9'), (7, 'C10');
+(2, 'B1'), (2, 'B2'), (2, 'B3'), (2, 'B4'), (2, 'B5'),
+(2, 'B6'), (2, 'B7'), (2, 'B8'), (2, 'B9'), (2, 'B10'),
+(2, 'B11'), (2, 'B12'), (2, 'B13'), (2, 'B14'), (2, 'B15'),
+(2, 'B16'), (2, 'B17'), (2, 'B18'), (2, 'B19'), (2, 'B20');
 
--- Generate seats for showtime_id = 8 (10 seats as per max_seats)
+-- Generate 20 seats for showtime_id = 3
 INSERT INTO Seats (showtime_id, seat_number) VALUES
-(8, 'D1'), (8, 'D2'), (8, 'D3'), (8, 'D4'), (8, 'D5'),
-(8, 'D6'), (8, 'D7'), (8, 'D8'), (8, 'D9'), (8, 'D10');
+(3, 'C1'), (3, 'C2'), (3, 'C3'), (3, 'C4'), (3, 'C5'),
+(3, 'C6'), (3, 'C7'), (3, 'C8'), (3, 'C9'), (3, 'C10'),
+(3, 'C11'), (3, 'C12'), (3, 'C13'), (3, 'C14'), (3, 'C15'),
+(3, 'C16'), (3, 'C17'), (3, 'C18'), (3, 'C19'), (3, 'C20');
 
--- E and F are for spirited away
--- Generate seats for showtime_id = 5 (10 seats)
+-- Generate 20 seats for showtime_id = 7
 INSERT INTO Seats (showtime_id, seat_number) VALUES
-(5, 'E1'), (5, 'E2'), (5, 'E3'), (5, 'E4'), (5, 'E5'),
-(5, 'E6'), (5, 'E7'), (5, 'E8'), (5, 'E9'), (5, 'E10');
+(7, 'D1'), (7, 'D2'), (7, 'D3'), (7, 'D4'), (7, 'D5'),
+(7, 'D6'), (7, 'D7'), (7, 'D8'), (7, 'D9'), (7, 'D10'),
+(7, 'D11'), (7, 'D12'), (7, 'D13'), (7, 'D14'), (7, 'D15'),
+(7, 'D16'), (7, 'D17'), (7, 'D18'), (7, 'D19'), (7, 'D20');
 
--- Generate seats for showtime_id = 6 (10 seats)
+-- Generate 20 seats for showtime_id = 8
 INSERT INTO Seats (showtime_id, seat_number) VALUES
-(6, 'F1'), (6, 'F2'), (6, 'F3'), (6, 'F4'), (6, 'F5'),
-(6, 'F6'), (6, 'F7'), (6, 'F8'), (6, 'F9'), (6, 'F10');
--- h is for shrek 2 for theater id 2
--- Generate seats for showtime_id = 4 (10 seats)
+(8, 'E1'), (8, 'E2'), (8, 'E3'), (8, 'E4'), (8, 'E5'),
+(8, 'E6'), (8, 'E7'), (8, 'E8'), (8, 'E9'), (8, 'E10'),
+(8, 'E11'), (8, 'E12'), (8, 'E13'), (8, 'E14'), (8, 'E15'),
+(8, 'E16'), (8, 'E17'), (8, 'E18'), (8, 'E19'), (8, 'E20');
+
+-- Generate 20 seats for showtime_id = 5
 INSERT INTO Seats (showtime_id, seat_number) VALUES
-(4, 'H1'), (4, 'H2'), (4, 'H3'), (4, 'H4'), (4, 'H5'),
-(4, 'H6'), (4, 'H7'), (4, 'H8'), (4, 'H9'), (4, 'H10');
+(5, 'F1'), (5, 'F2'), (5, 'F3'), (5, 'F4'), (5, 'F5'),
+(5, 'F6'), (5, 'F7'), (5, 'F8'), (5, 'F9'), (5, 'F10'),
+(5, 'F11'), (5, 'F12'), (5, 'F13'), (5, 'F14'), (5, 'F15'),
+(5, 'F16'), (5, 'F17'), (5, 'F18'), (5, 'F19'), (5, 'F20');
+
+-- Generate 20 seats for showtime_id = 6
+INSERT INTO Seats (showtime_id, seat_number) VALUES
+(6, 'G1'), (6, 'G2'), (6, 'G3'), (6, 'G4'), (6, 'G5'),
+(6, 'G6'), (6, 'G7'), (6, 'G8'), (6, 'G9'), (6, 'G10'),
+(6, 'G11'), (6, 'G12'), (6, 'G13'), (6, 'G14'), (6, 'G15'),
+(6, 'G16'), (6, 'G17'), (6, 'G18'), (6, 'G19'), (6, 'G20');
+
 
 
 INSERT INTO Users (name, email, password, phone_number, address, is_registered, annual_fee_paid) VALUES
