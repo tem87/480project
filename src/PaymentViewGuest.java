@@ -6,6 +6,8 @@ import java.util.List;
 
 public class PaymentViewGuest {
 
+    static boolean success = false; //initializes it to false at the beginning
+
     public static void showPaymentView(JFrame frame, Theatre theatre, Movie movie, Showtime showtime, List<Seat> selectedSeats, Runnable backToMenuCallback) {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout(10, 10));
@@ -162,7 +164,7 @@ public class PaymentViewGuest {
                         return;
                     }
 
-                    boolean success = true;
+                    success = true;
                     for (Seat seat : selectedSeats) {
                         // Save ticket for each seat
                         Ticket ticket = new Ticket(
@@ -200,6 +202,11 @@ public class PaymentViewGuest {
 
         // send email button
         sendEmailButton.addActionListener(e -> {
+            if (!success) {
+                JOptionPane.showMessageDialog(frame, "Payment has not been completed. Please make a payment first.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             String email = emailField.getText();
             if (email != null && !email.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(frame,
