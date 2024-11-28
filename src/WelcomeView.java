@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 public class WelcomeView {
@@ -76,11 +78,15 @@ public class WelcomeView {
         JTextField phoneField = new JTextField();
         JTextField addressField = new JTextField();
 
+        restrictToChar(nameField, 50);
+        restrictToPhoneFormat(phoneField, 12);
+
+
         Object[] message = {
                 "Full Name:", nameField,
                 "Email:", emailField,
                 "Password:", passwordField,
-                "Phone Number (e.g. 585-589-5236):", phoneField,
+                "Phone Number (e.g. 585-000-5236):", phoneField,
                 "Address:", addressField
         };
 
@@ -91,6 +97,12 @@ public class WelcomeView {
             String password = new String(passwordField.getPassword());
             String phone = phoneField.getText();
             String address = addressField.getText();
+
+            String emailRegex = "^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$";
+            if (!email.matches(emailRegex)) {
+                JOptionPane.showMessageDialog(frame, "Please enter a valid email address.", "Invalid Email", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Name, Email, and Password are required!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -107,29 +119,49 @@ public class WelcomeView {
         }
     }
 
-//    private static void loginForm(JFrame frame) {
-//        JTextField emailField = new JTextField();
-//        JPasswordField passwordField = new JPasswordField();
-//
-//        Object[] message = {
-//                "Email:", emailField,
-//                "Password:", passwordField
-//        };
-//
-//        int option = JOptionPane.showConfirmDialog(frame, message, "Login", JOptionPane.OK_CANCEL_OPTION);
-//        if (option == JOptionPane.OK_OPTION) {
-//            String email = emailField.getText();
-//            String password = new String(passwordField.getPassword());
-//
-//            User loggedInUser = User.authenticate(email, password);
-//            if (loggedInUser != null) {
-//                JOptionPane.showMessageDialog(frame, "Login Successful! Welcome, " + loggedInUser.getName());
-//                showUserMenu(frame, loggedInUser);
-//            } else {
-//                JOptionPane.showMessageDialog(frame, "Invalid email or password. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-//            }
-//        }
-//    }
+    private static void restrictToDigits(JTextField field, int maxLength) {
+        field.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (!Character.isDigit(c) || field.getText().length() >= maxLength) {
+                    e.consume(); // Ignore non-digit or excess characters
+                }
+            }
+        });
+    }
+
+    private static void restrictToChar(JTextField field, int maxLength) {
+        field.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (Character.isDigit(c) || field.getText().length() >= maxLength) {
+                    e.consume(); // Ignore non-digit or excess characters
+                }
+            }
+        });
+    }
+
+    private static void restrictToPhoneFormat(JTextField field, int maxLength) {
+        field.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                String currentText = field.getText();
+
+                // Allow digits, '-' character, and backspace
+                if ((!Character.isDigit(c) && c != '-') || currentText.length() >= maxLength) {
+                    e.consume(); // Ignore invalid characters or if max length is reached
+                }
+
+                // Prevent multiple consecutive '-' or starting with '-'
+                if (currentText.endsWith("-") && c == '-' || currentText.isEmpty() && c == '-') {
+                    e.consume();
+                }
+            }
+        });
+    }
 
 
 }
