@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -129,6 +131,9 @@ public class PaymentViewRU {
         JTextField cardNumberField = new JTextField();
         JPasswordField cvvField = new JPasswordField();
         JTextField expirationDateField = new JTextField();
+
+        restrictToDigits(cardNumberField, 16);
+        restrictToDigits(cvvField, 3);
 
         paymentPanel.add(new JLabel("Payment Method:"));
         paymentPanel.add(paymentMethodDropdown);
@@ -385,6 +390,18 @@ public class PaymentViewRU {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private static void restrictToDigits(JTextField field, int maxLength) {
+        field.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (!Character.isDigit(c) || field.getText().length() >= maxLength) {
+                    e.consume(); // Ignore non-digit or excess characters
+                }
+            }
+        });
     }
 
 
