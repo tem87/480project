@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -131,6 +133,11 @@ public class PaymentViewGuest {
         JPasswordField cvvField = new JPasswordField();
         JTextField expirationDateField = new JTextField();
 
+        //code for restricting user inputs
+        restrictToChar(nameField, 50);
+        restrictToDigits(cardNumberField, 16);
+        restrictToDigits(cvvField, 3);
+
         paymentPanel.add(new JLabel("Email:"));
         paymentPanel.add(emailField);
         paymentPanel.add(new JLabel("Cardholder Name:"));
@@ -153,6 +160,12 @@ public class PaymentViewGuest {
             String cardNumber = cardNumberField.getText();
             String cvv = new String(cvvField.getPassword());
             String expirationDate = expirationDateField.getText();
+
+            String emailRegex = "^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$";
+            if (!email.matches(emailRegex)) {
+                JOptionPane.showMessageDialog(frame, "Please enter a valid email address.", "Invalid Email", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             if (validateInputs(name, cardNumber, cvv, expirationDate)) {
                 if (validateCardDetails(cardNumber, cvv, expirationDate, totalPriceAfterTax[0])) {
@@ -291,5 +304,33 @@ public class PaymentViewGuest {
 
         JOptionPane.showMessageDialog(null, receipt.toString(), "Payment Receipt", JOptionPane.INFORMATION_MESSAGE);
     }
+
+
+    //restrict to digits
+    private static void restrictToDigits(JTextField field, int maxLength) {
+        field.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (!Character.isDigit(c) || field.getText().length() >= maxLength) {
+                    e.consume(); // Ignore non-digit or excess characters
+                }
+            }
+        });
+    }
+
+    //restricts to char
+    private static void restrictToChar(JTextField field, int maxLength) {
+        field.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (Character.isDigit(c) || field.getText().length() >= maxLength) {
+                    e.consume(); // Ignore non-digit or excess characters
+                }
+            }
+        });
+    }
+
 
 }
