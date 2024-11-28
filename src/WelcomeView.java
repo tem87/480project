@@ -112,7 +112,7 @@ public class WelcomeView {
             RegisteredUser newUser = new RegisteredUser(name, email, password, phone, address);
 
             if (newUser.saveToDatabase()) {
-                JOptionPane.showMessageDialog(frame, "Sign Up Successful! Welcome, " + name + "Login now to access all the features");
+                JOptionPane.showMessageDialog(frame, "Sign Up Successful! Welcome, " + name + " Login now to access all the features");
             } else {
                 JOptionPane.showMessageDialog(frame, "Sign Up Failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
             }
