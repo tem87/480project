@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class PaymentViewRU {
-
+    static boolean success = false; //used to track if payment was successful
     public static void showPaymentViewRU(JFrame frame, RegisteredUser loggedInUser, Theatre theatre, Movie movie, Showtime showtime, List<Seat> selectedSeats, Runnable backToMenuCallback) {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout(10, 10));
@@ -125,7 +125,7 @@ public class PaymentViewRU {
         JPanel paymentPanel = new JPanel(new GridLayout(0, 2, 5, 5));
         paymentPanel.setBorder(BorderFactory.createTitledBorder("Payment Information"));
 
-        JComboBox<String> paymentMethodDropdown = new JComboBox<>(new String[]{"Credit Card", "Debit Card"});
+        JComboBox<String> paymentMethodDropdown = new JComboBox<>(new String[]{"Credit Card"});
         JTextField cardNumberField = new JTextField();
         JPasswordField cvvField = new JPasswordField();
         JTextField expirationDateField = new JTextField();
@@ -155,7 +155,7 @@ public class PaymentViewRU {
             if (totalPriceAfterTax[0] == 0 || validateInputs(cardNumber, cvv, expirationDate)) {
                 if (totalPriceAfterTax[0] == 0 || validateCardDetails(cardNumber, cvv, expirationDate, totalPriceAfterTax[0])) {
                     confirmButton.setEnabled(false); // Disable the button only after successful validation
-                    boolean success = true;
+                    success = true; //make global
 
                     try (Connection conn = DBConnection.getConnection()) {
                         conn.setAutoCommit(false);
@@ -294,6 +294,11 @@ public class PaymentViewRU {
 
         // Send Receipt and Tickets via Email Button
         sendEmailButton.addActionListener(e -> {
+            if (!success) {
+                JOptionPane.showMessageDialog(frame, "Payment has not been completed. Please make a payment first.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             try (Connection conn = DBConnection.getConnection()) {
                 String query = "SELECT email FROM Users WHERE user_id = ?";
                 PreparedStatement stmt = conn.prepareStatement(query);
@@ -365,7 +370,6 @@ public class PaymentViewRU {
         }
         return false;
     }
-
 
     private static boolean associateTicketWithReceipt(int paymentId, int ticketId) {
         String query = "UPDATE Receipt SET ticket_id = ? WHERE payment_id = ?";
