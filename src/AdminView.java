@@ -64,6 +64,10 @@ public class AdminView {
         JButton addShowtimeButton = new JButton("Add Showtime");
         JButton modifyShowtimeButton = new JButton("Modify Showtime");
         JButton deleteShowtimeButton = new JButton("Delete Showtime");
+        JButton viewNewsButton = new JButton("View News");
+        JButton addNewsButton = new JButton("Add News");
+        JButton modifyNewsButton = new JButton("Modify News");
+        JButton deleteNewsButton = new JButton("Delete News");
         JButton backButton = new JButton("Back to Main Menu");
 
         // Action listeners for Admin-specific functionality
@@ -76,6 +80,10 @@ public class AdminView {
         addShowtimeButton.addActionListener(e -> ShowtimeView.addShowtime(frame));
         modifyShowtimeButton.addActionListener(e -> ShowtimeView.modifyShowtime(frame));
         deleteShowtimeButton.addActionListener(e -> ShowtimeView.deleteShowtime(frame));
+        viewNewsButton.addActionListener(e -> NewsView.showNews(frame, () -> AdminView.openAdminMenu(frame)));
+        addNewsButton.addActionListener(e -> NewsView.addNews(frame));
+        modifyNewsButton.addActionListener(e -> NewsView.modifyNews(frame));
+        deleteNewsButton.addActionListener(e -> NewsView.deleteNews(frame));
 
         // Back button callback
         backButton.addActionListener(e ->
@@ -93,6 +101,10 @@ public class AdminView {
         adminPanel.add(addShowtimeButton);
         adminPanel.add(modifyShowtimeButton);
         adminPanel.add(deleteShowtimeButton);
+        adminPanel.add(viewNewsButton);
+        adminPanel.add(addNewsButton);
+        adminPanel.add(modifyNewsButton);
+        adminPanel.add(deleteNewsButton);
         adminPanel.add(backButton);
 
         frame.add(adminPanel, BorderLayout.CENTER);

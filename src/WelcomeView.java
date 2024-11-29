@@ -102,6 +102,7 @@ public class WelcomeView {
             if (!email.matches(emailRegex)) {
                 JOptionPane.showMessageDialog(frame, "Please enter a valid email address.", "Invalid Email", JOptionPane.ERROR_MESSAGE);
                 return;
+
             }
 
             if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
