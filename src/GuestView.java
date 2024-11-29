@@ -10,7 +10,7 @@ public class GuestView {
         JPanel guestPanel = new JPanel();
         guestPanel.setLayout(new GridLayout(0, 1, 10, 10));
 
-        JLabel guestPanelLabel = new JLabel("Guest Menu", SwingConstants.CENTER);
+        JLabel guestPanelLabel = new JLabel("AcmePlex Guest Menu", SwingConstants.CENTER);
         guestPanelLabel.setFont(new Font("Arial", Font.BOLD, 18));
         guestPanel.add(guestPanelLabel);
 
