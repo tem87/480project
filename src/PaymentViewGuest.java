@@ -305,7 +305,6 @@ public class PaymentViewGuest {
         receipt.append(String.format("Total Price Paid: $%.2f\n", totalPrice));
         receipt.append("Card Number: **** **** **** ").append(cardNumber.substring(cardNumber.length() - 4)).append("\n"); // Mask all but the last 4 digits
         receipt.append("Transaction Date: ").append(LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n");
-        receipt.append("--------------------------------------");
 
         JOptionPane.showMessageDialog(null, receipt.toString(), "Payment Receipt", JOptionPane.INFORMATION_MESSAGE);
     }
