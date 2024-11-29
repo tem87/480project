@@ -12,7 +12,7 @@ public class VisualGui {
     public static final Font BUTTON_FONT = new Font("Courier New", Font.BOLD, 14);
 
     // Common colors
-    public static final Color PRIMARY_COLOR = new Color(0, 128, 128);
+    public static final Color PRIMARY_COLOR = new Color(173, 216, 230);
     public static final Color PRIMARY_TEXT_COLOR = Color.black;
     public static final Color ALTERNATE_ROW_COLOR = new Color(224, 255, 255);
     public static final Color BACKGROUND_COLOR = Color.white;
