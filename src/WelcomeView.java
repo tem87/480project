@@ -8,12 +8,12 @@ public class WelcomeView {
 
     public static void showMainMenu() {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Movie Ticket Booking System :)");
+            JFrame frame = new JFrame("Movie Ticket Booking System");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(800, 600);
             frame.setLayout(new BorderLayout());
 
-            JLabel welcomeLabel = new JLabel("MOVIE TICKET BOOKING SYSTEM", SwingConstants.CENTER);
+            JLabel welcomeLabel = new JLabel("WELCOME TO ACMEPLEX!", SwingConstants.CENTER);
             welcomeLabel.setFont(new Font("Georgia", Font.BOLD, 28));
             welcomeLabel.setForeground(new Color(0, 51, 102)); // Dark blue
             welcomeLabel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
@@ -112,7 +112,7 @@ public class WelcomeView {
             RegisteredUser newUser = new RegisteredUser(name, email, password, phone, address);
 
             if (newUser.saveToDatabase()) {
-                JOptionPane.showMessageDialog(frame, "Sign Up Successful! Welcome, " + name + " Login now to access all the features");
+                JOptionPane.showMessageDialog(frame, "Sign Up Successful! Welcome to AcmePlex, " + name + ", you can now Log In to access all the features!");
             } else {
                 JOptionPane.showMessageDialog(frame, "Sign Up Failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -125,7 +125,7 @@ public class WelcomeView {
             public void keyTyped(KeyEvent e) {
                 char c = e.getKeyChar();
                 if (!Character.isDigit(c) || field.getText().length() >= maxLength) {
-                    e.consume(); // Ignore non-digit or excess characters
+                    e.consume(); 
                 }
             }
         });
@@ -150,12 +150,10 @@ public class WelcomeView {
                 char c = e.getKeyChar();
                 String currentText = field.getText();
 
-                // Allow digits, '-' character, and backspace
-                if ((!Character.isDigit(c) && c != '-') || currentText.length() >= maxLength) {
-                    e.consume(); // Ignore invalid characters or if max length is reached
-                }
 
-                // Prevent multiple consecutive '-' or starting with '-'
+                if ((!Character.isDigit(c) && c != '-') || currentText.length() >= maxLength) {
+                    e.consume(); 
+                }
                 if (currentText.endsWith("-") && c == '-' || currentText.isEmpty() && c == '-') {
                     e.consume();
                 }
