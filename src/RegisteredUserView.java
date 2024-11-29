@@ -13,7 +13,7 @@ public class RegisteredUserView {
         JPanel registeredUserPanel = new JPanel();
         registeredUserPanel.setLayout(new GridLayout(0, 1, 10, 10));
 
-        JLabel registeredUserLabel = new JLabel("Registered User Menu", SwingConstants.CENTER);
+        JLabel registeredUserLabel = new JLabel("AcmePlex Registered User Menu", SwingConstants.CENTER);
         registeredUserLabel.setFont(new Font("Arial", Font.BOLD, 18));
         registeredUserPanel.add(registeredUserLabel);
 
