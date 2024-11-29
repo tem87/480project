@@ -5,7 +5,7 @@ public class WelcomeView {
 
     public static void showMainMenu() {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Movie Ticket Booking System");
+            JFrame frame = new JFrame("Movie Ticket Booking System :)");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(900, 800);
             frame.setLayout(new BorderLayout());
