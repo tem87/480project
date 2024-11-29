@@ -5,6 +5,41 @@ import java.util.List;
 
 public class TheatreView {
 
+    public static void showTheatre(JFrame frame, Runnable backToMenuCallback) {
+        frame.getContentPane().removeAll();
+        frame.setLayout(new BorderLayout());
+
+        java.util.List<Theatre> theaters = Theatre.fetchTheaters();
+        String[] columnNames = {"Name", "Location"};
+
+        Object[][] data = new Object[theaters.size()][columnNames.length];
+        for (int i = 0; i < theaters.size(); i++) {
+            Theatre theater = theaters.get(i);
+            data[i][0] = theater.getName();
+            data[i][1] = theater.getLocation();
+        }
+
+        JTable table = VisualGui.createStyledTable(data, columnNames);
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        JLabel titleLabel = VisualGui.createStyledTitle("Available Theatres");
+
+        JButton backButton = VisualGui.createStyledButton("Back to Menu", backToMenuCallback);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(backButton);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        frame.add(mainPanel, BorderLayout.CENTER);
+        frame.revalidate();
+        frame.repaint();
+    }
+
+
 //    public static void showTheatre(JFrame frame, Runnable backToMenuCallback) {
 //        frame.getContentPane().removeAll();
 //        frame.setLayout(new BorderLayout());
@@ -70,41 +105,41 @@ public class TheatreView {
 //        frame.revalidate();
 //        frame.repaint();
 //    }
-public static void showTheatre(JFrame frame, Runnable backToMenuCallback) {
-    frame.getContentPane().removeAll();
-    frame.setLayout(new BorderLayout());
-
-    java.util.List<Theatre> theaters = Theatre.fetchTheaters();
-
-    String[] columnNames = {"Name", "Location"};
-
-    Object[][] data = new Object[theaters.size()][columnNames.length];
-    for (int i = 0; i < theaters.size(); i++) {
-        Theatre theater = theaters.get(i);
-        data[i][0] = theater.getName();
-        data[i][1] = theater.getLocation();
-    }
-
-    JTable table = new JTable(data, columnNames);
-    table.setFillsViewportHeight(true);
-    table.setRowHeight(30);
-    table.setFont(new Font("Arial", Font.PLAIN, 14));
-    table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
-
-    JScrollPane scrollPane = new JScrollPane(table);
-
-    // Back button with a dynamic callback
-    JButton backButton = new JButton("Back to Menu");
-    backButton.addActionListener(e -> backToMenuCallback.run());
-
-    JPanel panel = new JPanel(new BorderLayout());
-    panel.add(scrollPane, BorderLayout.CENTER);
-    panel.add(backButton, BorderLayout.SOUTH);
-
-    frame.add(panel, BorderLayout.CENTER);
-    frame.revalidate();
-    frame.repaint();
-}
+//public static void showTheatre(JFrame frame, Runnable backToMenuCallback) {
+//    frame.getContentPane().removeAll();
+//    frame.setLayout(new BorderLayout());
+//
+//    java.util.List<Theatre> theaters = Theatre.fetchTheaters();
+//
+//    String[] columnNames = {"Name", "Location"};
+//
+//    Object[][] data = new Object[theaters.size()][columnNames.length];
+//    for (int i = 0; i < theaters.size(); i++) {
+//        Theatre theater = theaters.get(i);
+//        data[i][0] = theater.getName();
+//        data[i][1] = theater.getLocation();
+//    }
+//
+//    JTable table = new JTable(data, columnNames);
+//    table.setFillsViewportHeight(true);
+//    table.setRowHeight(30);
+//    table.setFont(new Font("Arial", Font.PLAIN, 14));
+//    table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
+//
+//    JScrollPane scrollPane = new JScrollPane(table);
+//
+//    // Back button with a dynamic callback
+//    JButton backButton = new JButton("Back to Menu");
+//    backButton.addActionListener(e -> backToMenuCallback.run());
+//
+//    JPanel panel = new JPanel(new BorderLayout());
+//    panel.add(scrollPane, BorderLayout.CENTER);
+//    panel.add(backButton, BorderLayout.SOUTH);
+//
+//    frame.add(panel, BorderLayout.CENTER);
+//    frame.revalidate();
+//    frame.repaint();
+//}
 
 
 

@@ -92,11 +92,11 @@ public class PurchaseTicketViewRU {
         panel.add(showtimeDropdown);
 
         // Buttons
-        JButton seatMapButton = new JButton("View Seat Map");
-        JButton backButton = new JButton("Back to Menu");
+        //JButton seatMapButton = new JButton("View Seat Map");
+        JButton backButton = VisualGui.createStyledButton("Back to Menu", backToMenuCallback);
 
         // View seat map button action
-        seatMapButton.addActionListener(e -> {
+        JButton seatMapButton = VisualGui.createStyledButton("View Seat Map", () -> {
             int selectedTheatreIndex = theatreDropdown.getSelectedIndex();
             int selectedMovieIndex = movieDropdown.getSelectedIndex();
             int selectedShowtimeIndex = showtimeDropdown.getSelectedIndex();
@@ -130,5 +130,6 @@ public class PurchaseTicketViewRU {
         frame.add(panel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
+        VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.TABLE_FONT);
     }
 }

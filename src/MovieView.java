@@ -5,6 +5,7 @@ import java.util.List;
 public class MovieView {
 
     // Show all movies
+    // Show all movies for admin view
     public static void showMoviesAdminView(JFrame frame, Runnable backToMenuCallback) {
         List<Movie> movies = Movie.fetchMovies();
         String[] columnNames = {"ID", "Title", "Genre", "Rating", "Synopsis", "Length", "Price", "Early Access"};
@@ -22,10 +23,10 @@ public class MovieView {
             data[i][7] = movie.isEarlyAccess() ? "Yes" : "No";
         }
 
-        displayTable(frame, columnNames, data, backToMenuCallback);
+        displayTable(frame, "All Movies", columnNames, data, backToMenuCallback);
     }
 
-    // View for movies that are NOT early access
+    // Show movies that are NOT early access
     public static void showMovie(JFrame frame, Runnable backToMenuCallback) {
         List<Movie> movies = Movie.fetchMoviesNoEarlyAccess();
         String[] columnNames = {"Title", "Genre", "Rating", "Synopsis", "Length", "Price"};
@@ -41,10 +42,10 @@ public class MovieView {
             data[i][5] = String.format("$%.2f", movie.getPrice());
         }
 
-        displayTable(frame, columnNames, data, backToMenuCallback);
+        displayTable(frame, "Available Movies", columnNames, data, backToMenuCallback);
     }
 
-    // View for early access movies without showing the early access attribute
+    // Show early access movies
     public static void showEarlyAccessMovies(JFrame frame, Runnable backToMenuCallback) {
         List<Movie> movies = Movie.fetchEarlyAccessMovies();
         String[] columnNames = {"Title", "Genre", "Rating", "Synopsis", "Length", "Price"};
@@ -60,32 +61,29 @@ public class MovieView {
             data[i][5] = String.format("$%.2f", movie.getPrice());
         }
 
-        displayTable(frame, columnNames, data, backToMenuCallback);
+        displayTable(frame, "Early Access Movies", columnNames, data, backToMenuCallback);
     }
 
-    // Helper method to display the table
-    private static void displayTable(JFrame frame, String[] columnNames, Object[][] data, Runnable backToMenuCallback) {
+    // Helper method to display tables
+    private static void displayTable(JFrame frame, String title, String[] columnNames, Object[][] data, Runnable backToMenuCallback) {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
-        JTable table = new JTable(data, columnNames);
-        table.setFillsViewportHeight(true);
-        table.setRowHeight(30);
-        table.setFont(new Font("Arial", Font.PLAIN, 14));
-        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
-
+        JTable table = VisualGui.createStyledTable(data, columnNames);
         JScrollPane scrollPane = new JScrollPane(table);
 
-        JButton backButton = new JButton("Back to Menu");
-        backButton.setBackground(Color.DARK_GRAY);
-        backButton.setForeground(Color.WHITE);
-        backButton.addActionListener(e -> backToMenuCallback.run());
+        JLabel titleLabel = VisualGui.createStyledTitle(title);
+        JButton backButton = VisualGui.createStyledButton("Back to Menu", backToMenuCallback);
 
-        JPanel moviesPanel = new JPanel(new BorderLayout());
-        moviesPanel.add(scrollPane, BorderLayout.CENTER);
-        moviesPanel.add(backButton, BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(backButton);
 
-        frame.add(moviesPanel, BorderLayout.CENTER);
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        frame.add(mainPanel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
     }

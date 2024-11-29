@@ -15,7 +15,8 @@ public class ShowtimeView {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
-        java.util.List<Showtime> showtimes = Showtime.fetchShowtimes();
+        // Fetching showtime data
+        List<Showtime> showtimes = Showtime.fetchShowtimes();
         String[] columnNames = {"ID", "Movie ID", "Theater ID", "Start Time", "Max Seats"};
 
         Object[][] data = new Object[showtimes.size()][columnNames.length];
@@ -28,20 +29,14 @@ public class ShowtimeView {
             data[i][4] = showtime.getMaxSeats();
         }
 
-        JTable table = new JTable(data, columnNames);
-        table.setFillsViewportHeight(true);
-        table.setRowHeight(30);
-        table.setFont(new Font("Arial", Font.PLAIN, 14));
-        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
-
+        // Styled JTable
+        JTable table = VisualGui.createStyledTable(data, columnNames);
         JScrollPane scrollPane = new JScrollPane(table);
 
-        // Back button with a dynamic callback
-        JButton backButton = new JButton("Back to Menu");
-        backButton.setBackground(Color.DARK_GRAY);
-        backButton.setForeground(Color.WHITE);
-        backButton.addActionListener(e -> backToMenuCallback.run());
+        // Styled back button
+        JButton backButton = VisualGui.createStyledButton("Back to Menu", backToMenuCallback);
 
+        // Layout panel
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(backButton, BorderLayout.SOUTH);
@@ -55,8 +50,8 @@ public class ShowtimeView {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
+        // Fetching guest showtime data
         List<Showtime> showtimes = Showtime.fetchShowtimesGuest();
-
         String[] columnNames = {"Movie Name", "Theater Name", "Start Time"};
 
         Object[][] data = new Object[showtimes.size()][columnNames.length];
@@ -67,17 +62,14 @@ public class ShowtimeView {
             data[i][2] = showtime.getDateTime();
         }
 
-        JTable table = new JTable(data, columnNames);
-        table.setFillsViewportHeight(true);
-        table.setRowHeight(30);
-        table.setFont(new Font("Arial", Font.PLAIN, 14));
-        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
-
+        // Styled JTable
+        JTable table = VisualGui.createStyledTable(data, columnNames);
         JScrollPane scrollPane = new JScrollPane(table);
 
-        JButton backButton = new JButton("Back to Menu");
-        backButton.addActionListener(e -> backToMenuCallback.run());
+        // Styled back button
+        JButton backButton = VisualGui.createStyledButton("Back to Menu", backToMenuCallback);
 
+        // Layout panel
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(backButton, BorderLayout.SOUTH);

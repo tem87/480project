@@ -10,102 +10,89 @@ public class RegisteredUserView {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
-        JPanel registeredUserPanel = new JPanel();
-        registeredUserPanel.setLayout(new GridLayout(0, 1, 10, 10));
+        // Title label
+        JLabel registeredUserLabel = VisualGui.createStyledTitle("Registered User Menu");
 
-        JLabel registeredUserLabel = new JLabel("Registered User Menu", SwingConstants.CENTER);
-        registeredUserLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        registeredUserPanel.add(registeredUserLabel);
+        // Button panel with centered layout
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Add padding
 
-        JButton viewTheatreButton = new JButton("View Theatres");
-        JButton viewMovieButton = new JButton("View Movies");
-        JButton viewearlyMovieButton = new JButton("View Early Access Movies");
-        JButton viewShowtimeButton = new JButton("View Showtimes");
-        JButton purchaseTicketButton = new JButton("Purchase Ticket");
-        JButton cancelTicketButton = new JButton("Cancel Ticket");
-        JButton annualFeeButton = new JButton("Pay Annual Fee");
-        JButton newsButton = new JButton("News");
-        JButton informationButton = new JButton("Change Information");
-        JButton showTicketsButton = new JButton("View Purchased Tickets");
-        JButton showReceiptsButton = new JButton("View Receipts");
-        JButton backButton = new JButton("Logout");
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 0, 10, 0); // Spacing between buttons
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
 
-
-
-        viewTheatreButton.addActionListener(e ->
+        // Buttons with styled appearance
+        JButton viewTheatreButton = VisualGui.createStyledButton("View Theatres", () ->
                 TheatreView.showTheatre(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
 
-        viewMovieButton.addActionListener(e ->
+        JButton viewMovieButton = VisualGui.createStyledButton("View Movies", () ->
                 MovieView.showMovie(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
 
-        viewearlyMovieButton.addActionListener(e ->
+        JButton viewEarlyMovieButton = VisualGui.createStyledButton("View Early Access Movies", () ->
                 MovieView.showEarlyAccessMovies(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
 
-        viewShowtimeButton.addActionListener(e ->
+        JButton viewShowtimeButton = VisualGui.createStyledButton("View Showtimes", () ->
                 ShowtimeView.showShowtimeDetails(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
 
-        purchaseTicketButton.addActionListener(e ->
-                PurchaseTicketViewRU.showPurchaseTicketView(frame, loggedInUser, () -> RegisteredUserView.openRegisteredUserMenu(frame, loggedInUser))
+        JButton purchaseTicketButton = VisualGui.createStyledButton("Purchase Ticket", () ->
+                PurchaseTicketViewRU.showPurchaseTicketView(frame, loggedInUser, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
 
-        annualFeeButton.addActionListener(e -> handleAnnualFeePayment(frame, loggedInUser));
-
-        // Update callbacks for the registered user functionality
-        showTicketsButton.addActionListener(e -> {
-            String ticketInfo = loggedInUser.fetchTicketsFromDatabase();
-            if (ticketInfo != null && !ticketInfo.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, ticketInfo, "Your Tickets", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(frame, "No tickets found for your account.", "Your Tickets", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-
-        showReceiptsButton.addActionListener(e -> {
-            String receiptInfo = loggedInUser.fetchReceiptsFromDatabase();
-            if (receiptInfo != null && !receiptInfo.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, receiptInfo, "Your Receipts", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(frame, "No receipts found for your account.", "Your Receipts", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-
-        cancelTicketButton.addActionListener(e ->
+        JButton cancelTicketButton = VisualGui.createStyledButton("Cancel Ticket", () ->
                 CancelTicketViewRU.showCancelTicketView(frame, loggedInUser, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
 
-        // Navigate to ChangeInformationView
-        informationButton.addActionListener(e ->
+        JButton annualFeeButton = VisualGui.createStyledButton("Pay Annual Fee", () -> handleAnnualFeePayment(frame, loggedInUser));
+
+        JButton showTicketsButton = VisualGui.createStyledButton("View Purchased Tickets", () -> {
+            String ticketInfo = loggedInUser.fetchTicketsFromDatabase();
+            JOptionPane.showMessageDialog(frame,
+                    ticketInfo != null && !ticketInfo.isEmpty() ? ticketInfo : "No tickets found.",
+                    "Your Tickets", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        JButton showReceiptsButton = VisualGui.createStyledButton("View Receipts", () -> {
+            String receiptInfo = loggedInUser.fetchReceiptsFromDatabase();
+            JOptionPane.showMessageDialog(frame,
+                    receiptInfo != null && !receiptInfo.isEmpty() ? receiptInfo : "No receipts found.",
+                    "Your Receipts", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        JButton newsButton = VisualGui.createStyledButton("News", () ->
+                NewsView.showNews(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
+        );
+
+        JButton informationButton = VisualGui.createStyledButton("Change Information", () ->
                 ChangeInformationView.showChangeInformation(frame, loggedInUser, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
 
-        newsButton.addActionListener(e -> NewsView.showNews(frame, () -> openRegisteredUserMenu(frame, loggedInUser)));
-
-
-        // Logout functionality
-        backButton.addActionListener(e -> {
+        JButton backButton = VisualGui.createStyledButton("Logout", () -> {
             JOptionPane.showMessageDialog(frame, "You have been logged out.");
             WelcomeView.showMainMenu();
         });
 
+        // Add buttons to the panel
+        gbc.gridy = 0; buttonPanel.add(viewTheatreButton, gbc);
+        gbc.gridy++;   buttonPanel.add(viewMovieButton, gbc);
+        gbc.gridy++;   buttonPanel.add(viewEarlyMovieButton, gbc);
+        gbc.gridy++;   buttonPanel.add(viewShowtimeButton, gbc);
+        gbc.gridy++;   buttonPanel.add(purchaseTicketButton, gbc);
+        gbc.gridy++;   buttonPanel.add(cancelTicketButton, gbc);
+        gbc.gridy++;   buttonPanel.add(annualFeeButton, gbc);
+        gbc.gridy++;   buttonPanel.add(showTicketsButton, gbc);
+        gbc.gridy++;   buttonPanel.add(showReceiptsButton, gbc);
+        gbc.gridy++;   buttonPanel.add(newsButton, gbc);
+        gbc.gridy++;   buttonPanel.add(informationButton, gbc);
+        gbc.gridy++;   buttonPanel.add(backButton, gbc);
 
-        registeredUserPanel.add(viewTheatreButton);
-        registeredUserPanel.add(viewMovieButton);
-        registeredUserPanel.add(viewearlyMovieButton);
-        registeredUserPanel.add(viewShowtimeButton);
-        registeredUserPanel.add(purchaseTicketButton);
-        registeredUserPanel.add(cancelTicketButton);
-        registeredUserPanel.add(annualFeeButton);
-        registeredUserPanel.add(showTicketsButton); // Add ticket buttons
-        registeredUserPanel.add(showReceiptsButton);
-        registeredUserPanel.add(newsButton);
-        registeredUserPanel.add(informationButton);
-        registeredUserPanel.add(backButton);
-
-        frame.add(registeredUserPanel, BorderLayout.CENTER);
+        // Add components to the frame
+        frame.add(registeredUserLabel, BorderLayout.NORTH);
+        frame.add(buttonPanel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
     }

@@ -6,9 +6,9 @@ public class AdminView {
     public static void showAdminLogin(JFrame frame) {
         JPanel loginPanel = new JPanel(new GridLayout(2, 2, 10, 10));
 
-        JLabel usernameLabel = new JLabel("Username:");
+        JLabel usernameLabel = VisualGui.createStyledLabel("Username:");
         JTextField usernameField = new JTextField();
-        JLabel passwordLabel = new JLabel("Password:");
+        JLabel passwordLabel = VisualGui.createStyledLabel("Password:");
         JPasswordField passwordField = new JPasswordField();
 
         loginPanel.add(usernameLabel);
@@ -39,7 +39,7 @@ public class AdminView {
     private static boolean validateAdminCredentials(String username, String password) {
         // Hardcoded credentials - replace with database queries if necessary
         String adminUsername = "admin";
-        String adminPassword = "gojo123";
+        String adminPassword = "admin12345";
 
         return username.equals(adminUsername) && password.equals(adminPassword);
     }
@@ -48,67 +48,101 @@ public class AdminView {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
-        JPanel adminPanel = new JPanel();
-        adminPanel.setLayout(new GridLayout(0, 1, 10, 10));
+        // Styled title using VisualGui
+        JLabel adminLabel = VisualGui.createStyledTitle("Admin Menu");
 
-        JLabel adminLabel = new JLabel("Admin Menu", SwingConstants.CENTER);
-        adminLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        adminPanel.add(adminLabel);
+        // Main panel with GridBagLayout for centering buttons
+        JPanel adminPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL; // Ensure buttons fill the width
+        gbc.insets = new Insets(5, 0, 5, 0); // Add spacing between buttons
+        gbc.gridx = 0; // All buttons in one column
 
-        JButton viewTheatreButton = new JButton("View Theatres");
-        JButton viewMovieButton = new JButton("View Movies");
-        JButton addMovieButton = new JButton("Add Movie");
-        JButton modifyMovieButton = new JButton("Modify Movie");
-        JButton deleteMovieButton = new JButton("Delete Movie");
-        JButton viewShowtimeButton = new JButton("View Showtimes");
-        JButton addShowtimeButton = new JButton("Add Showtime");
-        JButton modifyShowtimeButton = new JButton("Modify Showtime");
-        JButton deleteShowtimeButton = new JButton("Delete Showtime");
-        JButton viewNewsButton = new JButton("View News");
-        JButton addNewsButton = new JButton("Add News");
-        JButton modifyNewsButton = new JButton("Modify News");
-        JButton deleteNewsButton = new JButton("Delete News");
-        JButton backButton = new JButton("Back to Main Menu");
-
-        // Action listeners for Admin-specific functionality
-        viewTheatreButton.addActionListener(e -> TheatreView.showTheatre(frame, () -> AdminView.openAdminMenu(frame)));
-        viewMovieButton.addActionListener(e -> MovieView.showMoviesAdminView(frame, () -> AdminView.openAdminMenu(frame)));
-        addMovieButton.addActionListener(e -> MovieView.addMovie(frame));
-        modifyMovieButton.addActionListener(e -> MovieView.modifyMovie(frame));
-        deleteMovieButton.addActionListener(e -> MovieView.deleteMovie(frame));
-        viewShowtimeButton.addActionListener(e -> ShowtimeView.showShowtime(frame, () -> AdminView.openAdminMenu(frame)));
-        addShowtimeButton.addActionListener(e -> ShowtimeView.addShowtime(frame));
-        modifyShowtimeButton.addActionListener(e -> ShowtimeView.modifyShowtime(frame));
-        deleteShowtimeButton.addActionListener(e -> ShowtimeView.deleteShowtime(frame));
-        viewNewsButton.addActionListener(e -> NewsView.showNews(frame, () -> AdminView.openAdminMenu(frame)));
-        addNewsButton.addActionListener(e -> NewsView.addNews(frame));
-        modifyNewsButton.addActionListener(e -> NewsView.modifyNews(frame));
-        deleteNewsButton.addActionListener(e -> NewsView.deleteNews(frame));
-
-        // Back button callback
-        backButton.addActionListener(e ->
-                WelcomeView.showMainMenu()
+        // Create styled buttons
+        JButton viewTheatreButton = createSmallStyledButton("View Theatres", () ->
+                TheatreView.showTheatre(frame, () -> AdminView.openAdminMenu(frame))
         );
+        JButton viewMovieButton = createSmallStyledButton("View Movies", () ->
+                MovieView.showMoviesAdminView(frame, () -> AdminView.openAdminMenu(frame))
+        );
+        JButton addMovieButton = createSmallStyledButton("Add Movie", () ->
+                MovieView.addMovie(frame)
+        );
+        JButton modifyMovieButton = createSmallStyledButton("Modify Movie", () ->
+                MovieView.modifyMovie(frame)
+        );
+        JButton deleteMovieButton = createSmallStyledButton("Delete Movie", () ->
+                MovieView.deleteMovie(frame)
+        );
+        JButton viewShowtimeButton = createSmallStyledButton("View Showtimes", () ->
+                ShowtimeView.showShowtime(frame, () -> AdminView.openAdminMenu(frame))
+        );
+        JButton addShowtimeButton = createSmallStyledButton("Add Showtime", () ->
+                ShowtimeView.addShowtime(frame)
+        );
+        JButton modifyShowtimeButton = createSmallStyledButton("Modify Showtime", () ->
+                ShowtimeView.modifyShowtime(frame)
+        );
+        JButton deleteShowtimeButton = createSmallStyledButton("Delete Showtime", () ->
+                ShowtimeView.deleteShowtime(frame)
+        );
+        JButton viewNewsButton = createSmallStyledButton("View News", () ->
+                NewsView.showNews(frame, () -> AdminView.openAdminMenu(frame))
+        );
+        JButton addNewsButton = createSmallStyledButton("Add News", () ->
+                NewsView.addNews(frame)
+        );
+        JButton modifyNewsButton = createSmallStyledButton("Modify News", () ->
+                NewsView.modifyNews(frame)
+        );
+        JButton deleteNewsButton = createSmallStyledButton("Delete News", () ->
+                NewsView.deleteNews(frame)
+        );
+        JButton backButton = createSmallStyledButton("Back to Main Menu", WelcomeView::showMainMenu);
 
+        // Add buttons to the panel with vertical centering
+        gbc.gridy = 0;
+        adminPanel.add(viewTheatreButton, gbc);
+        gbc.gridy++;
+        adminPanel.add(viewMovieButton, gbc);
+        gbc.gridy++;
+        adminPanel.add(addMovieButton, gbc);
+        gbc.gridy++;
+        adminPanel.add(modifyMovieButton, gbc);
+        gbc.gridy++;
+        adminPanel.add(deleteMovieButton, gbc);
+        gbc.gridy++;
+        adminPanel.add(viewShowtimeButton, gbc);
+        gbc.gridy++;
+        adminPanel.add(addShowtimeButton, gbc);
+        gbc.gridy++;
+        adminPanel.add(modifyShowtimeButton, gbc);
+        gbc.gridy++;
+        adminPanel.add(deleteShowtimeButton, gbc);
+        gbc.gridy++;
+        adminPanel.add(viewNewsButton, gbc);
+        gbc.gridy++;
+        adminPanel.add(addNewsButton, gbc);
+        gbc.gridy++;
+        adminPanel.add(modifyNewsButton, gbc);
+        gbc.gridy++;
+        adminPanel.add(deleteNewsButton, gbc);
+        gbc.gridy++;
+        adminPanel.add(backButton, gbc);
 
-        // Adding buttons to the Admin panel
-        adminPanel.add(viewTheatreButton);
-        adminPanel.add(viewMovieButton);
-        adminPanel.add(addMovieButton);
-        adminPanel.add(modifyMovieButton);
-        adminPanel.add(deleteMovieButton);
-        adminPanel.add(viewShowtimeButton);
-        adminPanel.add(addShowtimeButton);
-        adminPanel.add(modifyShowtimeButton);
-        adminPanel.add(deleteShowtimeButton);
-        adminPanel.add(viewNewsButton);
-        adminPanel.add(addNewsButton);
-        adminPanel.add(modifyNewsButton);
-        adminPanel.add(deleteNewsButton);
-        adminPanel.add(backButton);
-
+        // Add components to the frame
+        frame.add(adminLabel, BorderLayout.NORTH);
         frame.add(adminPanel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
     }
+
+    // Helper method for smaller buttons
+    private static JButton createSmallStyledButton(String text, Runnable action) {
+        JButton button = VisualGui.createStyledButton(text, action);
+        button.setPreferredSize(new Dimension(200, 40)); // Set a smaller preferred size
+        return button;
+    }
+
 }
+

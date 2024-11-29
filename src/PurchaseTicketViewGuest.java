@@ -11,7 +11,7 @@ public class PurchaseTicketViewGuest {
 
         JPanel panel = new JPanel(new GridLayout(0, 1, 10, 10));
         JLabel titleLabel = new JLabel("Purchase Ticket", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        titleLabel.setFont(new Font("Courier New", Font.BOLD, 18));
         panel.add(titleLabel);
 
         // Dropdowns for Theatre, Movie, and Showtime
@@ -97,8 +97,10 @@ public class PurchaseTicketViewGuest {
         panel.add(showtimeDropdown);
 
         // Buttons
-        JButton seatMapButton = new JButton("View Seat Map");
-        JButton backButton = new JButton("Back to Menu");
+        //JButton seatMapButton = new JButton("View Seat Map");
+        JButton seatMapButton = VisualGui.createStyledButtonSmall("View Seat Map");
+        //JButton backButton = new JButton("Back to Menu");
+        JButton backButton = VisualGui.createStyledButtonSmall("Back to Menu");
 
         seatMapButton.addActionListener(e -> {
             int selectedTheatreIndex = theatreDropdown.getSelectedIndex();
@@ -126,5 +128,6 @@ public class PurchaseTicketViewGuest {
         frame.add(panel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
+        VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.TABLE_FONT);
     }
 }

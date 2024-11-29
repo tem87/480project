@@ -15,7 +15,7 @@ public class PaymentViewGuest {
         frame.setLayout(new BorderLayout(10, 10));
 
         JLabel mainTitle = new JLabel("Enter Payment Details", SwingConstants.CENTER);
-        mainTitle.setFont(new Font("Arial", Font.BOLD, 24));
+        mainTitle.setFont(new Font("Courier New", Font.BOLD, 24));
         frame.add(mainTitle, BorderLayout.NORTH);
 
         JPanel mainPanel = new JPanel(new GridLayout(4, 1, 10, 10));
@@ -56,7 +56,8 @@ public class PaymentViewGuest {
 
         JLabel voucherLabel = new JLabel("Enter Voucher Code:");
         JTextField voucherField = new JTextField();
-        JButton applyVoucherButton = new JButton("Apply Voucher");
+        JButton applyVoucherButton = VisualGui.createStyledButtonSmall("Apply Voucher");
+
         JLabel voucherMessage = new JLabel("No voucher applied.", SwingConstants.CENTER);
 
         applyVoucherButton.addActionListener(e -> {
@@ -151,8 +152,11 @@ public class PaymentViewGuest {
         mainPanel.add(paymentPanel);
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
-        JButton confirmButton = new JButton("Confirm Payment");
-        JButton backButton = new JButton("Back");
+        //JButton confirmButton = new JButton("Confirm Payment");
+        //JButton backButton = new JButton("Back");
+
+        JButton confirmButton = VisualGui.createStyledButtonSmall("Confirm Payment");
+        JButton backButton = VisualGui.createStyledButtonSmall("Back to Menu");
 
         confirmButton.addActionListener(e -> {
             String name = nameField.getText();
@@ -210,7 +214,7 @@ public class PaymentViewGuest {
             }
         });
 
-        JButton sendEmailButton = new JButton("Send Receipt and Tickets via Email");
+        JButton sendEmailButton = VisualGui.createStyledButtonSmall("Send Receipt and Tickets via Email");
         buttonPanel.add(sendEmailButton);
 
         // send email button
@@ -244,6 +248,7 @@ public class PaymentViewGuest {
         frame.add(buttonPanel, BorderLayout.SOUTH);
         frame.revalidate();
         frame.repaint();
+        VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.TABLE_FONT);
     }
 
     private static boolean validateInputs(String name, String cardNumber, String cvv, String expirationDate) {

@@ -20,11 +20,11 @@ public class CancelTicketViewGuest {
         JTextField nameField = new JTextField();
         nameField.setPreferredSize(new Dimension(200, 24));
 
-        JButton checkDetailsButton = new JButton("Check Details");
-        checkDetailsButton.setPreferredSize(new Dimension(120, 30)); // Resized button
+        JButton checkDetailsButton = VisualGui.createStyledButtonSmall("Check Details");
+        //checkDetailsButton.setPreferredSize(new Dimension(120, 30)); // Resized button
 
-        JButton backButton = new JButton("Back to Menu");
-        backButton.setPreferredSize(new Dimension(120, 30)); // Resized button
+        JButton backButton = VisualGui.createStyledButtonSmall("Back to Menu");
+        //backButton.setPreferredSize(new Dimension(120, 30)); // Resized button
 
         inputPanel.add(emailLabel);
         JPanel emailInputPanel = new JPanel();
@@ -94,14 +94,14 @@ public class CancelTicketViewGuest {
         cancelTicketPanel.setLayout(new GridLayout(0, 1, 10, 10));
 
         JLabel titleLabel = new JLabel("Cancel Ticket", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        titleLabel.setFont(new Font("Courier New", Font.BOLD, 18));
         cancelTicketPanel.add(titleLabel);
 
         JLabel ticketLabel = new JLabel("Select a ticket to cancel:");
 
         JComboBox<String> ticketDropdown = new JComboBox<>();
-        JButton cancelTicketButton = new JButton("Cancel Ticket");
-        JButton backButton = new JButton("Back");
+        JButton cancelTicketButton = VisualGui.createStyledButtonSmall("Cancel Ticket");
+        JButton backButton = VisualGui.createStyledButtonSmall("Back");
 
         cancelTicketPanel.add(ticketLabel);
         cancelTicketPanel.add(ticketDropdown);

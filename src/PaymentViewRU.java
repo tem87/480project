@@ -13,7 +13,7 @@ public class PaymentViewRU {
         frame.setLayout(new BorderLayout(10, 10));
 
         JLabel mainTitle = new JLabel("Payment Details for " + loggedInUser.getName(), SwingConstants.CENTER);
-        mainTitle.setFont(new Font("Arial", Font.BOLD, 24));
+        mainTitle.setFont(new Font("Courier New", Font.BOLD, 24));
         frame.add(mainTitle, BorderLayout.NORTH);
 
         JPanel mainPanel = new JPanel(new GridLayout(4, 1, 10, 10));
@@ -54,7 +54,7 @@ public class PaymentViewRU {
 
         JLabel voucherLabel = new JLabel("Enter Voucher Code:");
         JTextField voucherField = new JTextField();
-        JButton applyVoucherButton = new JButton("Apply Voucher");
+        JButton applyVoucherButton = VisualGui.createStyledButtonSmall("Apply Voucher");
         JLabel voucherMessage = new JLabel("No voucher applied.", SwingConstants.CENTER);
 
         applyVoucherButton.addActionListener(e -> {
@@ -147,10 +147,12 @@ public class PaymentViewRU {
 
         // Action Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout());
-        JButton confirmButton = new JButton("Confirm Payment");
+        JButton confirmButton = VisualGui.createStyledButtonSmall("Confirm Payment");
         //email thing
-        JButton sendEmailButton = new JButton("Send Receipt and Tickets via Email");
-        JButton backButton = new JButton("Back");
+        //JButton sendEmailButton = new JButton("Send Receipt and Tickets via Email");
+        JButton sendEmailButton = VisualGui.createStyledButtonSmall("Send Receipt and Tickets via Email");
+        //JButton backButton = new JButton("Back");
+        JButton backButton = VisualGui.createStyledButtonSmall("Back to Menu");
 
         confirmButton.addActionListener(e -> {
             String cardNumber = cardNumberField.getText();
@@ -340,6 +342,7 @@ public class PaymentViewRU {
         frame.add(buttonPanel, BorderLayout.SOUTH);
         frame.revalidate();
         frame.repaint();
+        VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.TABLE_FONT);
     }
 
     private static boolean validateInputs(String cardNumber, String cvv, String expirationDate) {

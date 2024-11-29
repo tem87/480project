@@ -7,51 +7,55 @@ public class GuestView {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
-        JPanel guestPanel = new JPanel();
-        guestPanel.setLayout(new GridLayout(0, 1, 10, 10));
+        // Styled title using VisualGui
+        JLabel guestPanelLabel = VisualGui.createStyledTitle("AcmePlex Guest Menu");
+        frame.add(guestPanelLabel, BorderLayout.NORTH);
 
-        JLabel guestPanelLabel = new JLabel("AcmePlex Guest Menu", SwingConstants.CENTER);
-        guestPanelLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        guestPanel.add(guestPanelLabel);
+        // Button panel
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(15, 15, 15, 15);
 
-        JButton viewTheatreButton = new JButton("View Theatres");
-        JButton viewMovieButton = new JButton("View Movies");
-        JButton viewShowtimeButton = new JButton("View Showtimes");
-        JButton purchaseTicketButton = new JButton("Purchase Ticket");
-        JButton cancelTicketButton = new JButton("Cancel Ticket"); // Fixed button text
-        JButton backButton = new JButton("Back to Main Menu");
-
-        // Update callbacks for the new changes
-        viewTheatreButton.addActionListener(e ->
-                TheatreView.showTheatre(frame, () -> GuestView.openGuestMenu(frame))
-        );
-        viewMovieButton.addActionListener(e ->
-                MovieView.showMovie(frame, () -> GuestView.openGuestMenu(frame))
-        );
-        viewShowtimeButton.addActionListener(e ->
-                ShowtimeView.showShowtimeDetails(frame, () -> GuestView.openGuestMenu(frame))
+        // Styled buttons using VisualGui
+        JButton viewTheatreButton = VisualGui.createStyledButton("View Theatres",
+                () -> TheatreView.showTheatre(frame, () -> GuestView.openGuestMenu(frame))
         );
 
-        // Open the PurchaseTicketView when Purchase Ticket button is clicked
-        purchaseTicketButton.addActionListener(e ->
-                PurchaseTicketViewGuest.showPurchaseTicketView(frame, () -> GuestView.openGuestMenu(frame))
+        JButton viewMovieButton = VisualGui.createStyledButton("View Movies",
+                () -> MovieView.showMovie(frame, () -> GuestView.openGuestMenu(frame))
         );
 
-        // Cancel ticket action
-        cancelTicketButton.addActionListener(e ->
-                CancelTicketViewGuest.showCancelTicketView(frame, () -> GuestView.openGuestMenu(frame))
+        JButton viewShowtimeButton = VisualGui.createStyledButton("View Showtimes",
+                () -> ShowtimeView.showShowtimeDetails(frame, () -> GuestView.openGuestMenu(frame))
         );
 
-        backButton.addActionListener(e -> WelcomeView.showMainMenu());
+        JButton purchaseTicketButton = VisualGui.createStyledButton("Purchase Ticket",
+                () -> PurchaseTicketViewGuest.showPurchaseTicketView(frame, () -> GuestView.openGuestMenu(frame))
+        );
 
-        guestPanel.add(viewTheatreButton);
-        guestPanel.add(viewMovieButton);
-        guestPanel.add(viewShowtimeButton);
-        guestPanel.add(purchaseTicketButton);
-        guestPanel.add(cancelTicketButton); // Added the cancel ticket button
-        guestPanel.add(backButton);
+        JButton cancelTicketButton = VisualGui.createStyledButton("Cancel Ticket",
+                () -> CancelTicketViewGuest.showCancelTicketView(frame, () -> GuestView.openGuestMenu(frame))
+        );
 
-        frame.add(guestPanel, BorderLayout.CENTER);
+        JButton backButton = VisualGui.createStyledButton("Back to Main Menu",
+                WelcomeView::showMainMenu
+        );
+
+        // Adding buttons to the layout
+        gbc.gridy = 0;
+        buttonPanel.add(viewTheatreButton, gbc);
+        gbc.gridy = 1;
+        buttonPanel.add(viewMovieButton, gbc);
+        gbc.gridy = 2;
+        buttonPanel.add(viewShowtimeButton, gbc);
+        gbc.gridy = 3;
+        buttonPanel.add(purchaseTicketButton, gbc);
+        gbc.gridy = 4;
+        buttonPanel.add(cancelTicketButton, gbc);
+        gbc.gridy = 5;
+        buttonPanel.add(backButton, gbc);
+
+        frame.add(buttonPanel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
     }

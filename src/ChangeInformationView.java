@@ -9,13 +9,13 @@ public class ChangeInformationView {
 
         JPanel panel = new JPanel(new GridLayout(0, 1, 10, 10));
         JLabel titleLabel = new JLabel("Change User Information", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        titleLabel.setFont(new Font("Courier New", Font.BOLD, 18));
         panel.add(titleLabel);
 
         // Buttons for changing information
-        JButton changeFullNameButton = new JButton("Change Full Name");
-        JButton changeEmailButton = new JButton("Change Email");
-        JButton changePasswordButton = new JButton("Change Password");
+        JButton changeFullNameButton = VisualGui.createStyledButtonSmall("Change Full Name");
+        JButton changeEmailButton = VisualGui.createStyledButtonSmall("Change Email");
+        JButton changePasswordButton = VisualGui.createStyledButtonSmall("Change Password");
 
         // Action for "Change Full Name" button
         changeFullNameButton.addActionListener(e -> {

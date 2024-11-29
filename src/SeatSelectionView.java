@@ -20,7 +20,7 @@ public class SeatSelectionView {
         seatsPanel.setOpaque(false);
 
         JLabel totalCostLabel = new JLabel("Total Cost: $0.00", SwingConstants.CENTER);
-        totalCostLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        totalCostLabel.setFont(new Font("Courier New", Font.BOLD, 16));
         totalCostLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
         double moviePrice = movie.getPrice();
@@ -52,7 +52,7 @@ public class SeatSelectionView {
             // Add seat number as an overlay label
             JLabel seatLabel = new JLabel(seat.getSeatNumber(), SwingConstants.CENTER);
             seatLabel.setForeground(Color.BLACK); // Black text for visibility
-            seatLabel.setFont(new Font("Arial", Font.BOLD, 14));
+            seatLabel.setFont(new Font("Courier New", Font.BOLD, 14));
             seatLabel.setOpaque(false); // Transparent background
             seatButton.add(seatLabel, BorderLayout.CENTER);
 
@@ -80,11 +80,11 @@ public class SeatSelectionView {
         centerWrapper.add(seatsPanel);
 
         // Back button
-        JButton backButton = new JButton("Back to Showtime Menu");
+        JButton backButton = VisualGui.createStyledButtonSmall("Back to Showtime Menu");
         backButton.addActionListener(e -> backToMenuCallback.run());
 
         // Proceed to Payment button
-        JButton proceedButton = new JButton("Proceed to Payment");
+        JButton proceedButton = VisualGui.createStyledButtonSmall("Proceed to Payment");
         proceedButton.addActionListener(e -> {
             if (selectedSeats.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Please select at least one seat to proceed.");
@@ -111,6 +111,7 @@ public class SeatSelectionView {
 
         frame.revalidate();
         frame.repaint();
+        VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.TABLE_FONT);
     }
 
 

@@ -14,15 +14,15 @@ public class CancelTicketViewRU {
         cancelTicketPanel.setLayout(new GridLayout(0, 1, 10, 10));
 
         JLabel titleLabel = new JLabel("Cancel Ticket", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        titleLabel.setFont(new Font("Courier New", Font.BOLD, 18));
         cancelTicketPanel.add(titleLabel);
 
         JLabel ticketLabel = new JLabel("Select a ticket to cancel:");
 
         // Dropdown to display tickets
         JComboBox<String> ticketDropdown = new JComboBox<>();
-        JButton cancelTicketButton = new JButton("Cancel Ticket");
-        JButton backButton = new JButton("Back");
+        JButton cancelTicketButton = VisualGui.createStyledButtonSmall("Cancel Ticket");
+        JButton backButton = VisualGui.createStyledButtonSmall("Back");
 
         cancelTicketPanel.add(ticketLabel);
         cancelTicketPanel.add(ticketDropdown);

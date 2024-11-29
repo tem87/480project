@@ -10,7 +10,7 @@ public class NewsView {
         frame.setLayout(new BorderLayout());
 
         JLabel titleLabel = new JLabel("News", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        titleLabel.setFont(new Font("Courier New", Font.BOLD, 18));
 
         // Fetch all news
         List<News> newsList = News.fetchAllNews();
@@ -40,6 +40,7 @@ public class NewsView {
         frame.add(newsPanel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
+        VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.TABLE_FONT);
     }
 
     public static void addNews(JFrame frame) {
