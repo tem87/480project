@@ -73,7 +73,7 @@ public class Movie {
 
     // Add movie to the database
     public boolean addMovie() {
-        String query = "INSERT INTO Movie (title, genre, rating, synopsis, length, price, has_early_access) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Movie (title, genre, rating, synopsis, length, price, early_access) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -97,7 +97,7 @@ public class Movie {
 
     // Update an existing movie
     public boolean modifyMovie() {
-        String query = "UPDATE Movie SET title = ?, genre = ?, rating = ?, synopsis = ?, length = ?, price = ?, has_early_access = ? WHERE movie_id = ?";
+        String query = "UPDATE Movie SET title = ?, genre = ?, rating = ?, synopsis = ?, length = ?, price = ?, early_access = ? WHERE movie_id = ?";
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
