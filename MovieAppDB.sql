@@ -61,7 +61,6 @@ CREATE TABLE Tickets (
     FOREIGN KEY (seat_id) REFERENCES Seats(seat_id)
 );
 
-
 CREATE TABLE Bank (
     bank_id INT AUTO_INCREMENT PRIMARY KEY,
     card_number VARCHAR(16) UNIQUE NOT NULL,
@@ -91,6 +90,19 @@ CREATE TABLE Receipt (
     FOREIGN KEY (ticket_id) REFERENCES Tickets(ticket_id)
 ); 
 
+CREATE TABLE News (
+	news_id INT AUTO_INCREMENT PRIMARY KEY,
+    headline VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL
+);
+
+-- Insert sample data into News table
+INSERT INTO News (headline, content) VALUES
+('New Blockbuster Movie Released', 'A thrilling new blockbuster has just hit theaters, breaking box office records.'),
+('Award Season Kicks Off', 'The award season is officially here. Several movies are tipped to win big this year.'),
+('Exclusive Interview with Top Director', 'In an exclusive interview, the director discusses the making of their latest hit movie.'),
+('Top 10 Movies to Watch this Winter', 'Here is our pick of the top 10 movies to enjoy during the winter season.'),
+('Upcoming Movie Premieres This Month', 'Several highly anticipated movies are premiering this month. Check out the full schedule here.');
 
 
 INSERT INTO Bank (card_number, cvv, expiration_date, balance)
@@ -178,7 +190,7 @@ INSERT INTO Seats (showtime_id, seat_number) VALUES
 
 INSERT INTO Users (name, email, password, phone_number, address, is_registered, annual_fee_paid) VALUES
 ('Jamie Smith', 'jamie1@gmaile.com', NULL, NULL, NULL, FALSE, FALSE),
-('a', 'a@gmail.com', 'a', '0987654321', '596 Oak Avenue', TRUE, FALSE);
+('Ana', 'a@gmail.com', 'ana145', '0987654321', '596 Oak Avenue', TRUE, FALSE);
 
 
 -- Step 2: Insert Voucher for the User
