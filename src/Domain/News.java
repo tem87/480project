@@ -148,6 +148,6 @@ public class News {
 
     @Override
     public String toString() {
-        return "Domain.News ID: " + newsId + "\nHeadline: " + headline + "\nContent: " + content + "\n";
+        return "News ID: " + newsId + "\nHeadline: " + headline + "\nContent: " + content + "\n";
     }
 }

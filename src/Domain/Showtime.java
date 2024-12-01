@@ -217,7 +217,7 @@ public class Showtime {
 
     @Override
     public String toString() {
-        return "Domain.Showtime{" +
+        return "Showtime{" +
                 "showtimeID=" + showtimeID +
                 ", movieID=" + movieID +
                 ", theaterID=" + theaterID +
