@@ -136,13 +136,13 @@ public class User {
             preparedStatement.setInt(1, this.userId);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                tickets.append("Ticket ID: ").append(resultSet.getInt("ticket_id"))
-                        .append(", Movie: ").append(resultSet.getString("movie_title"))
-                        .append(", Showtime: ").append(resultSet.getTimestamp("showtime_time"))
-                        .append(", Seat: ").append(resultSet.getString("seat_number"))
-                        .append(", Price: $").append(resultSet.getBigDecimal("price"))
-                        .append(", Status: ").append(resultSet.getString("status"))
-                        .append(", Purchase Date: ").append(resultSet.getTimestamp("purchase_date"))
+                tickets.append("Ticket ID: ").append(resultSet.getInt("ticket_id")).append("\n")
+                        .append("Movie: ").append(resultSet.getString("movie_title")).append("\n")
+                        .append("Showtime: ").append(resultSet.getTimestamp("showtime_time")).append("\n")
+                        .append("Seat: ").append(resultSet.getString("seat_number")).append("\n")
+                        .append("Price: $").append(resultSet.getBigDecimal("price")).append("\n")
+                        .append("Status: ").append(resultSet.getString("status")).append("\n")
+                        .append("Purchase Date: ").append(resultSet.getTimestamp("purchase_date")).append("\n")
                         .append("\n");
             }
         } catch (SQLException e) {
