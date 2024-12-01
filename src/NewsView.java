@@ -40,7 +40,7 @@ public class NewsView {
         frame.add(newsPanel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
-        VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.TABLE_FONT);
+        VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.fontTable);
     }
 
     public static void addNews(JFrame frame) {

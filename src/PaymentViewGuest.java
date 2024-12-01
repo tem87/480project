@@ -248,7 +248,7 @@ public class PaymentViewGuest {
         frame.add(buttonPanel, BorderLayout.SOUTH);
         frame.revalidate();
         frame.repaint();
-        VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.TABLE_FONT);
+        VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.fontTable);
     }
 
     private static boolean validateInputs(String name, String cardNumber, String cvv, String expirationDate) {

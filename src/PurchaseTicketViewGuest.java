@@ -128,6 +128,6 @@ public class PurchaseTicketViewGuest {
         frame.add(panel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
-        VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.TABLE_FONT);
+        VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.fontTable);
     }
 }

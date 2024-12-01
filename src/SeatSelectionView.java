@@ -111,7 +111,7 @@ public class SeatSelectionView {
 
         frame.revalidate();
         frame.repaint();
-        VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.TABLE_FONT);
+        VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.fontTable);
     }
 
 
