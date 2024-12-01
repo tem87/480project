@@ -1,3 +1,5 @@
+-- ENSF 480 Group 7
+
 DROP DATABASE IF EXISTS MovieAppDB;
 CREATE DATABASE MovieAppDB;
 USE MovieAppDB;
@@ -109,7 +111,7 @@ INSERT INTO Bank (card_number, cvv, expiration_date, balance)
 VALUES
 ('1234567890123456', '123', '12/25', 500.00),
 ('6543210987654321', '456', '11/24', 300.00),
-('1111222233334444', '789', '10/23', 1000.00),
+('1111222233334444', '789', '10/25', 1000.00),
 ('9999000011112222', '654', '08/27', 1200.00);
 
 
@@ -127,14 +129,14 @@ INSERT INTO Theater (name, location) VALUES
 
 -- Insert showtimes
 INSERT INTO Showtime (movie_id, theater_id, start_time, max_seats) VALUES
-(1, 1, '2024-11-25 17:00', 10), -- less than 72 hours
-(1, 2, '2024-12-03 18:00', 10), -- more
-(2, 1, '2024-11-21 19:00', 10),
-(2, 2, '2024-11-21 20:00', 10),
-(3, 1, '2024-11-22 22:00', 10),
-(3, 2, '2024-11-21 20:00', 10),
-(4, 1, '2024-11-22 22:00', 10),
-(4, 2, '2024-11-21 20:00', 10);
+(1, 1, '2024-11-28 17:00', 20), -- less than 72 hours
+(1, 2, '2024-12-03 18:00', 20), -- more
+(2, 1, '2024-12-21 19:00', 20),
+(2, 2, '2024-12-21 20:00', 20),
+(3, 1, '2024-12-22 22:00', 20),
+(3, 2, '2024-12-21 20:00', 20),
+(4, 1, '2024-12-22 22:00', 20),
+(4, 2, '2024-12-21 20:00', 20);
 
 
 -- Generate 20 seats for showtime_id = 1
@@ -159,7 +161,7 @@ INSERT INTO Seats (showtime_id, seat_number) VALUES
 (3, 'C16'), (3, 'C17'), (3, 'C18'), (3, 'C19'), (3, 'C20');
 
 
--- Generate 20 seats for showtime_id = 5
+-- Generate 20 seats for showtime_id = 4
 INSERT INTO Seats (showtime_id, seat_number) VALUES
 (4, 'F1'), (4, 'F2'), (4, 'F3'), (4, 'F4'), (4, 'F5'),
 (4, 'F6'), (4, 'F7'), (4, 'F8'), (4, 'F9'), (4, 'F10'),
@@ -207,7 +209,7 @@ INSERT INTO Users (name, email, password, phone_number, address, is_registered, 
 VALUES ('John Doe', 'john.doe@example.com', 'securepassword123', '5551234567', '123 Maple Street', TRUE, TRUE);
 -- Not expired
 INSERT INTO Voucher (voucher_id, user_id, amount, is_used, created_at)
-VALUES (4, 3, 50.00, FALSE, '2024-11-25 12:00:00');  -- Valid voucher
+VALUES (4, 3, 50.00, FALSE, '2024-11-29 12:00:00');  -- Valid voucher
 -- Expired Voucher (created in the past, e.g., January 2024)
 INSERT INTO Voucher (voucher_id, user_id, amount, is_used, created_at)
 VALUES (5, 3, 50.00, FALSE, '2023-01-01 00:00:00');  -- Expired voucher
@@ -220,7 +222,7 @@ INSERT INTO Users (name, email, password, phone_number, address, is_registered, 
 VALUES ('Guest User', 'guest@example.com', NULL, NULL, NULL, FALSE, FALSE);
 -- Valid voucher for guest (not expired)
 INSERT INTO Voucher (voucher_id, user_id, amount, is_used, created_at)
-VALUES (7, 4, 30.00, FALSE, '2024-11-25 12:00:00');  -- Valid voucher for guest
+VALUES (7, 4, 30.00, FALSE, '2024-11-29 12:00:00');  -- Valid voucher for guest
 
 -- Expired voucher for guest (created in the past, e.g., January 2024)
 INSERT INTO Voucher (voucher_id, user_id, amount, is_used, created_at)
