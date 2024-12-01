@@ -1,3 +1,7 @@
+package Boundary;
+import Visual.*;
+import Domain.*;
+import Database.*;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.*;

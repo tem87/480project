@@ -1,6 +1,8 @@
+package Boundary;
+import Visual.*;
 import javax.swing.*;
 import java.awt.*;
-
+import Domain.*;
 public class ChangeInformationView {
 
     public static void showChangeInformation(JFrame frame, User loggedInUser, Runnable backToMenuCallback) {

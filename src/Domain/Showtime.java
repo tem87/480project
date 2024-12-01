@@ -1,9 +1,12 @@
+package Domain;
+
+import Database.DBConnection;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -214,7 +217,7 @@ public class Showtime {
 
     @Override
     public String toString() {
-        return "Showtime{" +
+        return "Domain.Showtime{" +
                 "showtimeID=" + showtimeID +
                 ", movieID=" + movieID +
                 ", theaterID=" + theaterID +

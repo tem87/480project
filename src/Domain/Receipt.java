@@ -1,3 +1,7 @@
+package Domain;
+
+import Database.DBConnection;
+
 import java.time.LocalDateTime;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

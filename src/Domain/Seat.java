@@ -1,3 +1,7 @@
+package Domain;
+
+import Database.DBConnection;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -114,7 +118,7 @@ public class Seat {
 
     public boolean reserveSeat(int i) {
         if (!"Available".equalsIgnoreCase(this.status)) {
-            System.out.println("Seat " + this.seatNumber + " is already booked.");
+            System.out.println("Domain.Seat " + this.seatNumber + " is already booked.");
             return false;
         }
 
@@ -136,7 +140,7 @@ public class Seat {
 
     public boolean releaseSeat() {
         if (!"Booked".equalsIgnoreCase(this.status)) {
-            System.out.println("Seat " + this.seatNumber + " is already available.");
+            System.out.println("Domain.Seat " + this.seatNumber + " is already available.");
             return false;
         }
 

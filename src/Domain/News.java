@@ -1,3 +1,7 @@
+package Domain;
+
+import Database.DBConnection;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -144,6 +148,6 @@ public class News {
 
     @Override
     public String toString() {
-        return "News ID: " + newsId + "\nHeadline: " + headline + "\nContent: " + content + "\n";
+        return "Domain.News ID: " + newsId + "\nHeadline: " + headline + "\nContent: " + content + "\n";
     }
 }

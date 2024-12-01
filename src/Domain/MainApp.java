@@ -1,3 +1,7 @@
+package Domain;
+
+import Boundary.WelcomeView;
+
 import javax.swing.*;
 
 public class MainApp {

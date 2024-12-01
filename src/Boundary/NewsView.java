@@ -1,8 +1,11 @@
+package Boundary;
+import Visual.*;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
-
+import Domain.*;
 public class NewsView {
 
     public static void showNews(JFrame frame, Runnable backToMenuCallback) {

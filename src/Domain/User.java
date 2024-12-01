@@ -1,3 +1,7 @@
+package Domain;
+
+import Database.DBConnection;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -132,10 +136,10 @@ public class User {
             preparedStatement.setInt(1, this.userId);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                tickets.append("Ticket ID: ").append(resultSet.getInt("ticket_id"))
-                        .append(", Movie: ").append(resultSet.getString("movie_title"))
-                        .append(", Showtime: ").append(resultSet.getTimestamp("showtime_time"))
-                        .append(", Seat: ").append(resultSet.getString("seat_number"))
+                tickets.append("Domain.Ticket ID: ").append(resultSet.getInt("ticket_id"))
+                        .append(", Domain.Movie: ").append(resultSet.getString("movie_title"))
+                        .append(", Domain.Showtime: ").append(resultSet.getTimestamp("showtime_time"))
+                        .append(", Domain.Seat: ").append(resultSet.getString("seat_number"))
                         .append(", Price: $").append(resultSet.getBigDecimal("price"))
                         .append(", Status: ").append(resultSet.getString("status"))
                         .append(", Purchase Date: ").append(resultSet.getTimestamp("purchase_date"))

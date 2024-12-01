@@ -1,3 +1,7 @@
+package Boundary;
+import Visual.*;
+import Domain.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -127,7 +131,7 @@ public class SeatSelectionView {
         JScrollPane scrollPane = new JScrollPane(table);
 
         JButton backButton = new JButton("Back to Showtime Menu");
-//        backButton.addActionListener(e -> ShowtimeView.showShowtime(frame));
+//        backButton.addActionListener(e -> Boundary.ShowtimeView.showShowtime(frame));
         backButton.addActionListener(e -> ShowtimeView.showShowtime(frame, () -> GuestView.openGuestMenu(frame)));
 
         JPanel panel = new JPanel(new BorderLayout());

@@ -1,3 +1,7 @@
+package Domain;
+
+import Database.DBConnection;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -222,7 +226,7 @@ public class Movie {
 
     @Override
     public String toString() {
-        return String.format("Movie{movieID=%d, title='%s', genre='%s', rating='%s', synopsis='%s', length='%s', price=%.2f, earlyAccess=%b}",
+        return String.format("Domain.Movie{movieID=%d, title='%s', genre='%s', rating='%s', synopsis='%s', length='%s', price=%.2f, earlyAccess=%b}",
                 movieID, title, genre, rating, synopsis, length, price, earlyAccess);
     }
 }

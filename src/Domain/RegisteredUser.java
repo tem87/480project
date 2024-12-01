@@ -1,3 +1,7 @@
+package Domain;
+
+import Database.DBConnection;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -83,10 +87,10 @@ public class RegisteredUser extends User {
 //    public String fetchReceiptsFromDatabase() {
 //        StringBuilder receiptInfo = new StringBuilder();
 //        String query = "SELECT r.payment_id, r.ticket_id, r.total_amount, r.payment_date, r.masked_card_number " +
-//                "FROM Receipt r " +
+//                "FROM Domain.Receipt r " +
 //                "WHERE r.user_id = ?";
 //
-//        try (Connection conn = DBConnection.getConnection();
+//        try (Connection conn = Database.DBConnection.getConnection();
 //             PreparedStatement stmt = conn.prepareStatement(query)) {
 //
 //            stmt.setInt(1, this.getUserId());
@@ -100,7 +104,7 @@ public class RegisteredUser extends User {
 //                String maskedCardNumber = rs.getString("masked_card_number");
 //
 //                receiptInfo.append("Payment ID: ").append(paymentId).append("\n")
-//                        .append("Ticket ID: ").append(ticketId).append("\n")
+//                        .append("Domain.Ticket ID: ").append(ticketId).append("\n")
 //                        .append("Amount Paid: $").append(String.format("%.2f", totalAmount)).append("\n")
 //                        .append("Payment Date: ").append(paymentDate).append("\n")
 //                        .append("Card: ").append(maskedCardNumber).append("\n\n");
@@ -140,13 +144,13 @@ public class RegisteredUser extends User {
                 String theatreName = rs.getString("name");
 
                 receiptInfo.append("Payment ID: ").append(paymentId).append("\n")
-                        .append("Ticket ID: ").append(ticketId).append("\n")
+                        .append("Domain.Ticket ID: ").append(ticketId).append("\n")
                         .append("Amount Paid: $").append(String.format("%.2f", totalAmount)).append("\n")
                         .append("Payment Date: ").append(paymentDate).append("\n")
                         .append("Card: ").append(maskedCardNumber).append("\n")
-                        .append("Seat Number: ").append(seatNumber).append("\n")
-                        .append("Movie: ").append(movieTitle).append("\n")
-                        .append("Theatre: ").append(theatreName).append("\n\n");
+                        .append("Domain.Seat Number: ").append(seatNumber).append("\n")
+                        .append("Domain.Movie: ").append(movieTitle).append("\n")
+                        .append("Domain.Theatre: ").append(theatreName).append("\n\n");
             }
         } catch (SQLException e) {
             System.err.println("Error fetching receipts: " + e.getMessage());
