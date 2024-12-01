@@ -7,20 +7,20 @@ public class News {
     private String headline;
     private String content;
 
-    // Constructor
+    // ctor
     public News(int newsId, String headline, String content) {
         this.newsId = newsId;
         this.headline = headline;
         this.content = content;
     }
 
-    // Constructor for creating new news without ID (to be auto-generated)
+    // ctor for creating news
     public News(String headline, String content) {
         this.headline = headline;
         this.content = content;
     }
 
-    // Getters and Setters
+    // getters and setters
     public int getNewsId() {
         return newsId;
     }
@@ -45,7 +45,6 @@ public class News {
         this.content = content;
     }
 
-    // Add news to the database
     public boolean addToDatabase() {
         String query = "INSERT INTO News (headline, content) VALUES (?, ?)";
         try (Connection conn = DBConnection.getConnection();
@@ -58,7 +57,7 @@ public class News {
             if (rowsAffected > 0) {
                 ResultSet rs = stmt.getGeneratedKeys();
                 if (rs.next()) {
-                    this.newsId = rs.getInt(1); // Retrieve the generated news_id
+                    this.newsId = rs.getInt(1);
                 }
                 return true;
             }
@@ -68,7 +67,7 @@ public class News {
         return false;
     }
 
-    // Fetch all news from the database
+
     public static List<News> fetchAllNews() {
         List<News> newsList = new ArrayList<>();
         String query = "SELECT * FROM News";
@@ -90,7 +89,6 @@ public class News {
         return newsList;
     }
 
-    // Fetch a single news item by ID
     public static News fetchNewsById(int newsId) {
         String query = "SELECT * FROM News WHERE news_id = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -112,7 +110,6 @@ public class News {
         return null;
     }
 
-    // modidy news in the database
     public boolean modifyInDatabase() {
         String query = "UPDATE News SET headline = ?, content = ? WHERE news_id = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -130,7 +127,6 @@ public class News {
         return false;
     }
 
-    // dlete news from the database
     public boolean deleteFromDatabase() {
         String query = "DELETE FROM News WHERE news_id = ?";
         try (Connection conn = DBConnection.getConnection();

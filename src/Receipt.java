@@ -24,7 +24,7 @@ public class Receipt {
         this.maskedCardNumber = maskCardNumber(cardNumber);
     }
 
-    // Constructor for retrieving receipt details
+    // ctor for retrieving receipt details
     public Receipt(int paymentId, int userId, int ticketId, String cardNumber, LocalDateTime paymentDate, double totalAmount, String maskedCardNumber) {
         this.paymentId = paymentId;
         this.userId = userId;
@@ -35,7 +35,6 @@ public class Receipt {
         this.maskedCardNumber = maskedCardNumber;
     }
 
-    // Save receipt to the database
     public boolean saveToDatabase() {
         String query = "INSERT INTO Receipt (user_id, ticket_id, card_number, payment_date, total_amount, masked_card_number) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
@@ -67,7 +66,7 @@ public class Receipt {
         return false;
     }
 
-    // Mask card number for security
+
     private String maskCardNumber(String cardNumber) {
         if (cardNumber != null && cardNumber.length() == 16) {
             return "****-****-****-" + cardNumber.substring(12);
@@ -75,7 +74,6 @@ public class Receipt {
         return null;
     }
 
-    // Fetch receipt by ID
     public static Receipt fetchPaymentById(int paymentId) {
         String query = "SELECT * FROM Receipt WHERE payment_id = ?";
 

@@ -18,8 +18,6 @@ public class CancelTicketViewRU {
         cancelTicketPanel.add(titleLabel);
 
         JLabel ticketLabel = new JLabel("Select a ticket to cancel:");
-
-        // Dropdown to display tickets
         JComboBox<String> ticketDropdown = new JComboBox<>();
         JButton cancelTicketButton = VisualGui.createStyledButtonSmall("Cancel Ticket");
         JButton backButton = VisualGui.createStyledButtonSmall("Back");
@@ -31,7 +29,6 @@ public class CancelTicketViewRU {
 
         frame.add(cancelTicketPanel, BorderLayout.CENTER);
 
-        // Fetch booked tickets for the logged-in user
         List<Integer> ticketIds = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection()) {
             String query = "SELECT t.ticket_id, m.title, s.seat_number, sh.start_time " +
@@ -58,7 +55,7 @@ public class CancelTicketViewRU {
 
             if (ticketIds.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "No tickets to cancel.", "Info", JOptionPane.INFORMATION_MESSAGE);
-                return; // Stay on the current screen
+                return;
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -66,7 +63,7 @@ public class CancelTicketViewRU {
             return;
         }
 
-        // Action for "Cancel Ticket" button
+        // cancel Ticket button implementation
         cancelTicketButton.addActionListener(e -> {
             int selectedIndex = ticketDropdown.getSelectedIndex();
             if (selectedIndex == -1 || ticketIds.isEmpty()) {
@@ -78,8 +75,6 @@ public class CancelTicketViewRU {
 
             try (Connection conn = DBConnection.getConnection()) {
                 conn.setAutoCommit(false);
-
-                // Step 1: Check if cancellation is within allowed time
                 String showtimeQuery = "SELECT sh.start_time FROM Tickets t " +
                         "JOIN Showtime sh ON t.showtime_id = sh.showtime_id WHERE t.ticket_id = ?";
                 PreparedStatement showtimeStmt = conn.prepareStatement(showtimeQuery);
@@ -102,24 +97,20 @@ public class CancelTicketViewRU {
                     return;
                 }
 
-                // Step 2: Update the seat status
+                // update seat status
                 String updateSeatQuery = "UPDATE Seats SET status = 'Available' " +
                         "WHERE seat_id = (SELECT seat_id FROM Tickets WHERE ticket_id = ?)";
                 PreparedStatement updateSeatStmt = conn.prepareStatement(updateSeatQuery);
                 updateSeatStmt.setInt(1, ticketId);
                 updateSeatStmt.executeUpdate();
 
-                // Step 3: Mark the ticket as "Cancelled"
                 String updateTicketQuery = "UPDATE Tickets SET status = 'Cancelled' WHERE ticket_id = ?";
                 PreparedStatement updateTicketStmt = conn.prepareStatement(updateTicketQuery);
                 updateTicketStmt.setInt(1, ticketId);
                 updateTicketStmt.executeUpdate();
 
-                // Step 4: Generate a unique 4-digit voucher ID
                 int voucherId = generateUniqueVoucherId(conn);
 
-                // Step 5: Create a voucher for the user
-                // Step 5: Create a voucher for the user
                 String createVoucherQuery = "INSERT INTO Voucher (voucher_id, user_id, amount, created_at) " +
                         "SELECT ?, user_id, price, CURRENT_TIMESTAMP FROM Tickets WHERE ticket_id = ?";
                 PreparedStatement createVoucherStmt = conn.prepareStatement(createVoucherQuery);
@@ -127,7 +118,6 @@ public class CancelTicketViewRU {
                 createVoucherStmt.setInt(2, ticketId);
                 createVoucherStmt.executeUpdate();
 
-// Display voucher details
                 String getVoucherDetailsQuery = "SELECT amount, created_at FROM Voucher WHERE voucher_id = ?";
                 PreparedStatement getVoucherDetailsStmt = conn.prepareStatement(getVoucherDetailsQuery);
                 getVoucherDetailsStmt.setInt(1, voucherId);
@@ -165,7 +155,6 @@ public class CancelTicketViewRU {
             }
         });
 
-        // Action for "Back" button
         backButton.addActionListener(e -> backCallback.run());
 
         frame.revalidate();
@@ -176,13 +165,13 @@ public class CancelTicketViewRU {
         int voucherId;
         boolean isUnique;
         do {
-            voucherId = 1000 + (int) (Math.random() * 9000); // Generate random 4-digit number
+            voucherId = 1000 + (int) (Math.random() * 9000);
             String checkQuery = "SELECT COUNT(*) FROM Voucher WHERE voucher_id = ?";
             try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
                 checkStmt.setInt(1, voucherId);
                 ResultSet rs = checkStmt.executeQuery();
                 rs.next();
-                isUnique = rs.getInt(1) == 0; // Check if the ID is unique
+                isUnique = rs.getInt(1) == 0;
             }
         } while (!isUnique);
         return voucherId;

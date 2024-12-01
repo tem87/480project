@@ -10,20 +10,20 @@ public class Theatre {
     private String name;
     private String location;
 
-    // Constructor for existing theaters
+    // ctor for existing theaters
     public Theatre(int theaterID, String name, String location) {
         this.theaterID = theaterID;
         this.name = name;
         this.location = location;
     }
 
-    // Constructor for new theaters (without ID)
+    // ctor for new theaters
     public Theatre(String name, String location) {
         this.name = name;
         this.location = location;
     }
 
-    // Getters
+    // getters
     public int getTheatreID() {
         return theaterID;
     }
@@ -36,7 +36,6 @@ public class Theatre {
         return location;
     }
 
-    // Fetch all theaters from the database
     public static List<Theatre> fetchTheaters() {
         List<Theatre> theaters = new ArrayList<>();
         String query = "SELECT * FROM Theater";
@@ -60,7 +59,6 @@ public class Theatre {
         return theaters;
     }
 
-    // Insert a new theater into the database
     public boolean addTheatre() {
         String query = "INSERT INTO Theater (name, location) VALUES (?, ?)";
 
@@ -71,7 +69,7 @@ public class Theatre {
             preparedStatement.setString(2, location);
 
             int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0; // Return true if insertion was successful
+            return rowsAffected > 0;
 
         } catch (SQLException e) {
             System.err.println("Error inserting theater: " + e.getMessage());
@@ -79,7 +77,6 @@ public class Theatre {
         }
     }
 
-    // Update an existing theater in the database
     public boolean updateTheater() {
         String query = "UPDATE Theater SET name = ?, location = ? WHERE theater_id = ?";
 
@@ -91,7 +88,7 @@ public class Theatre {
             preparedStatement.setInt(3, theaterID);
 
             int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0; // Return true if update was successful
+            return rowsAffected > 0;
 
         } catch (SQLException e) {
             System.err.println("Error updating theater: " + e.getMessage());
@@ -99,25 +96,6 @@ public class Theatre {
         }
     }
 
-//    // Delete a theater from the database
-//    public static boolean deleteTheater(int theaterID) {
-//        String query = "DELETE FROM Theater WHERE theater_id = ?";
-//
-//        try (Connection connection = DBConnection.getConnection();
-//             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-//
-//            preparedStatement.setInt(1, theaterID);
-//
-//            int rowsAffected = preparedStatement.executeUpdate();
-//            return rowsAffected > 0; // Return true if deletion was successful
-//
-//        } catch (SQLException e) {
-//            System.err.println("Error deleting theater: " + e.getMessage());
-//            return false;
-//        }
-//    }
-
-    // Override toString
     @Override
     public String toString() {
         return "Theater{" +

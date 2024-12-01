@@ -36,8 +36,8 @@ public class AdminView {
         }
     }
 
+    //use username and password shown here when running tht GUI
     private static boolean validateAdminCredentials(String username, String password) {
-        // Hardcoded credentials - replace with database queries if necessary
         String adminUsername = "admin";
         String adminPassword = "admin12345";
 
@@ -48,17 +48,13 @@ public class AdminView {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
-        // Styled title using VisualGui
         JLabel adminLabel = VisualGui.createStyledTitle("Admin Menu");
-
-        // Main panel with GridBagLayout for centering buttons
         JPanel adminPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Ensure buttons fill the width
-        gbc.insets = new Insets(5, 0, 5, 0); // Add spacing between buttons
-        gbc.gridx = 0; // All buttons in one column
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 0, 5, 0);
+        gbc.gridx = 0;
 
-        // Create styled buttons
         JButton viewTheatreButton = createSmallStyledButton("View Theatres", () ->
                 TheatreView.showTheatre(frame, () -> AdminView.openAdminMenu(frame))
         );
@@ -100,7 +96,6 @@ public class AdminView {
         );
         JButton backButton = createSmallStyledButton("Back to Main Menu", WelcomeView::showMainMenu);
 
-        // Add buttons to the panel with vertical centering
         gbc.gridy = 0;
         adminPanel.add(viewTheatreButton, gbc);
         gbc.gridy++;
@@ -130,17 +125,15 @@ public class AdminView {
         gbc.gridy++;
         adminPanel.add(backButton, gbc);
 
-        // Add components to the frame
         frame.add(adminLabel, BorderLayout.NORTH);
         frame.add(adminPanel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
     }
 
-    // Helper method for smaller buttons
     private static JButton createSmallStyledButton(String text, Runnable action) {
         JButton button = VisualGui.createStyledButton(text, action);
-        button.setPreferredSize(new Dimension(200, 40)); // Set a smaller preferred size
+        button.setPreferredSize(new Dimension(200, 40));
         return button;
     }
 

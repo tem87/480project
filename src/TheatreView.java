@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.util.List;
 
@@ -21,14 +20,11 @@ public class TheatreView {
 
         JTable table = VisualGui.createStyledTable(data, columnNames);
         JScrollPane scrollPane = new JScrollPane(table);
-
         JLabel titleLabel = VisualGui.createStyledTitle("Available Theatres");
-
         JButton backButton = VisualGui.createStyledButton("Back to Menu", backToMenuCallback);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(backButton);
-
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(titleLabel, BorderLayout.NORTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
@@ -140,8 +136,6 @@ public class TheatreView {
 //    frame.revalidate();
 //    frame.repaint();
 //}
-
-
 
     public static void addTheatre(JFrame frame) {
         JTextField nameField = new JTextField();

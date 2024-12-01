@@ -8,7 +8,7 @@ import java.util.List;
 
 public class PaymentViewGuest {
 
-    static boolean success = false; //initializes it to false at the beginning
+    static boolean success = false;
 
     public static void showPaymentView(JFrame frame, Theatre theatre, Movie movie, Showtime showtime, List<Seat> selectedSeats, Runnable backToMenuCallback) {
         frame.getContentPane().removeAll();
@@ -20,7 +20,7 @@ public class PaymentViewGuest {
 
         JPanel mainPanel = new JPanel(new GridLayout(4, 1, 10, 10));
 
-        // Movie and Seat Details
+        // movie & seat details
         JPanel detailsPanel = new JPanel(new GridLayout(0, 1, 5, 5));
         detailsPanel.setBorder(BorderFactory.createTitledBorder("Movie & Seat Details"));
 
@@ -34,14 +34,13 @@ public class PaymentViewGuest {
         detailsPanel.add(new JLabel("Selected Seats: " + seatNumbers.toString()));
         mainPanel.add(detailsPanel);
 
-        // Pricing Details
         JPanel pricingPanel = new JPanel(new GridLayout(0, 1, 5, 5));
         pricingPanel.setBorder(BorderFactory.createTitledBorder("Pricing Details"));
 
         double pricePerSeat = movie.getPrice();
         double totalPrice = pricePerSeat * selectedSeats.size();
-        double tax = totalPrice * 0.05; // 5% tax
-        final double[] totalPriceAfterTax = {totalPrice + tax}; // Mutable wrapper for the total price
+        double tax = totalPrice * 0.05;
+        final double[] totalPriceAfterTax = {totalPrice + tax};
 
         JLabel totalPriceLabel = new JLabel(String.format("Total Price (After Tax): $%.2f", totalPriceAfterTax[0]));
         pricingPanel.add(new JLabel(String.format("Price Per Seat: $%.2f", pricePerSeat)));
@@ -50,7 +49,7 @@ public class PaymentViewGuest {
         pricingPanel.add(totalPriceLabel);
         mainPanel.add(pricingPanel);
 
-        // Voucher implementation
+        // voucher implementation
         JPanel voucherPanel = new JPanel(new GridLayout(0, 1, 5, 5));
         voucherPanel.setBorder(BorderFactory.createTitledBorder("Voucher Code"));
 
@@ -79,13 +78,13 @@ public class PaymentViewGuest {
                     Timestamp createdAt = rs.getTimestamp("created_at");
                     double voucherAmount = rs.getDouble("amount");
 
-                    // Check if the voucher is already used
+                    // check if the voucher is already used
                     if (isUsed) {
                         JOptionPane.showMessageDialog(frame, "This voucher has already been used.", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
-                    // Check if the voucher is within one year of its creation date
+                    // check if the voucher is within one year of its creation date
                     LocalDateTime creationDate = createdAt.toLocalDateTime();
                     LocalDateTime expiryDate = creationDate.plusYears(1);
                     if (LocalDateTime.now().isAfter(expiryDate)) {
@@ -93,7 +92,7 @@ public class PaymentViewGuest {
                         return;
                     }
 
-                    // Apply the voucher if valid
+                    // apply the voucher if valid
                     if (voucherAmount >= totalPriceAfterTax[0]) {
                         totalPriceAfterTax[0] = 0;
                         voucherMessage.setText("Voucher fully covers the price. Remaining: $0.00");
@@ -103,7 +102,6 @@ public class PaymentViewGuest {
                     }
                     totalPriceLabel.setText(String.format("Total Price (After Tax): $%.2f", totalPriceAfterTax[0]));
 
-                    // Mark the voucher as used
                     String updateVoucherQuery = "UPDATE Voucher SET is_used = TRUE WHERE voucher_id = ?";
                     PreparedStatement updateStmt = conn.prepareStatement(updateVoucherQuery);
                     updateStmt.setString(1, voucherCode);
@@ -124,7 +122,7 @@ public class PaymentViewGuest {
         voucherPanel.add(voucherMessage);
         mainPanel.add(voucherPanel);
 
-        // Payment Information
+        // payment info
         JPanel paymentPanel = new JPanel(new GridLayout(0, 2, 5, 5));
         paymentPanel.setBorder(BorderFactory.createTitledBorder("Payment Information"));
 
@@ -134,7 +132,6 @@ public class PaymentViewGuest {
         JPasswordField cvvField = new JPasswordField();
         JTextField expirationDateField = new JTextField();
 
-        //code for restricting user inputs
         restrictToChar(nameField, 50);
         restrictToDigits(cardNumberField, 16);
         restrictToDigits(cvvField, 3);
@@ -173,8 +170,7 @@ public class PaymentViewGuest {
 
             if (validateInputs(name, cardNumber, cvv, expirationDate)) {
                 if (validateCardDetails(cardNumber, cvv, expirationDate, totalPriceAfterTax[0])) {
-                    confirmButton.setEnabled(false); // Disable the button only after successful validation
-                    // Save guest user to Users table
+                    confirmButton.setEnabled(false);
                     int userId = User.saveGuestUserToDatabase(name, email);
                     if (userId == -1) {
                         JOptionPane.showMessageDialog(frame, "Failed to save user details. Payment aborted.");
@@ -217,7 +213,6 @@ public class PaymentViewGuest {
         JButton sendEmailButton = VisualGui.createStyledButtonSmall("Send Receipt and Tickets via Email");
         buttonPanel.add(sendEmailButton);
 
-        // send email button
         sendEmailButton.addActionListener(e -> {
             if (!success) {
                 JOptionPane.showMessageDialog(frame, "Payment has not been completed. Please make a payment first.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -299,7 +294,7 @@ public class PaymentViewGuest {
         for (Seat seat : selectedSeats) {
             receipt.append(seat.getSeatNumber()).append(", ");
         }
-        receipt.setLength(receipt.length() - 2); // Remove trailing comma and space
+        receipt.setLength(receipt.length() - 2);
         receipt.append("\n");
 
         receipt.append(String.format("Total Price Paid: $%.2f\n", totalPrice));

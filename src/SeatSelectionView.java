@@ -8,8 +8,6 @@ public class SeatSelectionView {
     public static void showSeatMap(JFrame frame, int showtimeId, Runnable backToMenuCallback, Theatre theatre, Movie movie, Showtime showtime, RegisteredUser loggedInUser) {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
-
-        // Fetch seats for the selected showtime
         List<Seat> seats = Seat.fetchSeatsByShowtime(showtimeId);
         List<Seat> selectedSeats = new ArrayList<>();
 
@@ -18,55 +16,48 @@ public class SeatSelectionView {
 
         JPanel seatsPanel = new JPanel(new GridLayout(rows, columns, 5, 5));
         seatsPanel.setOpaque(false);
-
         JLabel totalCostLabel = new JLabel("Total Cost: $0.00", SwingConstants.CENTER);
         totalCostLabel.setFont(new Font("Courier New", Font.BOLD, 16));
         totalCostLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
         double moviePrice = movie.getPrice();
 
-        // Load and resize images
         ImageIcon availableIcon = resizeImage("images/seat.png", 70, 70);
         ImageIcon selectedIcon = resizeImage("images/sel_seat.png", 70, 70);
         ImageIcon bookedIcon = resizeImage("images/booked_seat.png", 70, 70);
 
-        // Create buttons for seats
         for (Seat seat : seats) {
             JButton seatButton = new JButton();
             seatButton.setPreferredSize(new Dimension(70, 70));
-            seatButton.setLayout(new BorderLayout()); // Allow text overlay
+            seatButton.setLayout(new BorderLayout());
 
-            // Determine the icon and background color based on seat status
             if ("Available".equalsIgnoreCase(seat.getStatus())) {
-                seatButton.setIcon(availableIcon); // Available seat icon
-                seatButton.setBackground(Color.WHITE); // Default background for available seats
-                seatButton.setContentAreaFilled(false); // Transparent background if an icon is used
+                seatButton.setIcon(availableIcon);
+                seatButton.setBackground(Color.WHITE);
+                seatButton.setContentAreaFilled(false);
             } else {
-                seatButton.setIcon(bookedIcon); // Booked seat icon
-                seatButton.setDisabledIcon(bookedIcon); // Prevent grayed-out effect
-                seatButton.setEnabled(false); // Disable button for booked seats
-                seatButton.setBackground(Color.GRAY); // Grey background for booked seats
-                seatButton.setContentAreaFilled(true); // Ensure the background color is visible
+                seatButton.setIcon(bookedIcon);
+                seatButton.setDisabledIcon(bookedIcon);
+                seatButton.setEnabled(false);
+                seatButton.setBackground(Color.GRAY);
+                seatButton.setContentAreaFilled(true);
             }
 
-            // Add seat number as an overlay label
             JLabel seatLabel = new JLabel(seat.getSeatNumber(), SwingConstants.CENTER);
             seatLabel.setForeground(Color.BLACK); // Black text for visibility
             seatLabel.setFont(new Font("Courier New", Font.BOLD, 14));
-            seatLabel.setOpaque(false); // Transparent background
+            seatLabel.setOpaque(false);
             seatButton.add(seatLabel, BorderLayout.CENTER);
 
-            // Action listener for seat selection
             seatButton.addActionListener(e -> {
                 if (selectedSeats.contains(seat)) {
                     selectedSeats.remove(seat);
-                    seatButton.setIcon(availableIcon); // Deselect seat
+                    seatButton.setIcon(availableIcon);
                 } else {
                     selectedSeats.add(seat);
-                    seatButton.setIcon(selectedIcon); // Mark as selected
+                    seatButton.setIcon(selectedIcon);
                 }
 
-                // Update total cost
                 double totalCost = selectedSeats.size() * moviePrice;
                 totalCostLabel.setText(String.format("Total Cost: $%.2f", totalCost));
             });
@@ -74,37 +65,29 @@ public class SeatSelectionView {
             seatsPanel.add(seatButton);
         }
 
-        // Create a wrapper panel to center the seat map
         JPanel centerWrapper = new JPanel(new GridBagLayout());
         centerWrapper.setOpaque(false);
         centerWrapper.add(seatsPanel);
 
-        // Back button
         JButton backButton = VisualGui.createStyledButtonSmall("Back to Showtime Menu");
         backButton.addActionListener(e -> backToMenuCallback.run());
 
-        // Proceed to Payment button
         JButton proceedButton = VisualGui.createStyledButtonSmall("Proceed to Payment");
         proceedButton.addActionListener(e -> {
             if (selectedSeats.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Please select at least one seat to proceed.");
             } else {
                 if (loggedInUser != null) {
-                    // If logged in as a registered user
                     PaymentViewRU.showPaymentViewRU(frame, loggedInUser, theatre, movie, showtime, selectedSeats, backToMenuCallback);
                 } else {
-                    // If not logged in
                     PaymentViewGuest.showPaymentView(frame, theatre, movie, showtime, selectedSeats, backToMenuCallback);
                 }
             }
         });
 
-        // Add buttons to a control panel
         JPanel controlPanel = new JPanel(new GridLayout(1, 2, 10, 10));
         controlPanel.add(backButton);
         controlPanel.add(proceedButton);
-
-        // Add components to the frame
         frame.add(totalCostLabel, BorderLayout.NORTH);
         frame.add(centerWrapper, BorderLayout.CENTER);
         frame.add(controlPanel, BorderLayout.SOUTH);
@@ -114,15 +97,11 @@ public class SeatSelectionView {
         VisualGui.applyGlobalFont(frame.getContentPane(), VisualGui.fontTable);
     }
 
-
-    // Helper method to resize images
     private static ImageIcon resizeImage(String path, int width, int height) {
         ImageIcon originalIcon = new ImageIcon(path);
         Image scaledImage = originalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
         return new ImageIcon(scaledImage);
     }
-
-
 
     public static void showSeats(JFrame frame, int showtimeId, Runnable backToMenuCallback) {
         frame.getContentPane().removeAll();
@@ -236,7 +215,6 @@ public class SeatSelectionView {
             }
         }
     }
-
 
     public static void deleteSeat(JFrame frame, int showtimeId) {
         List<Seat> seats = Seat.fetchSeatsByShowtime(showtimeId);

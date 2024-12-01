@@ -12,12 +12,11 @@ public class ChangeInformationView {
         titleLabel.setFont(new Font("Courier New", Font.BOLD, 18));
         panel.add(titleLabel);
 
-        // Buttons for changing information
         JButton changeFullNameButton = VisualGui.createStyledButtonSmall("Change Full Name");
         JButton changeEmailButton = VisualGui.createStyledButtonSmall("Change Email");
         JButton changePasswordButton = VisualGui.createStyledButtonSmall("Change Password");
 
-        // Action for "Change Full Name" button
+        // change full name button
         changeFullNameButton.addActionListener(e -> {
             JPanel namePanel = new JPanel(new GridLayout(0, 1));
             JTextField firstNameField = new JTextField(loggedInUser.getName().split(" ")[0]);
@@ -45,7 +44,7 @@ public class ChangeInformationView {
             }
         });
 
-        // Action for "Change Email" button
+        // change email
         changeEmailButton.addActionListener(e -> {
             JPanel emailPanel = new JPanel(new GridLayout(0, 1));
             JTextField emailField = new JTextField(loggedInUser.getEmail());
@@ -69,7 +68,7 @@ public class ChangeInformationView {
             }
         });
 
-        // Action for "Change Password" button
+        // change password
         changePasswordButton.addActionListener(e -> {
             JPanel passwordPanel = new JPanel(new GridLayout(0, 1));
             JPasswordField passwordField = new JPasswordField();
@@ -97,12 +96,9 @@ public class ChangeInformationView {
             }
         });
 
-        // Adding buttons to the panel
         panel.add(changeFullNameButton);
         panel.add(changeEmailButton);
         panel.add(changePasswordButton);
-
-        // Back button
         JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton backButton = new JButton("Back to Menu");
 

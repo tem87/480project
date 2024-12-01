@@ -9,9 +9,9 @@ public class Seat {
     private int seatId;
     private int showtimeId;
     private String seatNumber;
-    private String status; // "Available" or "Booked"
+    private String status; // "available" or "booked"
 
-    // Constructor for existing seats
+    // ctor for existing seats
     public Seat(int seatId, int showtimeId, String seatNumber, String status) {
         this.seatId = seatId;
         this.showtimeId = showtimeId;
@@ -19,14 +19,14 @@ public class Seat {
         this.status = status;
     }
 
-    // Constructor for new seats (without ID)
+    // ctor for new seats (without ID)
     public Seat(int showtimeId, String seatNumber, String status) {
         this.showtimeId = showtimeId;
         this.seatNumber = seatNumber;
         this.status = status;
     }
 
-    // Getters and Setters
+    // getters and setters
     public int getSeatId() {
         return seatId;
     }
@@ -47,7 +47,6 @@ public class Seat {
         this.status = status;
     }
 
-    // Method to fetch all seats for a specific showtime
     public static List<Seat> fetchSeatsByShowtime(int showtimeId) {
         List<Seat> seats = new ArrayList<>();
         String query = "SELECT * FROM Seats WHERE showtime_id = ?";
@@ -70,7 +69,6 @@ public class Seat {
         return seats;
     }
 
-    // Method to add a new seat
     public boolean addSeat() {
         String insertSeat = "INSERT INTO Seats (showtime_id, seat_number, status) VALUES (?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
@@ -86,7 +84,6 @@ public class Seat {
         return false;
     }
 
-    // Method to modify an existing seat
     public boolean modifySeat() {
         String updateSeat = "UPDATE Seats SET seat_number = ?, status = ? WHERE seat_id = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -102,7 +99,6 @@ public class Seat {
         return false;
     }
 
-    // Method to delete a seat
     public boolean deleteSeat() {
         String deleteSeat = "DELETE FROM Seats WHERE seat_id = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -116,7 +112,6 @@ public class Seat {
         return false;
     }
 
-    // Method to reserve a seat
     public boolean reserveSeat(int i) {
         if (!"Available".equalsIgnoreCase(this.status)) {
             System.out.println("Seat " + this.seatNumber + " is already booked.");
@@ -139,7 +134,6 @@ public class Seat {
         return false;
     }
 
-    // Method to release (cancel) a seat
     public boolean releaseSeat() {
         if (!"Booked".equalsIgnoreCase(this.status)) {
             System.out.println("Seat " + this.seatNumber + " is already available.");

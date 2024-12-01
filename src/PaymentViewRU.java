@@ -7,18 +7,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class PaymentViewRU {
-    static boolean success = false; //used to track if payment was successful
+    static boolean success = false;
     public static void showPaymentViewRU(JFrame frame, RegisteredUser loggedInUser, Theatre theatre, Movie movie, Showtime showtime, List<Seat> selectedSeats, Runnable backToMenuCallback) {
+
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout(10, 10));
-
         JLabel mainTitle = new JLabel("Payment Details for " + loggedInUser.getName(), SwingConstants.CENTER);
         mainTitle.setFont(new Font("Courier New", Font.BOLD, 24));
         frame.add(mainTitle, BorderLayout.NORTH);
-
         JPanel mainPanel = new JPanel(new GridLayout(4, 1, 10, 10));
-
-        // Movie and Seat Details
         JPanel detailsPanel = new JPanel(new GridLayout(0, 1, 5, 5));
         detailsPanel.setBorder(BorderFactory.createTitledBorder("Movie & Seat Details"));
 
@@ -32,14 +29,13 @@ public class PaymentViewRU {
         detailsPanel.add(new JLabel("Selected Seats: " + seatNumbers.toString()));
         mainPanel.add(detailsPanel);
 
-        // Pricing Details
         JPanel pricingPanel = new JPanel(new GridLayout(0, 1, 5, 5));
         pricingPanel.setBorder(BorderFactory.createTitledBorder("Pricing Details"));
 
         double pricePerSeat = movie.getPrice();
         double totalPrice = pricePerSeat * selectedSeats.size();
-        double tax = totalPrice * 0.05; // 5% tax
-        final double[] totalPriceAfterTax = {totalPrice + tax}; // Mutable wrapper for the total price
+        double tax = totalPrice * 0.05;
+        final double[] totalPriceAfterTax = {totalPrice + tax};
 
         JLabel totalPriceLabel = new JLabel(String.format("Total Price (After Tax): $%.2f", totalPriceAfterTax[0]));
         pricingPanel.add(new JLabel(String.format("Price Per Seat: $%.2f", pricePerSeat)));
@@ -48,7 +44,6 @@ public class PaymentViewRU {
         pricingPanel.add(totalPriceLabel);
         mainPanel.add(pricingPanel);
 
-        // Voucher Input
         JPanel voucherPanel = new JPanel(new GridLayout(0, 1, 5, 5));
         voucherPanel.setBorder(BorderFactory.createTitledBorder("Voucher Code"));
 
@@ -77,13 +72,10 @@ public class PaymentViewRU {
                     Timestamp createdAt = rs.getTimestamp("created_at");
                     double voucherAmount = rs.getDouble("amount");
 
-                    // Check if the voucher is already used
                     if (isUsed) {
                         JOptionPane.showMessageDialog(frame, "This voucher has already been used.", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-
-                    // Check if the voucher is within one year of its creation date
                     LocalDateTime creationDate = createdAt.toLocalDateTime();
                     LocalDateTime expiryDate = creationDate.plusYears(1);
                     if (LocalDateTime.now().isAfter(expiryDate)) {
@@ -91,7 +83,6 @@ public class PaymentViewRU {
                         return;
                     }
 
-                    // Apply the voucher if valid
                     if (voucherAmount >= totalPriceAfterTax[0]) {
                         totalPriceAfterTax[0] = 0;
                         voucherMessage.setText("Voucher fully covers the price. Remaining: $0.00");
@@ -101,7 +92,6 @@ public class PaymentViewRU {
                     }
                     totalPriceLabel.setText(String.format("Total Price (After Tax): $%.2f", totalPriceAfterTax[0]));
 
-                    // Mark the voucher as used
                     String updateVoucherQuery = "UPDATE Voucher SET is_used = TRUE WHERE voucher_id = ?";
                     PreparedStatement updateStmt = conn.prepareStatement(updateVoucherQuery);
                     updateStmt.setString(1, voucherCode);
@@ -123,7 +113,6 @@ public class PaymentViewRU {
         voucherPanel.add(voucherMessage);
         mainPanel.add(voucherPanel);
 
-        // Payment Information
         JPanel paymentPanel = new JPanel(new GridLayout(0, 2, 5, 5));
         paymentPanel.setBorder(BorderFactory.createTitledBorder("Payment Information"));
 
@@ -145,10 +134,8 @@ public class PaymentViewRU {
         paymentPanel.add(expirationDateField);
         mainPanel.add(paymentPanel);
 
-        // Action Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton confirmButton = VisualGui.createStyledButtonSmall("Confirm Payment");
-        //email thing
         //JButton sendEmailButton = new JButton("Send Receipt and Tickets via Email");
         JButton sendEmailButton = VisualGui.createStyledButtonSmall("Send Receipt and Tickets via Email");
         //JButton backButton = new JButton("Back");
@@ -161,13 +148,13 @@ public class PaymentViewRU {
 
             if (totalPriceAfterTax[0] == 0 || validateInputs(cardNumber, cvv, expirationDate)) {
                 if (totalPriceAfterTax[0] == 0 || validateCardDetails(cardNumber, cvv, expirationDate, totalPriceAfterTax[0])) {
-                    confirmButton.setEnabled(false); // Disable the button only after successful validation
-                    success = true; //make global
+                    confirmButton.setEnabled(false);
+                    success = true;
 
                     try (Connection conn = DBConnection.getConnection()) {
                         conn.setAutoCommit(false);
 
-                        // Check if this is an early access movie
+                        // check if this is an early access movie
                         String checkEarlyAccessQuery = "SELECT early_access FROM Movie WHERE movie_id = ?";
                         boolean isEarlyAccess = false;
 
@@ -191,8 +178,6 @@ public class PaymentViewRU {
                                     totalSeats = rs.getInt("total_seats");
                                 }
                             }
-
-                            // Get the number of seats already booked by registered users
                             String bookedSeatsQuery = "SELECT COUNT(*) AS booked_seats FROM Tickets t " +
                                     "JOIN Users u ON t.user_id = u.user_id " +
                                     "WHERE t.showtime_id = ? AND u.is_registered = TRUE";
@@ -206,7 +191,7 @@ public class PaymentViewRU {
                                 }
                             }
 
-                            // Calculate the maximum number of seats registered users can book
+                            // calculate the max # of seats registered users can book
                             int maxSeatsForRegisteredUsers = (int) Math.ceil(totalSeats * 0.10);
                             if (bookedSeats + selectedSeats.size() > maxSeatsForRegisteredUsers) {
                                 JOptionPane.showMessageDialog(frame,
@@ -214,13 +199,12 @@ public class PaymentViewRU {
                                         "Booking Limit Reached",
                                         JOptionPane.ERROR_MESSAGE);
                                 conn.rollback();
-                                confirmButton.setEnabled(true); // Re-enable the button
+                                confirmButton.setEnabled(true);
                                 return;
                             }
                         }
 
                         for (Seat seat : selectedSeats) {
-                            // Check if the seat is already reserved
                             String checkSeatQuery = "SELECT status FROM Seats WHERE seat_id = ? AND showtime_id = ?";
                             try (PreparedStatement checkStmt = conn.prepareStatement(checkSeatQuery)) {
                                 checkStmt.setInt(1, seat.getSeatId());
@@ -230,12 +214,10 @@ public class PaymentViewRU {
                                 if (rs.next() && "Reserved".equalsIgnoreCase(rs.getString("status"))) {
                                     JOptionPane.showMessageDialog(frame, "Seat " + seat.getSeatNumber() + " is already reserved. Payment aborted.");
                                     conn.rollback();
-                                    confirmButton.setEnabled(true); // Re-enable the button
+                                    confirmButton.setEnabled(true);
                                     return;
                                 }
                             }
-
-                            // Create the ticket
                             Ticket ticket = new Ticket(
                                     loggedInUser.getUserId(),
                                     showtime.getShowtimeID(),
@@ -252,15 +234,13 @@ public class PaymentViewRU {
                                 break;
                             }
 
-                            int ticketId = ticket.getTicketId(); // Fetch the generated ticket_id
+                            int ticketId = ticket.getTicketId();
                             if (ticketId == -1) {
                                 success = false;
                                 JOptionPane.showMessageDialog(frame, "Failed to retrieve ticket ID. Payment aborted.");
                                 conn.rollback();
                                 break;
                             }
-
-                            // Save receipt linked to the ticket
                             Receipt receipt = new Receipt(
                                     loggedInUser.getUserId(),
                                     ticketId,
@@ -275,13 +255,11 @@ public class PaymentViewRU {
                                 conn.rollback();
                                 break;
                             }
-
-                            // Reserve the seat
                             seat.reserveSeat(seat.getSeatId());
                         }
 
                         if (success) {
-                            conn.commit(); // Commit transaction
+                            conn.commit();
                             JOptionPane.showMessageDialog(frame, "Payment Successful! Tickets and receipts have been saved.");
                             confirmButton.setEnabled(false);
                         }
@@ -298,8 +276,6 @@ public class PaymentViewRU {
             }
         });
 
-
-        // Send Receipt and Tickets via Email Button
         sendEmailButton.addActionListener(e -> {
             if (!success) {
                 JOptionPane.showMessageDialog(frame, "Payment has not been completed. Please make a payment first.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -379,29 +355,13 @@ public class PaymentViewRU {
         return false;
     }
 
-    private static boolean associateTicketWithReceipt(int paymentId, int ticketId) {
-        String query = "UPDATE Receipt SET ticket_id = ? WHERE payment_id = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, ticketId);
-            stmt.setInt(2, paymentId);
-
-            int rowsUpdated = stmt.executeUpdate();
-            return rowsUpdated > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     private static void restrictToDigits(JTextField field, int maxLength) {
         field.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
                 char c = e.getKeyChar();
                 if (!Character.isDigit(c) || field.getText().length() >= maxLength) {
-                    e.consume(); // Ignore non-digit or excess characters
+                    e.consume();
                 }
             }
         });

@@ -6,13 +6,13 @@ import java.sql.SQLException;
 public class RegisteredUser extends User {
     private boolean annualFeePaid;
 
-    // Constructor for creating a new Registered User
+    // ctor for creating a new ru
     public RegisteredUser(String name, String email, String password, String phoneNumber, String address) {
         super(name, email, password, phoneNumber, address);
         this.annualFeePaid = false;
     }
 
-    // Constructor for existing Registered Users
+    // ctor for existing ru
     public RegisteredUser(int userId, String name, String email, String password, String phoneNumber, String address,
                           boolean annualFeePaid) {
         super(userId, name, email, password, phoneNumber, address, true);
@@ -27,7 +27,6 @@ public class RegisteredUser extends User {
         this.annualFeePaid = annualFeePaid;
     }
 
-    // Save registered user to the database
     @Override
     public boolean saveToDatabase() {
         String query = "INSERT INTO Users (name, email, password, phone_number, address, is_registered, annual_fee_paid) "
@@ -53,7 +52,6 @@ public class RegisteredUser extends User {
         }
     }
 
-    // Authenticate registered user
     public static RegisteredUser authenticate(String email, String password) {
         String query = "SELECT * FROM Users WHERE email = ? AND password = ?";
 
@@ -79,7 +77,7 @@ public class RegisteredUser extends User {
             System.err.println("Error authenticating user: " + e.getMessage());
         }
 
-        return null; // Authentication failed
+        return null;
     }
 
 //    public String fetchReceiptsFromDatabase() {

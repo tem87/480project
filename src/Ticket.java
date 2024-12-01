@@ -22,7 +22,6 @@ public class Ticket {
         this.purchaseDate = purchaseDate;
     }
 
-    // Constructor for creating a ticket object with all fields
     public Ticket(int ticketId, int userId, int showtimeId, int seatId, double price, String status, LocalDateTime purchaseDate) {
         this.ticketId = ticketId;
         this.userId = userId;
@@ -33,7 +32,6 @@ public class Ticket {
         this.purchaseDate = purchaseDate;
     }
 
-    // Save ticket to the database
     public boolean saveToDatabase() {
         String query = "INSERT INTO Tickets (user_id, showtime_id, seat_id, price, status, purchase_date) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
@@ -94,7 +92,7 @@ public class Ticket {
         return purchaseDate;
     }
 
-    // Update ticket status in the database
+    // update ticket status in the database
     public boolean updateStatus(String newStatus) {
         String query = "UPDATE Tickets SET status = ? WHERE ticket_id = ?";
 
@@ -106,7 +104,7 @@ public class Ticket {
 
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
-                this.status = newStatus; // Update the object status
+                this.status = newStatus;
                 return true;
             }
 
@@ -116,7 +114,7 @@ public class Ticket {
         return false;
     }
 
-    // Fetch ticket from database by ID
+    // fetch ticket from database by ID
     public static Ticket fetchTicketById(int ticketId) {
         String query = "SELECT * FROM Tickets WHERE ticket_id = ?";
 
@@ -141,7 +139,7 @@ public class Ticket {
         } catch (SQLException e) {
             System.err.println("Error fetching ticket: " + e.getMessage());
         }
-        return null; // Return null if not found
+        return null;
     }
 }
 

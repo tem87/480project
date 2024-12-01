@@ -21,10 +21,10 @@ public class CancelTicketViewGuest {
         nameField.setPreferredSize(new Dimension(200, 24));
 
         JButton checkDetailsButton = VisualGui.createStyledButtonSmall("Check Details");
-        //checkDetailsButton.setPreferredSize(new Dimension(120, 30)); // Resized button
+        //checkDetailsButton.setPreferredSize(new Dimension(120, 30));
 
         JButton backButton = VisualGui.createStyledButtonSmall("Back to Menu");
-        //backButton.setPreferredSize(new Dimension(120, 30)); // Resized button
+        //backButton.setPreferredSize(new Dimension(120, 30));
 
         inputPanel.add(emailLabel);
         JPanel emailInputPanel = new JPanel();
@@ -54,7 +54,7 @@ public class CancelTicketViewGuest {
             }
 
             try (Connection conn = DBConnection.getConnection()) {
-                // Check if the email and name exist in the Users table and the user is not registered
+                // Chekc if the email and name exist in the Users table and the user is not registered
                 String query = "SELECT user_id, is_registered FROM Users WHERE email = ? AND name = ?";
                 PreparedStatement stmt = conn.prepareStatement(query);
                 stmt.setString(1, email);
@@ -110,7 +110,6 @@ public class CancelTicketViewGuest {
 
         frame.add(cancelTicketPanel, BorderLayout.CENTER);
 
-        // Fetch booked tickets for the guest user
         List<Integer> ticketIds = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection()) {
             String query = "SELECT t.ticket_id, m.title, s.seat_number, sh.start_time " +
@@ -137,15 +136,13 @@ public class CancelTicketViewGuest {
 
             if (ticketIds.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "No tickets to cancel.", "Info", JOptionPane.INFORMATION_MESSAGE);
-
-                // Redirect back to the email and name prompt instead of staying in the ticket selection
                 showCancelTicketView(frame, backCallback);
-                return; // Exit the current method to prevent further processing
+                return; //
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(frame, "Error fetching tickets.", "Error", JOptionPane.ERROR_MESSAGE);
-            showCancelTicketView(frame, backCallback); // Return to email and name prompt on error
+            showCancelTicketView(frame, backCallback);
             return;
         }
 
@@ -161,10 +158,9 @@ public class CancelTicketViewGuest {
             Connection conn = null;
 
             try {
-                conn = DBConnection.getConnection(); // Get the connection
+                conn = DBConnection.getConnection();
                 conn.setAutoCommit(false); // Begin transaction
 
-                // Get the showtime for the selected ticket
                 String showtimeQuery = "SELECT sh.start_time FROM Tickets t " +
                         "JOIN Showtime sh ON t.showtime_id = sh.showtime_id WHERE t.ticket_id = ?";
                 PreparedStatement showtimeStmt = conn.prepareStatement(showtimeQuery);
@@ -176,11 +172,11 @@ public class CancelTicketViewGuest {
                     Timestamp showtime = rs.getTimestamp("start_time");
                     Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 
-                    // Calculate the difference in hours between current time and showtime
+                    // calculate the difference in hours between current time and showtime
                     long timeDifference = showtime.getTime() - currentTime.getTime();
                     long hoursDifference = timeDifference / (1000 * 60 * 60); // Convert milliseconds to hours
 
-                    // If showtime is within 72 hours, ticket can't be canceled
+                    // if showtime is within 72 hours, ticket can't be canceled
                     if (hoursDifference < 72) {
                         JOptionPane.showMessageDialog(frame, "Tickets can only be canceled more than 72 hours before the showtime.", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
@@ -190,7 +186,7 @@ public class CancelTicketViewGuest {
                     return;
                 }
 
-                // Proceed with the ticket cancellation and update seat status
+                // proceed with the ticket cancellation and update seat status
                 String updateSeatQuery = "UPDATE Seats SET status = 'Available' WHERE seat_id = (SELECT seat_id FROM Tickets WHERE ticket_id = ?)";
                 PreparedStatement updateSeatStmt = conn.prepareStatement(updateSeatQuery);
                 updateSeatStmt.setInt(1, ticketId);
@@ -205,7 +201,7 @@ public class CancelTicketViewGuest {
                 //generate voucher id and save it in the database
                 int voucherId = generateUniqueVoucherId(conn);
 
-                // Step 5: Create a voucher for the user
+                // create a voucher for the user
                 String createVoucherQuery = "INSERT INTO Voucher (voucher_id, user_id, amount, created_at) " +
                         "SELECT ?, user_id, price, CURRENT_TIMESTAMP FROM Tickets WHERE ticket_id = ?";
                 PreparedStatement createVoucherStmt = conn.prepareStatement(createVoucherQuery);
@@ -213,7 +209,6 @@ public class CancelTicketViewGuest {
                 createVoucherStmt.setInt(2, ticketId);
                 createVoucherStmt.executeUpdate();
 
-// Display voucher details
                 String getVoucherDetailsQuery = "SELECT amount, created_at FROM Voucher WHERE voucher_id = ?";
                 PreparedStatement getVoucherDetailsStmt = conn.prepareStatement(getVoucherDetailsQuery);
                 getVoucherDetailsStmt.setInt(1, voucherId);
@@ -249,7 +244,7 @@ public class CancelTicketViewGuest {
                 ex.printStackTrace();
                 try {
                     if (conn != null) {
-                        conn.rollback(); // Rollback in case of error
+                        conn.rollback();
                     }
                 } catch (SQLException rollbackEx) {
                     rollbackEx.printStackTrace();
@@ -258,7 +253,7 @@ public class CancelTicketViewGuest {
             } finally {
                 try {
                     if (conn != null) {
-                        conn.close(); // Close connection
+                        conn.close();
                     }
                 } catch (SQLException ex) {
                     ex.printStackTrace();
@@ -277,13 +272,13 @@ public class CancelTicketViewGuest {
         int voucherId;
         boolean isUnique;
         do {
-            voucherId = 1000 + (int) (Math.random() * 9000); // Generate random 4-digit number
+            voucherId = 1000 + (int) (Math.random() * 9000);
             String checkQuery = "SELECT COUNT(*) FROM Voucher WHERE voucher_id = ?";
             try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
                 checkStmt.setInt(1, voucherId);
                 ResultSet rs = checkStmt.executeQuery();
                 rs.next();
-                isUnique = rs.getInt(1) == 0; // Check if the ID is unique
+                isUnique = rs.getInt(1) == 0;
             }
         } while (!isUnique);
         return voucherId;

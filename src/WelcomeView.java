@@ -9,8 +9,6 @@ public class WelcomeView {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(900, 800);
             frame.setLayout(new BorderLayout());
-
-            // Styled title using VisualGui
             JLabel welcomeLabel = VisualGui.createStyledTitle("WELCOME TO ACMEPLEX!");
             frame.add(welcomeLabel, BorderLayout.NORTH);
 
@@ -18,7 +16,6 @@ public class WelcomeView {
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(10, 10, 10, 10);
 
-            // Styled buttons using VisualGui
             JButton adminButton = VisualGui.createStyledButton("Admin", () -> AdminView.showAdminLogin(frame));
             JButton guestButton = VisualGui.createStyledButton("Guest", () -> GuestView.openGuestMenu(frame));
             JButton loginButton = VisualGui.createStyledButton("Login", () -> RegisteredUserView.login(frame));

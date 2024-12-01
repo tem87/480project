@@ -10,19 +10,14 @@ public class RegisteredUserView {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
-        // Title label
         JLabel registeredUserLabel = VisualGui.createStyledTitle("Registered User Menu");
-
-        // Button panel with centered layout
         JPanel buttonPanel = new JPanel(new GridBagLayout());
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Add padding
-
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 0, 10, 0); // Spacing between buttons
+        gbc.insets = new Insets(10, 0, 10, 0);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
 
-        // Buttons with styled appearance
         JButton viewTheatreButton = VisualGui.createStyledButton("View Theatres", () ->
                 TheatreView.showTheatre(frame, () -> openRegisteredUserMenu(frame, loggedInUser))
         );
@@ -76,7 +71,6 @@ public class RegisteredUserView {
             WelcomeView.showMainMenu();
         });
 
-        // Add buttons to the panel
         gbc.gridy = 0; buttonPanel.add(viewTheatreButton, gbc);
         gbc.gridy++;   buttonPanel.add(viewMovieButton, gbc);
         gbc.gridy++;   buttonPanel.add(viewEarlyMovieButton, gbc);
@@ -90,7 +84,6 @@ public class RegisteredUserView {
         gbc.gridy++;   buttonPanel.add(informationButton, gbc);
         gbc.gridy++;   buttonPanel.add(backButton, gbc);
 
-        // Add components to the frame
         frame.add(registeredUserLabel, BorderLayout.NORTH);
         frame.add(buttonPanel, BorderLayout.CENTER);
         frame.revalidate();

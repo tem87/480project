@@ -6,29 +6,25 @@ import java.util.List;
 public class PurchaseTicketViewRU {
 
     public static void showPurchaseTicketView(JFrame frame, RegisteredUser loggedInUser, Runnable backToMenuCallback) {
+
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
-
         JPanel panel = new JPanel(new GridLayout(0, 1, 10, 10));
         JLabel titleLabel = new JLabel("Purchase Ticket", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         panel.add(titleLabel);
-
-        // Dropdowns for Theatre, Movie, and Showtime
         JComboBox<String> theatreDropdown = new JComboBox<>();
         JComboBox<String> movieDropdown = new JComboBox<>();
         JComboBox<String> showtimeDropdown = new JComboBox<>();
 
-        // Fetch all theatres and populate dropdown
         List<Theatre> theatres = Theatre.fetchTheaters();
-        List<Movie> filteredMovies = new ArrayList<>(); // Holds filtered movies for the selected theatre
-        List<Showtime> filteredShowtimes = new ArrayList<>(); // Holds filtered showtimes for the selected theatre and movie
+        List<Movie> filteredMovies = new ArrayList<>();
+        List<Showtime> filteredShowtimes = new ArrayList<>();
 
         for (Theatre theatre : theatres) {
             theatreDropdown.addItem(theatre.getName() + " - " + theatre.getLocation());
         }
 
-        // Theatre selection action
         theatreDropdown.addActionListener(e -> {
             movieDropdown.removeAllItems();
             showtimeDropdown.removeAllItems();
@@ -37,7 +33,6 @@ public class PurchaseTicketViewRU {
             if (selectedTheatreIndex >= 0) {
                 Theatre selectedTheatre = theatres.get(selectedTheatreIndex);
 
-                // Filter movies based on the selected theatre
                 filteredMovies.clear();
                 for (Movie movie : Movie.fetchMovies()) {
                     boolean isMovieAtTheatre = Showtime.fetchShowtimes().stream()
@@ -55,7 +50,6 @@ public class PurchaseTicketViewRU {
             }
         });
 
-        // Movie selection action
         movieDropdown.addActionListener(e -> {
             showtimeDropdown.removeAllItems();
 
@@ -66,7 +60,6 @@ public class PurchaseTicketViewRU {
                 Theatre selectedTheatre = theatres.get(selectedTheatreIndex);
                 Movie selectedMovie = filteredMovies.get(selectedMovieIndex);
 
-                // Filter showtimes based on the selected theatre and movie
                 filteredShowtimes.clear();
                 for (Showtime showtime : Showtime.fetchShowtimes()) {
                     if (showtime.getTheaterID() == selectedTheatre.getTheatreID() &&
@@ -95,7 +88,6 @@ public class PurchaseTicketViewRU {
         //JButton seatMapButton = new JButton("View Seat Map");
         JButton backButton = VisualGui.createStyledButton("Back to Menu", backToMenuCallback);
 
-        // View seat map button action
         JButton seatMapButton = VisualGui.createStyledButton("View Seat Map", () -> {
             int selectedTheatreIndex = theatreDropdown.getSelectedIndex();
             int selectedMovieIndex = movieDropdown.getSelectedIndex();
@@ -106,7 +98,6 @@ public class PurchaseTicketViewRU {
                 Movie selectedMovie = filteredMovies.get(selectedMovieIndex);
                 Showtime selectedShowtime = filteredShowtimes.get(selectedShowtimeIndex);
 
-                // Display seat map view
                 SeatSelectionView.showSeatMap(
                         frame,
                         selectedShowtime.getShowtimeID(),
@@ -121,7 +112,6 @@ public class PurchaseTicketViewRU {
             }
         });
 
-        // Back button action
         backButton.addActionListener(e -> backToMenuCallback.run());
 
         panel.add(seatMapButton);

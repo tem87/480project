@@ -15,7 +15,7 @@ public class Movie {
     private double price;
     private boolean earlyAccess;
 
-    // Constructor for retrieving existing movies
+    // ctor for retrieving existing movies
     public Movie(int movieID, String title, String genre, String rating, String synopsis, String length, double price, boolean earlyAccess) {
         this.movieID = movieID;
         this.title = title;
@@ -27,7 +27,7 @@ public class Movie {
         this.earlyAccess = earlyAccess;
     }
 
-    // Constructor for creating new movies (without ID)
+    // ctor for creating new movies
     public Movie(String title, String genre, String rating, String synopsis, String length, double price, boolean earlyAccess) {
         this.title = title;
         this.genre = genre;
@@ -38,7 +38,7 @@ public class Movie {
         this.earlyAccess = earlyAccess;
     }
 
-    // Getters
+    // getters
     public int getMovieId() {
         return movieID;
     }
@@ -71,7 +71,6 @@ public class Movie {
         return earlyAccess;
     }
 
-    // Add movie to the database
     public boolean addMovie() {
         String query = "INSERT INTO Movie (title, genre, rating, synopsis, length, price, early_access) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
@@ -95,7 +94,6 @@ public class Movie {
         }
     }
 
-    // Update an existing movie
     public boolean modifyMovie() {
         String query = "UPDATE Movie SET title = ?, genre = ?, rating = ?, synopsis = ?, length = ?, price = ?, early_access = ? WHERE movie_id = ?";
 
@@ -120,7 +118,6 @@ public class Movie {
         }
     }
 
-    // Delete a movie from the database
     public static boolean deleteMovie(int movieID) {
         String query = "DELETE FROM Movie WHERE movie_id = ?";
 
@@ -138,7 +135,6 @@ public class Movie {
         }
     }
 
-    // Fetch all movies from the database
     public static List<Movie> fetchMovies() {
         List<Movie> movies = new ArrayList<>();
         String query = "SELECT * FROM Movie";
@@ -167,7 +163,6 @@ public class Movie {
         return movies;
     }
 
-    // Fetch movies without early access
     public static List<Movie> fetchMoviesNoEarlyAccess() {
         List<Movie> movies = new ArrayList<>();
         String query = "SELECT * FROM Movie WHERE early_access = FALSE";
@@ -197,7 +192,6 @@ public class Movie {
     }
 
 
-    // Fetch only movies with early access
     public static List<Movie> fetchEarlyAccessMovies() {
         List<Movie> movies = new ArrayList<>();
         String query = "SELECT * FROM Movie WHERE early_access = TRUE";

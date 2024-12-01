@@ -12,10 +12,8 @@ public class NewsView {
         JLabel titleLabel = new JLabel("News", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Courier New", Font.BOLD, 18));
 
-        // Fetch all news
         List<News> newsList = News.fetchAllNews();
 
-        // Table model to display news
         String[] columnNames = {"ID", "Headline", "Content"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
         for (News news : newsList) {
@@ -28,7 +26,6 @@ public class NewsView {
 
         JButton backButton = new JButton("Back");
 
-        // Back button functionality
         backButton.addActionListener(e -> backToMenuCallback.run());
 
         JPanel newsPanel = new JPanel(new BorderLayout(10, 10));

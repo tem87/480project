@@ -9,15 +9,11 @@ public class VisualGui {
     public static final Font fontTable = new Font("Courier New", Font.PLAIN, 14);
     public static final Font fontHeader = new Font("Courier New", Font.BOLD, 16);
     public static final Font fontButton = new Font("Courier New", Font.BOLD, 14);
-
     public static final Color primaryColor = new Color(173, 216, 230);
     public static final Color textColor = Color.black;
     public static final Color rowColor = new Color(224, 255, 255);
     public static final Color backgroundColor= Color.white;
 
-
-
-    // Style JLabel for titles
     public static JLabel createStyledTitle(String text) {
         JLabel titleLabel = new JLabel(text, JLabel.CENTER);
         titleLabel.setFont(fontTitle);
@@ -27,7 +23,7 @@ public class VisualGui {
         titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         return titleLabel;
     }
-    // Create styled JLabel
+
     public static JLabel createStyledLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(fontTable);
@@ -35,8 +31,6 @@ public class VisualGui {
         return label;
     }
 
-
-    // Style JButton
     public static JButton createStyledButton(String text, Runnable action) {
         JButton button = new JButton(text);
         button.setFont(fontButton);
@@ -74,8 +68,6 @@ public class VisualGui {
         return button;
     }
 
-
-    // Style JTable with alternating row colors
     public static JTable createStyledTable(Object[][] data, String[] columnNames) {
         JTable table = new JTable(data, columnNames) {
             @Override
@@ -101,7 +93,6 @@ public class VisualGui {
         tableHeader.setBackground(primaryColor);
         tableHeader.setForeground(textColor);
     }
-
 
     public static void applyGlobalFont(Container container, Font font) {
         for (Component component : container.getComponents()) {

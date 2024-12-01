@@ -16,7 +16,7 @@ public class Showtime {
     private String movieName;
     private String theaterName;
 
-    // Constructor for existing showtimes
+    // ctor for existing showtime
     public Showtime(int showtimeID, int movieID, int theaterID, LocalDateTime dateTime, int maxSeats) {
         this.showtimeID = showtimeID;
         this.movieID = movieID;
@@ -25,7 +25,7 @@ public class Showtime {
         this.maxSeats = maxSeats;
     }
 
-    // Constructor for new showtimes
+    // ctor for new showtime
     public Showtime(int movieID, int theaterID, LocalDateTime dateTime, int maxSeats) {
         this.movieID = movieID;
         this.theaterID = theaterID;
@@ -33,7 +33,7 @@ public class Showtime {
         this.maxSeats = maxSeats;
     }
 
-    //constructor with showtime details
+    //ctor with showtime details
     public Showtime(int showtimeID, String movieName, String theaterName, LocalDateTime dateTime, int maxSeats) {
         this.showtimeID = showtimeID;
         this.movieName = movieName;
@@ -43,7 +43,7 @@ public class Showtime {
     }
 
 
-    // Getters
+    // getters
     public int getShowtimeID() {
         return showtimeID;
     }

@@ -1,12 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ShowtimeView {
@@ -15,7 +10,6 @@ public class ShowtimeView {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
-        // Fetching showtime data
         List<Showtime> showtimes = Showtime.fetchShowtimes();
         String[] columnNames = {"ID", "Movie ID", "Theater ID", "Start Time", "Max Seats"};
 
@@ -29,14 +23,10 @@ public class ShowtimeView {
             data[i][4] = showtime.getMaxSeats();
         }
 
-        // Styled JTable
         JTable table = VisualGui.createStyledTable(data, columnNames);
         JScrollPane scrollPane = new JScrollPane(table);
 
-        // Styled back button
         JButton backButton = VisualGui.createStyledButton("Back to Menu", backToMenuCallback);
-
-        // Layout panel
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(backButton, BorderLayout.SOUTH);
@@ -50,7 +40,6 @@ public class ShowtimeView {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
-        // Fetching guest showtime data
         List<Showtime> showtimes = Showtime.fetchShowtimesGuest();
         String[] columnNames = {"Movie Name", "Theater Name", "Start Time"};
 
@@ -62,14 +51,9 @@ public class ShowtimeView {
             data[i][2] = showtime.getDateTime();
         }
 
-        // Styled JTable
         JTable table = VisualGui.createStyledTable(data, columnNames);
         JScrollPane scrollPane = new JScrollPane(table);
-
-        // Styled back button
         JButton backButton = VisualGui.createStyledButton("Back to Menu", backToMenuCallback);
-
-        // Layout panel
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(backButton, BorderLayout.SOUTH);
@@ -78,10 +62,6 @@ public class ShowtimeView {
         frame.revalidate();
         frame.repaint();
     }
-
-
-
-
 
     public static void addShowtime(JFrame frame) {
         JTextField movieIDField = new JTextField();
@@ -171,7 +151,6 @@ public class ShowtimeView {
                 int option = JOptionPane.showConfirmDialog(frame, message, "Modify Showtime", JOptionPane.OK_CANCEL_OPTION);
                 if (option == JOptionPane.OK_OPTION) {
                     try {
-                        // Trim input and validate each field
                         String movieIDText = movieIDField.getText().trim();
                         String theaterIDText = theaterIDField.getText().trim();
                         String dateTimeText = dateTimeField.getText().trim();
@@ -207,7 +186,6 @@ public class ShowtimeView {
             }
         }
     }
-
 
     public static void deleteShowtime(JFrame frame) {
         List<Showtime> showtimes = Showtime.fetchShowtimes();

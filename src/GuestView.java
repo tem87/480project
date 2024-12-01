@@ -7,16 +7,13 @@ public class GuestView {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
 
-        // Styled title using VisualGui
         JLabel guestPanelLabel = VisualGui.createStyledTitle("AcmePlex Guest Menu");
         frame.add(guestPanelLabel, BorderLayout.NORTH);
 
-        // Button panel
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(15, 15, 15, 15);
 
-        // Styled buttons using VisualGui
         JButton viewTheatreButton = VisualGui.createStyledButton("View Theatres",
                 () -> TheatreView.showTheatre(frame, () -> GuestView.openGuestMenu(frame))
         );
@@ -41,7 +38,6 @@ public class GuestView {
                 WelcomeView::showMainMenu
         );
 
-        // Adding buttons to the layout
         gbc.gridy = 0;
         buttonPanel.add(viewTheatreButton, gbc);
         gbc.gridy = 1;

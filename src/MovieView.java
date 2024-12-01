@@ -4,8 +4,7 @@ import java.util.List;
 
 public class MovieView {
 
-    // Show all movies
-    // Show all movies for admin view
+    // show all movies for admin view
     public static void showMoviesAdminView(JFrame frame, Runnable backToMenuCallback) {
         List<Movie> movies = Movie.fetchMovies();
         String[] columnNames = {"ID", "Title", "Genre", "Rating", "Synopsis", "Length", "Price", "Early Access"};
@@ -26,7 +25,7 @@ public class MovieView {
         displayTable(frame, "All Movies", columnNames, data, backToMenuCallback);
     }
 
-    // Show movies that are NOT early access
+    // show movies that are NOT early access
     public static void showMovie(JFrame frame, Runnable backToMenuCallback) {
         List<Movie> movies = Movie.fetchMoviesNoEarlyAccess();
         String[] columnNames = {"Title", "Genre", "Rating", "Synopsis", "Length", "Price"};
@@ -45,7 +44,7 @@ public class MovieView {
         displayTable(frame, "Available Movies", columnNames, data, backToMenuCallback);
     }
 
-    // Show early access movies
+    // show early access movies
     public static void showEarlyAccessMovies(JFrame frame, Runnable backToMenuCallback) {
         List<Movie> movies = Movie.fetchEarlyAccessMovies();
         String[] columnNames = {"Title", "Genre", "Rating", "Synopsis", "Length", "Price"};
@@ -64,7 +63,7 @@ public class MovieView {
         displayTable(frame, "Early Access Movies", columnNames, data, backToMenuCallback);
     }
 
-    // Helper method to display tables
+    // method to display in tables
     private static void displayTable(JFrame frame, String title, String[] columnNames, Object[][] data, Runnable backToMenuCallback) {
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout());
@@ -88,7 +87,6 @@ public class MovieView {
         frame.repaint();
     }
 
-    // Add a new movie (Admin-specific functionality)
     public static void addMovie(JFrame frame) {
         JTextField titleField = new JTextField();
         JTextField genreField = new JTextField();
@@ -141,7 +139,6 @@ public class MovieView {
         }
     }
 
-    // Modify an existing movie (Admin-specific functionality)
     public static void modifyMovie(JFrame frame) {
         List<Movie> movies = Movie.fetchMovies();
         String[] movieTitles = movies.stream().map(Movie::getTitle).toArray(String[]::new);
@@ -217,7 +214,6 @@ public class MovieView {
         }
     }
 
-    // Delete an existing movie (Admin-specific functionality)
     public static void deleteMovie(JFrame frame) {
         List<Movie> movies = Movie.fetchMovies();
         String[] movieTitles = movies.stream().map(Movie::getTitle).toArray(String[]::new);
