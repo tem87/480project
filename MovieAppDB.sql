@@ -1,5 +1,3 @@
--- ENSF 480 Project Group 7
-
 DROP DATABASE IF EXISTS MovieAppDB;
 CREATE DATABASE MovieAppDB;
 USE MovieAppDB;
@@ -111,7 +109,7 @@ INSERT INTO Bank (card_number, cvv, expiration_date, balance)
 VALUES
 ('1234567890123456', '123', '12/25', 500.00),
 ('6543210987654321', '456', '11/24', 300.00),
-('1111222233334444', '789', '10/25', 1000.00),
+('1111222233334444', '789', '10/23', 1000.00),
 ('9999000011112222', '654', '08/27', 1200.00);
 
 
@@ -129,14 +127,14 @@ INSERT INTO Theater (name, location) VALUES
 
 -- Insert showtimes
 INSERT INTO Showtime (movie_id, theater_id, start_time, max_seats) VALUES
-(1, 1, '2024-11-25 17:00', 20), -- less than 72 hours
-(1, 2, '2024-12-25 18:00', 20), -- more
-(2, 1, '2024-12-21 19:00', 20),
-(2, 2, '2024-12-21 20:00', 20),
-(3, 1, '2024-12-22 22:00', 20),
-(3, 2, '2024-12-21 20:00', 20),
-(4, 1, '2024-12-22 22:00', 20),
-(4, 2, '2024-12-21 20:00', 20);
+(1, 1, '2024-11-25 17:00', 10), -- less than 72 hours
+(1, 2, '2024-12-03 18:00', 10), -- more
+(2, 1, '2024-11-21 19:00', 10),
+(2, 2, '2024-11-21 20:00', 10),
+(3, 1, '2024-11-22 22:00', 10),
+(3, 2, '2024-11-21 20:00', 10),
+(4, 1, '2024-11-22 22:00', 10),
+(4, 2, '2024-11-21 20:00', 10);
 
 
 -- Generate 20 seats for showtime_id = 1
@@ -160,19 +158,14 @@ INSERT INTO Seats (showtime_id, seat_number) VALUES
 (3, 'C11'), (3, 'C12'), (3, 'C13'), (3, 'C14'), (3, 'C15'),
 (3, 'C16'), (3, 'C17'), (3, 'C18'), (3, 'C19'), (3, 'C20');
 
--- Generate 20 seats for showtime_id = 7
-INSERT INTO Seats (showtime_id, seat_number) VALUES
-(7, 'D1'), (7, 'D2'), (7, 'D3'), (7, 'D4'), (7, 'D5'),
-(7, 'D6'), (7, 'D7'), (7, 'D8'), (7, 'D9'), (7, 'D10'),
-(7, 'D11'), (7, 'D12'), (7, 'D13'), (7, 'D14'), (7, 'D15'),
-(7, 'D16'), (7, 'D17'), (7, 'D18'), (7, 'D19'), (7, 'D20');
 
--- Generate 20 seats for showtime_id = 8
+-- Generate 20 seats for showtime_id = 5
 INSERT INTO Seats (showtime_id, seat_number) VALUES
-(8, 'E1'), (8, 'E2'), (8, 'E3'), (8, 'E4'), (8, 'E5'),
-(8, 'E6'), (8, 'E7'), (8, 'E8'), (8, 'E9'), (8, 'E10'),
-(8, 'E11'), (8, 'E12'), (8, 'E13'), (8, 'E14'), (8, 'E15'),
-(8, 'E16'), (8, 'E17'), (8, 'E18'), (8, 'E19'), (8, 'E20');
+(4, 'F1'), (4, 'F2'), (4, 'F3'), (4, 'F4'), (4, 'F5'),
+(4, 'F6'), (4, 'F7'), (4, 'F8'), (4, 'F9'), (4, 'F10'),
+(4, 'F11'), (4, 'F12'), (4, 'F13'), (4, 'F14'), (4, 'F15'),
+(4, 'F16'), (4, 'F17'), (4, 'F18'), (4, 'F19'), (4, 'F20');
+
 
 -- Generate 20 seats for showtime_id = 5
 INSERT INTO Seats (showtime_id, seat_number) VALUES
@@ -187,6 +180,20 @@ INSERT INTO Seats (showtime_id, seat_number) VALUES
 (6, 'G6'), (6, 'G7'), (6, 'G8'), (6, 'G9'), (6, 'G10'),
 (6, 'G11'), (6, 'G12'), (6, 'G13'), (6, 'G14'), (6, 'G15'),
 (6, 'G16'), (6, 'G17'), (6, 'G18'), (6, 'G19'), (6, 'G20');
+
+-- Generate 20 seats for showtime_id = 7
+INSERT INTO Seats (showtime_id, seat_number) VALUES
+(7, 'D1'), (7, 'D2'), (7, 'D3'), (7, 'D4'), (7, 'D5'),
+(7, 'D6'), (7, 'D7'), (7, 'D8'), (7, 'D9'), (7, 'D10'),
+(7, 'D11'), (7, 'D12'), (7, 'D13'), (7, 'D14'), (7, 'D15'),
+(7, 'D16'), (7, 'D17'), (7, 'D18'), (7, 'D19'), (7, 'D20');
+
+-- Generate 20 seats for showtime_id = 8
+INSERT INTO Seats (showtime_id, seat_number) VALUES
+(8, 'E1'), (8, 'E2'), (8, 'E3'), (8, 'E4'), (8, 'E5'),
+(8, 'E6'), (8, 'E7'), (8, 'E8'), (8, 'E9'), (8, 'E10'),
+(8, 'E11'), (8, 'E12'), (8, 'E13'), (8, 'E14'), (8, 'E15'),
+(8, 'E16'), (8, 'E17'), (8, 'E18'), (8, 'E19'), (8, 'E20');
 
 
 
